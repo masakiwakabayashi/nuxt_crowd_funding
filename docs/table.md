@@ -38,7 +38,7 @@
 | id | uuid | PK |
 | organization_id | uuid | FK → organizations.id |
 | user_id | uuid | FK → auth.users.id |
-| role | text | 権限。例: `owner` / `admin` / `member` / `viewer` |
+| role | text | 権限: `admin` / `staff` / `viewer` |
 | created_at | timestamptz | 作成日時 |
 | updated_at | timestamptz | 更新日時 |
 
