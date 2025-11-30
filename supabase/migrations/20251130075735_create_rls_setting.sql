@@ -356,4 +356,54 @@ using (public.current_user_is_org_member(( SELECT b.organization_id
   WHERE (b.id = shipping_addresses.backer_id))));
 
 
+alter table "public"."project_members" enable row level security;
+
+
+  create policy "project_members_admin_delete"
+  on "public"."project_members"
+  as permissive
+  for delete
+  to public
+using (public.current_user_is_org_admin(( SELECT p.organization_id
+   FROM public.projects p
+  WHERE (p.id = project_members.project_id))));
+
+
+
+  create policy "project_members_admin_insert"
+  on "public"."project_members"
+  as permissive
+  for insert
+  to public
+with check (public.current_user_is_org_admin(( SELECT p.organization_id
+   FROM public.projects p
+  WHERE (p.id = project_members.project_id))));
+
+
+
+  create policy "project_members_admin_update"
+  on "public"."project_members"
+  as permissive
+  for update
+  to public
+using (public.current_user_is_org_admin(( SELECT p.organization_id
+   FROM public.projects p
+  WHERE (p.id = project_members.project_id))))
+with check (public.current_user_is_org_admin(( SELECT p.organization_id
+   FROM public.projects p
+  WHERE (p.id = project_members.project_id))));
+
+
+
+  create policy "project_members_select_for_members"
+  on "public"."project_members"
+  as permissive
+  for select
+  to public
+using (public.current_user_is_org_member(( SELECT p.organization_id
+   FROM public.projects p
+  WHERE (p.id = project_members.project_id))));
+
+
+
 
