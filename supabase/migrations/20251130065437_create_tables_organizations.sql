@@ -1,9 +1,10 @@
+create type "public"."org_role" as enum ('admin', 'staff', 'viewer');
 
   create table "public"."organization_members" (
     "id" uuid not null default gen_random_uuid(),
     "organization_id" uuid not null,
     "user_id" uuid not null,
-    "role" text not null default 'member'::text,
+    "role" org_role not null default 'viewer'::org_role,
     "created_at" timestamp with time zone not null default now(),
     "updated_at" timestamp with time zone not null default now()
       );
