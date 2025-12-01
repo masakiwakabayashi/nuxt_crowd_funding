@@ -10,11 +10,10 @@ function handleLogin() {
 }
 </script>
 
-
 <template>
-  <main class="bg-slate-50">
-    <div class="mx-auto max-w-5xl px-5 py-10 md:px-10 lg:py-16">
-      <section class="mt-12 rounded-3xl bg-white p-10 shadow-xl max-w-md mx-auto">
+  <main class="bg-blue-100 flex items-center justify-center min-h-screen">
+    <div class="max-w-md w-full p-10 rounded-3xl bg-white shadow-xl">
+      <section>
         <form @submit.prevent="handleLogin" class="mt-8 space-y-5">
           <label class="flex flex-col text-sm font-medium text-slate-700">
             メールアドレス
