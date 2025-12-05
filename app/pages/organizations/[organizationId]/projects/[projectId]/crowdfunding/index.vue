@@ -6,7 +6,7 @@
           Delivery Tracker
         </p>
         <h1 class="text-2xl font-bold text-slate-900">
-          クラウドファンディング納品管理テーブル
+          納品管理テーブル
         </h1>
         <p class="text-sm text-slate-500">
           支援者ごとのステータスと期限を一覧で確認できます。
