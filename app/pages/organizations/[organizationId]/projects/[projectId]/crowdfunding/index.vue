@@ -6,7 +6,7 @@
           Delivery Tracker
         </p>
         <h1 class="text-2xl font-bold text-slate-900">
-          納品管理テーブル
+          クラウドファンディング納品管理テーブル
         </h1>
         <p class="text-sm text-slate-500">
           支援者ごとのステータスと期限を一覧で確認できます。
@@ -14,20 +14,6 @@
       </div>
 
       <div class="flex flex-wrap items-center gap-3">
-        <select
-          v-model="selectedProjectId"
-          class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm"
-        >
-          <option value="">全プロジェクト</option>
-          <option
-            v-for="project in projects"
-            :key="project.id"
-            :value="project.id"
-          >
-            {{ project.name }}
-          </option>
-        </select>
-
         <select
           v-model="filterStatus"
           class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm"
@@ -82,9 +68,6 @@
               <td class="px-3 py-3">
                 <div class="text-slate-800">
                   {{ delivery.rewardName }}
-                </div>
-                <div class="text-xs text-slate-500">
-                  {{ relatedProjectName(delivery.projectId) }}
                 </div>
               </td>
               <td class="px-3 py-3">
