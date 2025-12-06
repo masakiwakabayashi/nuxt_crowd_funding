@@ -3,13 +3,15 @@
 
 begin;
 
-truncate table deliveries;
-truncate table supporters;
-truncate table returns;
-truncate table categories;
-truncate table projects;
-truncate table organization_members;
-truncate table organizations;
+truncate table
+  deliveries,
+  supporters,
+  returns,
+  categories,
+  projects,
+  organization_members,
+  organizations
+restart identity cascade;
 
 with org_seed(id, name) as (
   values
