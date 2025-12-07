@@ -1,3 +1,253 @@
+<script setup lang="ts">
+  type ProjectSummary = {
+    name: string
+    period: string
+    totalSales: number
+    goal: number
+    remainingSales: number
+    remainingDays: number
+    deadline: string
+  }
+
+  type Project = {
+    id: string
+    name: string
+    category: string
+  }
+
+  type DeliveryStatus = 'pending' | 'preparing' | 'shipped' | 'completed'
+
+  type Delivery = {
+    id: string
+    projectId: string
+    supporterName: string
+    supporterEmail: string
+    rewardName: string
+    amount: number
+    dueDate: string
+    status: DeliveryStatus
+    isOverdue: boolean
+    isDueSoon: boolean
+    overdueDays?: number
+  }
+
+  type Reward = {
+    id: string
+    title: string
+    description: string
+    price: number
+    supporters: number
+    limit?: number
+    deliverySchedule: string
+    category: string
+  }
+
+  const projectSummary: ProjectSummary = {
+    name: '新感覚ボードゲーム制作プロジェクト',
+    period: '2025/10/01 〜 2025/12/31',
+    totalSales: 3200000,
+    goal: 5000000,
+    remainingSales: 1800000,
+    remainingDays: 45,
+    deadline: '2025-12-31',
+  }
+
+  const goalProgress = computed(() =>
+    Math.min(
+      100,
+      Math.round((projectSummary.totalSales / projectSummary.goal) * 100),
+    ),
+  )
+
+  const rewards: Reward[] = [
+    {
+      id: 'r1',
+      title: '限定サンクスカード & デジタル壁紙',
+      description: 'プロジェクト限定アートをセットでお届けします。',
+      price: 3000,
+      supporters: 180,
+      limit: 400,
+      deliverySchedule: '2026年1月予定',
+      category: 'デジタル',
+    },
+    {
+      id: 'r2',
+      title: 'ゲーム本体＋限定カードセット',
+      description: '限定カード20枚が付いた物理版セット。',
+      price: 12000,
+      supporters: 260,
+      limit: 350,
+      deliverySchedule: '2026年2月発送',
+      category: 'プロダクト',
+    },
+    {
+      id: 'r3',
+      title: 'デラックス版（アートブック付）',
+      description: 'アートブックとサイン入り証明書を同梱した豪華版。',
+      price: 22000,
+      supporters: 95,
+      limit: 150,
+      deliverySchedule: '2026年3月発送',
+      category: 'コレクターズ',
+    },
+    {
+      id: 'r4',
+      title: 'オンラインワークショップ参加権',
+      description: '開発チームと一緒に体験できる限定ワークショップ。',
+      price: 8000,
+      supporters: 60,
+      deliverySchedule: '2026年1月中旬',
+      category: 'イベント',
+    },
+  ]
+
+  const totalRewardSales = computed(() =>
+    rewards.reduce((sum, reward) => sum + reward.price * reward.supporters, 0),
+  )
+
+  const projects: Project[] = [
+    {
+      id: 'p1',
+      name: '新感覚ボードゲーム制作プロジェクト',
+      category: 'プロダクト',
+    },
+    {
+      id: 'p2',
+      name: 'インディーゲーム開発支援',
+      category: 'ゲーム',
+    },
+    {
+      id: 'p3',
+      name: '地域ローカルフード応援企画',
+      category: 'フード',
+    },
+  ]
+
+  const deliveries: Delivery[] = [
+    {
+      id: 'd1',
+      projectId: 'p1',
+      supporterName: '山田 太郎',
+      supporterEmail: 'taro@example.com',
+      rewardName: 'ボードゲーム本体＋限定カード',
+      amount: 12000,
+      dueDate: '2025-11-30',
+      status: 'preparing',
+      isOverdue: true,
+      isDueSoon: false,
+      overdueDays: 5,
+    },
+    {
+      id: 'd2',
+      projectId: 'p1',
+      supporterName: '佐藤 花子',
+      supporterEmail: 'hanako@example.com',
+      rewardName: 'デジタル版 + サントラDL',
+      amount: 6000,
+      dueDate: '2025-12-10',
+      status: 'pending',
+      isOverdue: false,
+      isDueSoon: true,
+    },
+    {
+      id: 'd3',
+      projectId: 'p2',
+      supporterName: 'John Doe',
+      supporterEmail: 'john@example.com',
+      rewardName: 'ゲーム本編 + アートブック',
+      amount: 18000,
+      dueDate: '2026-01-05',
+      status: 'shipped',
+      isOverdue: false,
+      isDueSoon: false,
+    },
+    {
+      id: 'd4',
+      projectId: 'p3',
+      supporterName: '鈴木 次郎',
+      supporterEmail: 'jiro@example.com',
+      rewardName: '詰め合わせセット（冷蔵）',
+      amount: 8000,
+      dueDate: '2025-12-18',
+      status: 'completed',
+      isOverdue: false,
+      isDueSoon: false,
+    },
+    {
+      id: 'd5',
+      projectId: 'p3',
+      supporterName: '高橋 美咲',
+      supporterEmail: 'misaki@example.com',
+      rewardName: 'お礼の手紙 + レシピPDF',
+      amount: 4000,
+      dueDate: '2025-12-08',
+      status: 'pending',
+      isOverdue: false,
+      isDueSoon: true,
+    },
+  ]
+
+  const selectedProjectId = ref<string | ''>('')
+  const filterStatus = ref<DeliveryStatus | ''>('')
+
+  const filteredDeliveries = computed(() =>
+    deliveries.filter((d) => {
+      const matchProject =
+        !selectedProjectId.value || d.projectId === selectedProjectId.value
+      const matchStatus = !filterStatus.value || d.status === filterStatus.value
+      return matchProject && matchStatus
+    }),
+  )
+
+  const rewardSales = (reward: Reward) => reward.price * reward.supporters
+
+  const rewardRemaining = (reward: Reward) =>
+    reward.limit ? Math.max(reward.limit - reward.supporters, 0) : 0
+
+  const rewardCapacityRate = (reward: Reward) => {
+    if (!reward.limit) return 100
+    if (reward.limit === 0) return 0
+    return Math.min(100, Math.round((reward.supporters / reward.limit) * 100))
+  }
+
+  const statusLabel = (status: DeliveryStatus | '') => {
+    switch (status) {
+      case 'pending':
+        return '未着手'
+      case 'preparing':
+        return '準備中'
+      case 'shipped':
+        return '発送済み'
+      case 'completed':
+        return '完了'
+      default:
+        return '不明'
+    }
+  }
+
+  const statusBadgeClass = (status: DeliveryStatus) => {
+    switch (status) {
+      case 'pending':
+        return 'bg-slate-100 text-slate-700'
+      case 'preparing':
+        return 'bg-amber-50 text-amber-700 border border-amber-100'
+      case 'shipped':
+        return 'bg-sky-50 text-sky-700 border border-sky-100'
+      case 'completed':
+        return 'bg-emerald-50 text-emerald-700 border border-emerald-100'
+    }
+  }
+
+  const openDetail = (delivery: Delivery) => {
+    console.log('詳細を開く: ', delivery)
+  }
+
+  const markAsCompleted = (delivery: Delivery) => {
+    console.log('納品完了にする: ', delivery)
+    alert(`「${delivery.supporterName}」さんのリターンを完了にします（ダミー）`)
+  }
+</script>
+
 <template>
   <div class="min-h-screen bg-slate-50 p-6">
     <header class="mb-6 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
@@ -279,258 +529,3 @@
     </section>
   </div>
 </template>
-
-<script setup lang="ts">
-type ProjectSummary = {
-  name: string
-  period: string
-  totalSales: number
-  goal: number
-  remainingSales: number
-  remainingDays: number
-  deadline: string
-}
-
-type Project = {
-  id: string
-  name: string
-  category: string
-}
-
-type DeliveryStatus = 'pending' | 'preparing' | 'shipped' | 'completed'
-
-type Delivery = {
-  id: string
-  projectId: string
-  supporterName: string
-  supporterEmail: string
-  rewardName: string
-  amount: number
-  dueDate: string
-  status: DeliveryStatus
-  isOverdue: boolean
-  isDueSoon: boolean
-  overdueDays?: number
-}
-
-type Reward = {
-  id: string
-  title: string
-  description: string
-  price: number
-  supporters: number
-  limit?: number
-  deliverySchedule: string
-  category: string
-}
-
-const projectSummary: ProjectSummary = {
-  name: '新感覚ボードゲーム制作プロジェクト',
-  period: '2025/10/01 〜 2025/12/31',
-  totalSales: 3200000,
-  goal: 5000000,
-  remainingSales: 1800000,
-  remainingDays: 45,
-  deadline: '2025-12-31',
-}
-
-const goalProgress = computed(() =>
-  Math.min(
-    100,
-    Math.round((projectSummary.totalSales / projectSummary.goal) * 100),
-  ),
-)
-
-const rewards: Reward[] = [
-  {
-    id: 'r1',
-    title: '限定サンクスカード & デジタル壁紙',
-    description: 'プロジェクト限定アートをセットでお届けします。',
-    price: 3000,
-    supporters: 180,
-    limit: 400,
-    deliverySchedule: '2026年1月予定',
-    category: 'デジタル',
-  },
-  {
-    id: 'r2',
-    title: 'ゲーム本体＋限定カードセット',
-    description: '限定カード20枚が付いた物理版セット。',
-    price: 12000,
-    supporters: 260,
-    limit: 350,
-    deliverySchedule: '2026年2月発送',
-    category: 'プロダクト',
-  },
-  {
-    id: 'r3',
-    title: 'デラックス版（アートブック付）',
-    description: 'アートブックとサイン入り証明書を同梱した豪華版。',
-    price: 22000,
-    supporters: 95,
-    limit: 150,
-    deliverySchedule: '2026年3月発送',
-    category: 'コレクターズ',
-  },
-  {
-    id: 'r4',
-    title: 'オンラインワークショップ参加権',
-    description: '開発チームと一緒に体験できる限定ワークショップ。',
-    price: 8000,
-    supporters: 60,
-    deliverySchedule: '2026年1月中旬',
-    category: 'イベント',
-  },
-]
-
-const totalRewardSales = computed(() =>
-  rewards.reduce((sum, reward) => sum + reward.price * reward.supporters, 0),
-)
-
-const projects: Project[] = [
-  {
-    id: 'p1',
-    name: '新感覚ボードゲーム制作プロジェクト',
-    category: 'プロダクト',
-  },
-  {
-    id: 'p2',
-    name: 'インディーゲーム開発支援',
-    category: 'ゲーム',
-  },
-  {
-    id: 'p3',
-    name: '地域ローカルフード応援企画',
-    category: 'フード',
-  },
-]
-
-const deliveries: Delivery[] = [
-  {
-    id: 'd1',
-    projectId: 'p1',
-    supporterName: '山田 太郎',
-    supporterEmail: 'taro@example.com',
-    rewardName: 'ボードゲーム本体＋限定カード',
-    amount: 12000,
-    dueDate: '2025-11-30',
-    status: 'preparing',
-    isOverdue: true,
-    isDueSoon: false,
-    overdueDays: 5,
-  },
-  {
-    id: 'd2',
-    projectId: 'p1',
-    supporterName: '佐藤 花子',
-    supporterEmail: 'hanako@example.com',
-    rewardName: 'デジタル版 + サントラDL',
-    amount: 6000,
-    dueDate: '2025-12-10',
-    status: 'pending',
-    isOverdue: false,
-    isDueSoon: true,
-  },
-  {
-    id: 'd3',
-    projectId: 'p2',
-    supporterName: 'John Doe',
-    supporterEmail: 'john@example.com',
-    rewardName: 'ゲーム本編 + アートブック',
-    amount: 18000,
-    dueDate: '2026-01-05',
-    status: 'shipped',
-    isOverdue: false,
-    isDueSoon: false,
-  },
-  {
-    id: 'd4',
-    projectId: 'p3',
-    supporterName: '鈴木 次郎',
-    supporterEmail: 'jiro@example.com',
-    rewardName: '詰め合わせセット（冷蔵）',
-    amount: 8000,
-    dueDate: '2025-12-18',
-    status: 'completed',
-    isOverdue: false,
-    isDueSoon: false,
-  },
-  {
-    id: 'd5',
-    projectId: 'p3',
-    supporterName: '高橋 美咲',
-    supporterEmail: 'misaki@example.com',
-    rewardName: 'お礼の手紙 + レシピPDF',
-    amount: 4000,
-    dueDate: '2025-12-08',
-    status: 'pending',
-    isOverdue: false,
-    isDueSoon: true,
-  },
-]
-
-const selectedProjectId = ref<string | ''>('')
-const filterStatus = ref<DeliveryStatus | ''>('')
-
-const filteredDeliveries = computed(() =>
-  deliveries.filter((d) => {
-    const matchProject =
-      !selectedProjectId.value || d.projectId === selectedProjectId.value
-    const matchStatus = !filterStatus.value || d.status === filterStatus.value
-    return matchProject && matchStatus
-  }),
-)
-
-const relatedProjectName = (projectId: string) => {
-  const p = projects.find((p) => p.id === projectId)
-  return p ? `${p.name}（${p.category}）` : '不明なプロジェクト'
-}
-
-const rewardSales = (reward: Reward) => reward.price * reward.supporters
-
-const rewardRemaining = (reward: Reward) =>
-  reward.limit ? Math.max(reward.limit - reward.supporters, 0) : 0
-
-const rewardCapacityRate = (reward: Reward) => {
-  if (!reward.limit) return 100
-  if (reward.limit === 0) return 0
-  return Math.min(100, Math.round((reward.supporters / reward.limit) * 100))
-}
-
-const statusLabel = (status: DeliveryStatus | '') => {
-  switch (status) {
-    case 'pending':
-      return '未着手'
-    case 'preparing':
-      return '準備中'
-    case 'shipped':
-      return '発送済み'
-    case 'completed':
-      return '完了'
-    default:
-      return '不明'
-  }
-}
-
-const statusBadgeClass = (status: DeliveryStatus) => {
-  switch (status) {
-    case 'pending':
-      return 'bg-slate-100 text-slate-700'
-    case 'preparing':
-      return 'bg-amber-50 text-amber-700 border border-amber-100'
-    case 'shipped':
-      return 'bg-sky-50 text-sky-700 border border-sky-100'
-    case 'completed':
-      return 'bg-emerald-50 text-emerald-700 border border-emerald-100'
-  }
-}
-
-const openDetail = (delivery: Delivery) => {
-  console.log('詳細を開く: ', delivery)
-}
-
-const markAsCompleted = (delivery: Delivery) => {
-  console.log('納品完了にする: ', delivery)
-  alert(`「${delivery.supporterName}」さんのリターンを完了にします（ダミー）`)
-}
-</script>
