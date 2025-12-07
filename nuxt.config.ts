@@ -11,9 +11,12 @@ export default defineNuxtConfig({
     ],
   },
   runtimeConfig: {
+    // 🔐 サーバー専用（secret key）
+    supabaseSecretKey: process.env.NUXT_SUPABASE_SECRET_KEY,
     public: {
-      supabaseUrl: process.env.NUXT_PUBLIC_SUPABASE_URL,
-      supabaseAnonKey: process.env.NUXT_PUBLIC_SUPABASE_ANON_KEY,
+      // 🌐 クライアントで使う（publishable key）
+      supabaseUrl: process.env.NUXT_SUPABASE_URL,
+      supabasePublishableKey: process.env.NUXT_SUPABASE_PUBLISHABLE_KEY,
     },
   },
 })
