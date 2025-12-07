@@ -1,5 +1,7 @@
 import { createError } from 'h3'
-import { getSupabaseServerClient } from '~/server/utils/supabaseClient'
+import { getSupabaseServerClient } from '../utils/supabaseClient'
+
+// TODO: 型定義とかは別のファイルに移動させる
 
 type DeliveryStatus = '未着手' | '作成中' | '完了'
 
@@ -31,7 +33,8 @@ type SupporterRecord = {
 
 export default defineEventHandler(async () => {
   const supabase = getSupabaseServerClient()
-  const query = supabase
+
+  const { data, error } = await supabase
     .from('deliveries')
     .select(
       `
@@ -56,8 +59,8 @@ export default defineEventHandler(async () => {
         )
       `,
     )
-
-  const { data, error } = await query.returns<DeliveryRecord[]>()
+    .order('created_at', { ascending: false })
+    .returns<DeliveryRecord[]>()
 
   if (error) {
     throw createError({ statusCode: 500, statusMessage: error.message })

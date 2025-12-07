@@ -1,5 +1,13 @@
-import { createClient, type SupabaseClient } from '@supabase/supabase-js'
+import { createRequire } from 'node:module'
 import { useRuntimeConfig } from '#imports'
+import type { SupabaseClient } from '@supabase/supabase-js'
+
+// TODO: ここがこれでいいのかは、また考える
+
+type SupabaseLib = typeof import('@supabase/supabase-js')
+
+const require = createRequire(import.meta.url)
+const { createClient } = require('@supabase/supabase-js') as SupabaseLib
 
 let cachedClient: SupabaseClient | null = null
 
@@ -9,14 +17,14 @@ export const getSupabaseServerClient = (): SupabaseClient => {
   }
 
   const config = useRuntimeConfig()
-  const url = config.public.supabaseUrl
-  const key = config.supabaseServiceKey || config.public.supabaseAnonKey
+  const supabaseUrl = config.public.supabaseUrl
+  const supabaseKey = config.supabaseSecretKey || config.public.supabasePublishableKey
 
-  if (!url || !key) {
+  if (!supabaseUrl || !supabaseKey) {
     throw new Error('Supabase credentials are not configured')
   }
 
-  cachedClient = createClient(url, key, {
+  cachedClient = createClient(supabaseUrl, supabaseKey, {
     auth: {
       persistSession: false,
     },
