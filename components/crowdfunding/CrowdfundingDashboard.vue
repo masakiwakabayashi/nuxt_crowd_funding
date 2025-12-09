@@ -36,6 +36,10 @@
     category: string
   }
 
+  const props = defineProps<{
+    organizationId: string
+  }>()
+
   const filterStatus = ref<DeliveryStatus | ''>('')
 
   const projectSummary: ProjectSummary = {
@@ -226,7 +230,10 @@
 </script>
 
 <template>
-  <section class="mb-6 rounded-2xl bg-white p-5 shadow-sm">
+  <section
+    class="mb-6 rounded-2xl bg-white p-5 shadow-sm"
+    :data-organization-id="props.organizationId"
+  >
     <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
       <div>
         <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">

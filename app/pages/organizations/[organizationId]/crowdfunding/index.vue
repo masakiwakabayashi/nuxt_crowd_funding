@@ -1,5 +1,7 @@
 <script setup lang="ts">
   import CrowdfundingDashboard from '../../../../../components/crowdfunding/CrowdfundingDashboard.vue'
+
+  const organizationId = 'b52b352c-6dee-4ddc-bf0a-cc95d85f1a11'
 </script>
 
 <template>
@@ -18,6 +20,6 @@
       </div>
     </header>
 
-    <CrowdfundingDashboard />
+    <CrowdfundingDashboard :organization-id="organizationId" />
   </div>
 </template>
