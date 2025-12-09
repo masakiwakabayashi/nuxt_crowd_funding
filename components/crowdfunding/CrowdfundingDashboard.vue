@@ -36,14 +36,7 @@
     category: string
   }
 
-  const props = withDefaults(
-    defineProps<{
-      filterStatus?: DeliveryStatus | ''
-    }>(),
-    {
-      filterStatus: '',
-    },
-  )
+  const filterStatus = ref<DeliveryStatus | ''>('')
 
   const projectSummary: ProjectSummary = {
     name: '新感覚ボードゲーム制作プロジェクト',
@@ -178,7 +171,7 @@
     deliveries.filter((d) => {
       const matchProject =
         !selectedProjectId.value || d.projectId === selectedProjectId.value
-      const matchStatus = !props.filterStatus || d.status === props.filterStatus
+      const matchStatus = !filterStatus.value || d.status === filterStatus.value
       return matchProject && matchStatus
     }),
   )
@@ -377,12 +370,25 @@
   </section>
 
   <section class="rounded-2xl bg-white p-4 shadow-sm">
-    <div class="mb-3 flex items-center justify-between">
-      <h2 class="text-sm font-semibold text-slate-700">支援ごとの納品管理</h2>
-
-      <div class="flex items-center gap-2 text-xs text-slate-500">
-        <span class="inline-flex h-2 w-2 rounded-full bg-rose-500" /> 期限超過
-        <span class="inline-flex h-2 w-2 rounded-full bg-amber-400" /> 期限間近
+    <div class="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+      <div>
+        <h2 class="text-sm font-semibold text-slate-700">支援ごとの納品管理</h2>
+        <div class="mt-2 flex items-center gap-2 text-xs text-slate-500">
+          <span class="inline-flex h-2 w-2 rounded-full bg-rose-500" /> 期限超過
+          <span class="inline-flex h-2 w-2 rounded-full bg-amber-400" /> 期限間近
+        </div>
+      </div>
+      <div class="flex flex-wrap items-center gap-3">
+        <select
+          v-model="filterStatus"
+          class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm"
+        >
+          <option value="">すべてのステータス</option>
+          <option value="pending">未着手</option>
+          <option value="preparing">準備中</option>
+          <option value="shipped">発送済み</option>
+          <option value="completed">完了</option>
+        </select>
       </div>
     </div>
 

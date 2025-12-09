@@ -1,12 +1,5 @@
 <script setup lang="ts">
   import CrowdfundingDashboard from '../../../../../components/crowdfunding/CrowdfundingDashboard.vue'
-
-  type DeliveryStatus = 'pending' | 'preparing' | 'shipped' | 'completed'
-
-  const filterStatus = ref<DeliveryStatus | ''>('')
-
-  const organizationId = "b52b352c-6dee-4ddc-bf0a-cc95d85f1a11";
-
 </script>
 
 <template>
@@ -23,21 +16,8 @@
           支援者ごとのステータスと期限を一覧で確認できます。
         </p>
       </div>
-
-      <div class="flex flex-wrap items-center gap-3">
-        <select
-          v-model="filterStatus"
-          class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm"
-        >
-          <option value="">すべてのステータス</option>
-          <option value="pending">未着手</option>
-          <option value="preparing">準備中</option>
-          <option value="shipped">発送済み</option>
-          <option value="completed">完了</option>
-        </select>
-      </div>
     </header>
 
-    <CrowdfundingDashboard :filter-status="filterStatus" />
+    <CrowdfundingDashboard />
   </div>
 </template>
