@@ -9,12 +9,6 @@
     deadline: string
   }
 
-  type Project = {
-    id: string
-    name: string
-    category: string
-  }
-
   type DeliveryStatus = 'pending' | 'preparing' | 'shipped' | 'completed'
 
   type Delivery = {
@@ -104,24 +98,6 @@
   const totalRewardSales = computed(() =>
     rewards.reduce((sum, reward) => sum + reward.price * reward.supporters, 0),
   )
-
-  const projects: Project[] = [
-    {
-      id: 'p1',
-      name: '新感覚ボードゲーム制作プロジェクト',
-      category: 'プロダクト',
-    },
-    {
-      id: 'p2',
-      name: 'インディーゲーム開発支援',
-      category: 'ゲーム',
-    },
-    {
-      id: 'p3',
-      name: '地域ローカルフード応援企画',
-      category: 'フード',
-    },
-  ]
 
   const deliveries: Delivery[] = [
     {
@@ -276,6 +252,9 @@
         </select>
       </div>
     </header>
+
+    <!-- TODO: ここからしたは個別のコンポーネントに移行する -->
+    <!-- そのわけたコンポーネントでデータを取得する -->
 
     <section class="mb-6 rounded-2xl bg-white p-5 shadow-sm">
       <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
