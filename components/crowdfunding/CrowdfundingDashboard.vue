@@ -33,6 +33,8 @@
       detail: string | null
       maxQuantity: number | null
       categoryId: string | null
+      price: string | number | null
+      estimatedDelivery: string | null
     } | null
     supporter: {
       id: string
@@ -40,6 +42,7 @@
       name: string
       address: string | null
       email: string | null
+      pledgedAmount: string | number | null
     } | null
   }
 
@@ -123,7 +126,7 @@
       }),
   )
 
-  const formatDisplayDate = (value: string | null | undefined) => {
+  const formatDisplayDate = (value: string | null | undefined): string => {
     if (!value) return ''
     const date = new Date(value)
     if (Number.isNaN(date.getTime())) return ''
@@ -133,15 +136,17 @@
     return `${y}/${m}/${d}`
   }
 
-  const formatIsoDate = (value: string | null | undefined) => {
+  const formatIsoDate = (value: string | null | undefined): string => {
     if (!value) return ''
     const date = new Date(value)
     return Number.isNaN(date.getTime())
       ? ''
-      : date.toISOString().split('T')[0]
+      : date.toISOString().split('T')[0] ?? ""
   }
 
-  const calculateRemainingDays = (dateString: string | null | undefined) => {
+  const calculateRemainingDays = (
+    dateString: string | null | undefined,
+  ): number => {
     if (!dateString) return 0
     const deadlineDate = new Date(dateString)
     if (Number.isNaN(deadlineDate.getTime())) return 0
