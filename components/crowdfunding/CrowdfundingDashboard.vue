@@ -9,6 +9,16 @@
     deadline: string
   }
 
+  type ProjectSummaryRecord = {
+    id: string
+    title: string
+    startAt: string
+    endAt: string
+    goal: number
+    totalSales: number
+    supporterCount: number
+  } | null
+
   type DeliveryStatus = '未着手' | '作成中' | '完了'
 
   type DeliveryRecord = {
@@ -58,12 +68,48 @@
     category: string
   }
 
+  type RewardRecord = {
+    id: string
+    projectId: string
+    title: string
+    description: string
+    price: number
+    supporters: number
+    limit: number | null
+    deliverySchedule: string | null
+    category: string
+  }
+
   const props = defineProps<{
     organizationId: string
   }>()
 
   const filterStatus = ref<DeliveryStatus | ''>('')
   const selectedProjectId = ref<string | ''>('')
+
+  const {
+    data: summaryData,
+    pending: isSummaryLoading,
+    error: summaryError,
+  } = await useAsyncData<{ project: ProjectSummaryRecord }>(
+    `crowdfunding-project-summary-${props.organizationId}`,
+    () =>
+      $fetch('/api/crowdfunding/project-summary', {
+        query: { organizationId: props.organizationId },
+      }),
+  )
+
+  const {
+    data: rewardsData,
+    pending: areRewardsLoading,
+    error: rewardsError,
+  } = await useAsyncData<{ rewards: RewardRecord[] }>(
+    `crowdfunding-rewards-${props.organizationId}`,
+    () =>
+      $fetch('/api/crowdfunding/rewards', {
+        query: { organizationId: props.organizationId },
+      }),
+  )
 
   const {
     data: deliveriesData,
@@ -77,18 +123,68 @@
       }),
   )
 
-  const formatDate = (value: string | null | undefined) => {
+  const formatDisplayDate = (value: string | null | undefined) => {
+    if (!value) return ''
+    const date = new Date(value)
+    if (Number.isNaN(date.getTime())) return ''
+    const y = date.getFullYear()
+    const m = String(date.getMonth() + 1).padStart(2, '0')
+    const d = String(date.getDate()).padStart(2, '0')
+    return `${y}/${m}/${d}`
+  }
+
+  const formatIsoDate = (value: string | null | undefined) => {
     if (!value) return ''
     const date = new Date(value)
     return Number.isNaN(date.getTime())
-      ? value
+      ? ''
       : date.toISOString().split('T')[0]
+  }
+
+  const calculateRemainingDays = (dateString: string | null | undefined) => {
+    if (!dateString) return 0
+    const deadlineDate = new Date(dateString)
+    if (Number.isNaN(deadlineDate.getTime())) return 0
+    const diff = deadlineDate.getTime() - Date.now()
+    return Math.max(Math.ceil(diff / (1000 * 60 * 60 * 24)), 0)
+  }
+
+  const evaluateDueState = (dateString: string | null | undefined) => {
+    if (!dateString) {
+      return { isDueSoon: false, isOverdue: false, overdueDays: undefined }
+    }
+
+    const dueDate = new Date(dateString)
+    if (Number.isNaN(dueDate.getTime())) {
+      return { isDueSoon: false, isOverdue: false, overdueDays: undefined }
+    }
+
+    const diff = dueDate.getTime() - Date.now()
+    const diffDays = Math.ceil(diff / (1000 * 60 * 60 * 24))
+
+    if (diffDays < 0) {
+      return {
+        isDueSoon: false,
+        isOverdue: true,
+        overdueDays: Math.abs(diffDays),
+      }
+    }
+
+    if (diffDays <= 7) {
+      return { isDueSoon: true, isOverdue: false, overdueDays: undefined }
+    }
+
+    return { isDueSoon: false, isOverdue: false, overdueDays: undefined }
   }
 
   const deliveries = computed<Delivery[]>(() =>
     (deliveriesData.value?.deliveries ?? []).map((delivery) => {
       const projectId =
         delivery.return?.projectId ?? delivery.supporter?.projectId ?? ''
+      const price = Number(delivery.return?.price ?? 0)
+      const dueDateRaw =
+        delivery.return?.estimatedDelivery ?? delivery.updatedAt ?? delivery.createdAt
+      const { isDueSoon, isOverdue, overdueDays } = evaluateDueState(dueDateRaw)
 
       return {
         id: delivery.id,
@@ -96,76 +192,71 @@
         supporterName: delivery.supporter?.name ?? '支援者情報なし',
         supporterEmail: delivery.supporter?.email ?? '',
         rewardName: delivery.return?.title ?? 'リターン情報なし',
-        amount: null,
-        dueDate: formatDate(delivery.updatedAt ?? delivery.createdAt),
+        amount: Number.isNaN(price) ? null : price,
+        dueDate: formatIsoDate(dueDateRaw),
         status: delivery.status,
-        isOverdue: false,
-        isDueSoon: false,
+        isOverdue,
+        isDueSoon,
+        overdueDays,
       }
     }),
   )
 
-  const projectSummary: ProjectSummary = {
-    name: '新感覚ボードゲーム制作プロジェクト',
-    period: '2025/10/01 〜 2025/12/31',
-    totalSales: 3200000,
-    goal: 5000000,
-    remainingSales: 1800000,
-    remainingDays: 45,
-    deadline: '2025-12-31',
+  const projectSummaryFallback: ProjectSummary = {
+    name: 'プロジェクト情報未取得',
+    period: '-',
+    totalSales: 0,
+    goal: 0,
+    remainingSales: 0,
+    remainingDays: 0,
+    deadline: '-',
   }
 
-  const goalProgress = computed(() =>
-    Math.min(
+  const projectSummary = computed<ProjectSummary>(() => {
+    const summary = summaryData.value?.project
+    if (!summary) return projectSummaryFallback
+
+    const goal = summary.goal ?? 0
+    const totalSales = summary.totalSales ?? 0
+    const startLabel = formatDisplayDate(summary.startAt)
+    const endLabel = formatDisplayDate(summary.endAt)
+    const period = startLabel && endLabel ? `${startLabel} 〜 ${endLabel}` : '-'
+
+    return {
+      name: summary.title,
+      period,
+      totalSales,
+      goal,
+      remainingSales: Math.max(goal - totalSales, 0),
+      remainingDays: calculateRemainingDays(summary.endAt),
+      deadline: formatIsoDate(summary.endAt) || '-',
+    }
+  })
+
+  const goalProgress = computed(() => {
+    const goal = projectSummary.value.goal
+    if (!goal) return 0
+    return Math.min(
       100,
-      Math.round((projectSummary.totalSales / projectSummary.goal) * 100),
-    ),
+      Math.round((projectSummary.value.totalSales / goal) * 100),
+    )
+  })
+
+  const rewards = computed<Reward[]>(() =>
+    (rewardsData.value?.rewards ?? []).map((reward) => ({
+      id: reward.id,
+      title: reward.title,
+      description: reward.description,
+      price: reward.price,
+      supporters: reward.supporters,
+      limit: reward.limit ?? undefined,
+      deliverySchedule: formatDisplayDate(reward.deliverySchedule) || '-',
+      category: reward.category,
+    })),
   )
 
-  const rewards: Reward[] = [
-    {
-      id: 'r1',
-      title: '限定サンクスカード & デジタル壁紙',
-      description: 'プロジェクト限定アートをセットでお届けします。',
-      price: 3000,
-      supporters: 180,
-      limit: 400,
-      deliverySchedule: '2026年1月予定',
-      category: 'デジタル',
-    },
-    {
-      id: 'r2',
-      title: 'ゲーム本体＋限定カードセット',
-      description: '限定カード20枚が付いた物理版セット。',
-      price: 12000,
-      supporters: 260,
-      limit: 350,
-      deliverySchedule: '2026年2月発送',
-      category: 'プロダクト',
-    },
-    {
-      id: 'r3',
-      title: 'デラックス版（アートブック付）',
-      description: 'アートブックとサイン入り証明書を同梱した豪華版。',
-      price: 22000,
-      supporters: 95,
-      limit: 150,
-      deliverySchedule: '2026年3月発送',
-      category: 'コレクターズ',
-    },
-    {
-      id: 'r4',
-      title: 'オンラインワークショップ参加権',
-      description: '開発チームと一緒に体験できる限定ワークショップ。',
-      price: 8000,
-      supporters: 60,
-      deliverySchedule: '2026年1月中旬',
-      category: 'イベント',
-    },
-  ]
-
   const totalRewardSales = computed(() =>
-    rewards.reduce((sum, reward) => sum + reward.price * reward.supporters, 0),
+    rewards.value.reduce((sum, reward) => sum + reward.price * reward.supporters, 0),
   )
 
   const filteredDeliveries = computed(() =>
@@ -246,6 +337,19 @@
       </div>
     </div>
 
+    <p
+      v-if="summaryError"
+      class="mt-3 rounded-xl border border-rose-100 bg-rose-50 px-3 py-2 text-sm text-rose-700"
+    >
+      Supabaseのプロジェクト情報取得に失敗しました：{{ summaryError?.message }}
+    </p>
+    <p
+      v-else-if="isSummaryLoading"
+      class="mt-3 rounded-xl border border-dashed border-slate-200 px-3 py-2 text-xs text-slate-500"
+    >
+      Supabaseからプロジェクト情報を取得しています…
+    </p>
+
     <div class="mt-4 grid gap-4 md:grid-cols-3">
       <div class="rounded-2xl bg-slate-50 p-4">
         <p class="text-xs text-slate-500">全体の売り上げ</p>
@@ -304,7 +408,19 @@
       </div>
     </div>
 
-    <div class="grid gap-4 md:grid-cols-2">
+    <div
+      v-if="rewardsError"
+      class="rounded-2xl border border-rose-100 bg-rose-50 px-4 py-3 text-sm text-rose-700"
+    >
+      Supabaseのリターン情報取得に失敗しました：{{ rewardsError?.message }}
+    </div>
+    <div
+      v-else-if="areRewardsLoading"
+      class="flex items-center justify-center rounded-2xl border border-dashed border-slate-200 px-4 py-10 text-sm text-slate-500"
+    >
+      Supabaseからリターン情報を取得しています…
+    </div>
+    <div v-else class="grid gap-4 md:grid-cols-2">
       <article
         v-for="reward in rewards"
         :key="reward.id"
