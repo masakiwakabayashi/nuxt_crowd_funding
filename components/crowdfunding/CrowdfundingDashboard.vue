@@ -9,7 +9,29 @@
     deadline: string
   }
 
-  type DeliveryStatus = 'pending' | 'preparing' | 'shipped' | 'completed'
+  type DeliveryStatus = '未着手' | '作成中' | '完了'
+
+  type DeliveryRecord = {
+    id: string
+    status: DeliveryStatus
+    createdAt: string
+    updatedAt: string
+    return: {
+      id: string
+      projectId: string
+      title: string
+      detail: string | null
+      maxQuantity: number | null
+      categoryId: string | null
+    } | null
+    supporter: {
+      id: string
+      projectId: string
+      name: string
+      address: string | null
+      email: string | null
+    } | null
+  }
 
   type Delivery = {
     id: string
@@ -17,7 +39,7 @@
     supporterName: string
     supporterEmail: string
     rewardName: string
-    amount: number
+    amount: number | null
     dueDate: string
     status: DeliveryStatus
     isOverdue: boolean
@@ -41,6 +63,47 @@
   }>()
 
   const filterStatus = ref<DeliveryStatus | ''>('')
+  const selectedProjectId = ref<string | ''>('')
+
+  const {
+    data: deliveriesData,
+    pending: isDeliveriesLoading,
+    error: deliveriesError,
+  } = await useAsyncData<{ deliveries: DeliveryRecord[] }>(
+    `deliveries-${props.organizationId}`,
+    () =>
+      $fetch('/api/deliveries', {
+        query: { organizationId: props.organizationId },
+      }),
+  )
+
+  const formatDate = (value: string | null | undefined) => {
+    if (!value) return ''
+    const date = new Date(value)
+    return Number.isNaN(date.getTime())
+      ? value
+      : date.toISOString().split('T')[0]
+  }
+
+  const deliveries = computed<Delivery[]>(() =>
+    (deliveriesData.value?.deliveries ?? []).map((delivery) => {
+      const projectId =
+        delivery.return?.projectId ?? delivery.supporter?.projectId ?? ''
+
+      return {
+        id: delivery.id,
+        projectId,
+        supporterName: delivery.supporter?.name ?? '支援者情報なし',
+        supporterEmail: delivery.supporter?.email ?? '',
+        rewardName: delivery.return?.title ?? 'リターン情報なし',
+        amount: null,
+        dueDate: formatDate(delivery.updatedAt ?? delivery.createdAt),
+        status: delivery.status,
+        isOverdue: false,
+        isDueSoon: false,
+      }
+    }),
+  )
 
   const projectSummary: ProjectSummary = {
     name: '新感覚ボードゲーム制作プロジェクト',
@@ -105,74 +168,8 @@
     rewards.reduce((sum, reward) => sum + reward.price * reward.supporters, 0),
   )
 
-  const deliveries: Delivery[] = [
-    {
-      id: 'd1',
-      projectId: 'p1',
-      supporterName: '山田 太郎',
-      supporterEmail: 'taro@example.com',
-      rewardName: 'ボードゲーム本体＋限定カード',
-      amount: 12000,
-      dueDate: '2025-11-30',
-      status: 'preparing',
-      isOverdue: true,
-      isDueSoon: false,
-      overdueDays: 5,
-    },
-    {
-      id: 'd2',
-      projectId: 'p1',
-      supporterName: '佐藤 花子',
-      supporterEmail: 'hanako@example.com',
-      rewardName: 'デジタル版 + サントラDL',
-      amount: 6000,
-      dueDate: '2025-12-10',
-      status: 'pending',
-      isOverdue: false,
-      isDueSoon: true,
-    },
-    {
-      id: 'd3',
-      projectId: 'p2',
-      supporterName: 'John Doe',
-      supporterEmail: 'john@example.com',
-      rewardName: 'ゲーム本編 + アートブック',
-      amount: 18000,
-      dueDate: '2026-01-05',
-      status: 'shipped',
-      isOverdue: false,
-      isDueSoon: false,
-    },
-    {
-      id: 'd4',
-      projectId: 'p3',
-      supporterName: '鈴木 次郎',
-      supporterEmail: 'jiro@example.com',
-      rewardName: '詰め合わせセット（冷蔵）',
-      amount: 8000,
-      dueDate: '2025-12-18',
-      status: 'completed',
-      isOverdue: false,
-      isDueSoon: false,
-    },
-    {
-      id: 'd5',
-      projectId: 'p3',
-      supporterName: '高橋 美咲',
-      supporterEmail: 'misaki@example.com',
-      rewardName: 'お礼の手紙 + レシピPDF',
-      amount: 4000,
-      dueDate: '2025-12-08',
-      status: 'pending',
-      isOverdue: false,
-      isDueSoon: true,
-    },
-  ]
-
-  const selectedProjectId = ref<string | ''>('')
-
   const filteredDeliveries = computed(() =>
-    deliveries.filter((d) => {
+    deliveries.value.filter((d) => {
       const matchProject =
         !selectedProjectId.value || d.projectId === selectedProjectId.value
       const matchStatus = !filterStatus.value || d.status === filterStatus.value
@@ -193,14 +190,10 @@
 
   const statusLabel = (status: DeliveryStatus | '') => {
     switch (status) {
-      case 'pending':
-        return '未着手'
-      case 'preparing':
-        return '準備中'
-      case 'shipped':
-        return '発送済み'
-      case 'completed':
-        return '完了'
+      case '未着手':
+      case '作成中':
+      case '完了':
+        return status
       default:
         return '不明'
     }
@@ -208,14 +201,14 @@
 
   const statusBadgeClass = (status: DeliveryStatus) => {
     switch (status) {
-      case 'pending':
+      case '未着手':
         return 'bg-slate-100 text-slate-700'
-      case 'preparing':
+      case '作成中':
         return 'bg-amber-50 text-amber-700 border border-amber-100'
-      case 'shipped':
-        return 'bg-sky-50 text-sky-700 border border-sky-100'
-      case 'completed':
+      case '完了':
         return 'bg-emerald-50 text-emerald-700 border border-emerald-100'
+      default:
+        return 'bg-slate-100 text-slate-700'
     }
   }
 
@@ -391,15 +384,26 @@
           class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm"
         >
           <option value="">すべてのステータス</option>
-          <option value="pending">未着手</option>
-          <option value="preparing">準備中</option>
-          <option value="shipped">発送済み</option>
-          <option value="completed">完了</option>
+          <option value="未着手">未着手</option>
+          <option value="作成中">作成中</option>
+          <option value="完了">完了</option>
         </select>
       </div>
     </div>
 
-    <div class="overflow-x-auto">
+    <div
+      v-if="deliveriesError"
+      class="rounded-2xl border border-rose-100 bg-rose-50 px-4 py-3 text-sm text-rose-700"
+    >
+      Supabaseのデータ取得に失敗しました：{{ deliveriesError?.message }}
+    </div>
+    <div
+      v-else-if="isDeliveriesLoading"
+      class="flex items-center justify-center rounded-2xl border border-dashed border-slate-200 px-4 py-10 text-sm text-slate-500"
+    >
+      Supabaseからデータを取得しています…
+    </div>
+    <div v-else class="overflow-x-auto">
       <table class="min-w-full text-left text-sm">
         <thead>
           <tr class="border-b bg-slate-50 text-xs text-slate-500">
@@ -431,7 +435,10 @@
               </div>
             </td>
             <td class="px-3 py-3">
-              ¥{{ delivery.amount.toLocaleString() }}
+              <template v-if="delivery.amount != null">
+                ¥{{ delivery.amount.toLocaleString() }}
+              </template>
+              <span v-else class="text-slate-400">—</span>
             </td>
             <td class="px-3 py-3">
               <div class="flex items-center gap-2">
@@ -444,7 +451,7 @@
                   class="inline-flex h-2 w-2 rounded-full bg-amber-400"
                 />
                 <span class="text-sm">
-                  {{ delivery.dueDate }}
+                  {{ delivery.dueDate || '—' }}
                 </span>
               </div>
               <div v-if="delivery.isOverdue" class="text-xs text-rose-600">
