@@ -18,7 +18,7 @@
         <h1 class="text-xl font-bold text-slate-900">
           クラウドファンディング運用ダッシュボード
         </h1>
-        <p v-if="tagline" class="text-sm text-slate-500">
+        <p class="text-sm text-slate-500">
           支援・納品の状況をまとめて把握
         </p>
       </div>
