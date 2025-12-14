@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
+// ログインページはヘッダーがないレイアウトを使う
 definePageMeta({ layout: 'blank' });
 
 const email = ref('');
