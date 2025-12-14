@@ -1,9 +1,15 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import { fileURLToPath } from "node:url";
 import tailwindcss from "@tailwindcss/vite";
+
+const projectRoot = fileURLToPath(new URL("./", import.meta.url));
 
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
+  alias: {
+    "@": projectRoot,
+  },
   css: ['./app/assets/css/main.css'],
   vite: {
     plugins: [

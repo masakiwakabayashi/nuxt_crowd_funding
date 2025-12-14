@@ -69,7 +69,7 @@
 <script setup lang="ts">
   import { computed } from 'vue'
   import { useAsyncData } from 'nuxt/app'
-  import { formatDateTime } from '../../../../server/utils/date'
+  import { formatDateTime } from '@/server/utils/date'
 
   type Organization = {
     id: string
