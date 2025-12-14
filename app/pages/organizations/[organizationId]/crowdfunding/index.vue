@@ -18,6 +18,13 @@
           支援者ごとのステータスと期限を一覧で確認できます。
         </p>
       </div>
+
+      <NuxtLink
+        :to="`/organizations/${organizationId}/settings`"
+        class="inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition hover:border-emerald-500 hover:text-emerald-600"
+      >
+        組織設定へ
+      </NuxtLink>
     </header>
 
     <CrowdfundingDashboard :organization-id="organizationId" />
