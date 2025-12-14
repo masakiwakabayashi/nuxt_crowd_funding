@@ -1,4 +1,12 @@
 <script setup lang="ts">
+  import { computed, ref } from 'vue'
+  import { useAsyncData } from 'nuxt/app'
+
+  // 次は
+  // ・このコンポーネントを整理する
+  // ・シーダーの中身の文言をもう少しちゃんとしたものにする
+
+
   type ProjectSummary = {
     name: string
     period: string
