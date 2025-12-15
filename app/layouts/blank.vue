@@ -1,6 +1,11 @@
 <template>
-  <!-- Keep a single root node so layout switches don't leave stale DOM -->
-  <div class="min-h-screen">
-    <slot />
-  </div>
+  <AppBackdrop>
+    <div class="flex min-h-screen flex-col px-4 py-10 sm:px-8">
+      <slot />
+    </div>
+  </AppBackdrop>
 </template>
+
+<script setup lang="ts">
+  import AppBackdrop from '../../components/common/AppBackdrop.vue'
+</script>
