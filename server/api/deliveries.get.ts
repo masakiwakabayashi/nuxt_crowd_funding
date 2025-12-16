@@ -1,5 +1,5 @@
 import { createError, getQuery } from 'h3'
-import { getSupabaseServerClient } from '../utils/supabaseClient'
+import { getSupabaseServerClient } from '../../shared/utils/supabaseClient'
 
 // TODO: 型定義とかは別のファイルに移動させる
 

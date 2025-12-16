@@ -639,12 +639,6 @@
               <td class="px-4 py-5 text-right">
                 <div class="flex justify-end gap-2">
                   <button
-                    class="rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50"
-                    @click="openDetail(delivery)"
-                  >
-                    詳細
-                  </button>
-                  <button
                     class="rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 px-4 py-2 text-xs font-semibold text-white shadow-[0_8px_16px_rgba(16,185,129,0.35)] transition hover:brightness-110"
                     @click="markAsCompleted(delivery)"
                   >

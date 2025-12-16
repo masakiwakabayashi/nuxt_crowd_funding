@@ -1,5 +1,5 @@
 import { createError } from 'h3'
-import { getSupabaseServerClient } from '../../utils/supabaseClient'
+import { getSupabaseServerClient } from '../../../shared/utils/supabaseClient'
 
 type OrganizationRow = {
   id: string
