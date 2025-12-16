@@ -1,16 +1,16 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+  import { ref } from 'vue';
 
-// ログインページはヘッダーがないレイアウトを使う
-definePageMeta({ layout: 'blank' });
+  // ログインページはヘッダーがないレイアウトを使う
+  definePageMeta({ layout: 'blank' });
 
-const email = ref('');
-const password = ref('');
+  const email = ref('');
+  const password = ref('');
 
-function handleLogin() {
-  // ログイン処理をここに実装してください
-  console.log('ログイン試行:', email.value, password.value);
-}
+  function handleLogin() {
+    // ログイン処理をここに実装してください
+    console.log('ログイン試行:', email.value, password.value);
+  }
 </script>
 
 <template>
@@ -18,25 +18,7 @@ function handleLogin() {
     <div
       class="grid w-full max-w-5xl gap-6 rounded-[40px] border border-white/80 bg-white/95 p-8 shadow-2xl shadow-emerald-100/60 lg:grid-cols-[1.15fr,0.85fr]"
     >
-      <section class="flex flex-col justify-between rounded-[28px] bg-gradient-to-br from-emerald-500 via-teal-500 to-slate-900 p-6 text-white shadow-inner">
-        <div>
-          <p class="text-xs font-semibold uppercase tracking-[0.5em] text-white/80">
-            Crowd Funding Portal
-          </p>
-          <h1 class="mt-4 text-3xl font-semibold leading-snug">
-            Materialデザインのフルスクリーンログイン体験
-          </h1>
-          <p class="mt-4 text-sm text-white/80">
-            Nuxt Crowd Fundingのオペレーションと納品管理を、モダンなUIでまとめて確認できます。
-          </p>
-        </div>
-        <div class="mt-8 space-y-2 text-sm text-white/80">
-          <p>・Supabase連携済みの組織アカウント</p>
-          <p>・SSO対応（近日）</p>
-        </div>
-      </section>
-
-      <section class="rounded-[28px] border border-slate-100 bg-white/95 p-6 shadow-inner">
+      <section class="bg-white/95 p-6">
         <h2 class="text-lg font-semibold text-slate-900">サインイン</h2>
         <p class="text-sm text-slate-500">登録済みのメールとパスワードを入力してください。</p>
 
