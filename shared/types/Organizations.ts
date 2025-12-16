@@ -1,8 +1,6 @@
 export interface Organization {
   id: string;
   name: string;
-  plan: string;
-  is_active: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -10,8 +8,6 @@ export interface Organization {
 export type OrganizationInsert = {
   id?: string;
   name: string;
-  plan?: string;
-  is_active?: boolean;
 };
 
 export type OrganizationUpdate = {

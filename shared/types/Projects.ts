@@ -1,13 +1,11 @@
 export interface Project {
   id: string;
   organization_id: string;
-  name: string;
-  platform: string | null;
-  external_project_id: string | null;
-  project_url: string | null;
-  start_date: string | null;
-  end_date: string | null;
-  status: string;
+  title: string;
+  description: string | null;
+  start_at: string;
+  end_at: string;
+  goal: number;
   created_at: string;
   updated_at: string;
 }
@@ -15,13 +13,11 @@ export interface Project {
 export type ProjectInsert = {
   id?: string;
   organization_id: string;
-  name: string;
-  platform?: string | null;
-  external_project_id?: string | null;
-  project_url?: string | null;
-  start_date?: string | null;
-  end_date?: string | null;
-  status?: string;
+  title: string;
+  description?: string | null;
+  start_at: string;
+  end_at: string;
+  goal: number;
 };
 
 export type ProjectUpdate = {
