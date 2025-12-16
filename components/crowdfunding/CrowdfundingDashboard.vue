@@ -450,67 +450,84 @@
       >
         Supabaseからリターン情報を取得しています…
       </div>
-      <div v-else class="grid gap-4 lg:grid-cols-2">
+      <div v-else class="grid gap-6 lg:grid-cols-2">
         <article
           v-for="reward in rewards"
           :key="reward.id"
-          class="rounded-[28px] border border-slate-100/80 bg-gradient-to-br from-white to-slate-50 p-5 shadow-sm shadow-white transition hover:-translate-y-0.5"
+          class="relative overflow-hidden rounded-3xl bg-white p-6 shadow-[0_12px_32px_rgba(15,23,42,0.08)] ring-1 ring-slate-100 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_24px_50px_rgba(15,23,42,0.12)]"
         >
+          <div
+            aria-hidden="true"
+            class="pointer-events-none absolute inset-x-6 top-0 h-1 rounded-full bg-gradient-to-r from-emerald-400 via-teal-400 to-sky-400"
+          />
           <div class="flex items-start justify-between gap-4">
             <div>
-              <p class="text-xs uppercase tracking-[0.3em] text-slate-400">リターン</p>
-              <h3 class="text-xl font-semibold text-slate-900">
+              <p class="text-[11px] font-semibold uppercase tracking-[0.35em] text-slate-400">
+                リターン
+              </p>
+              <h3 class="mt-2 text-xl font-semibold text-slate-900">
                 {{ reward.title }}
               </h3>
-              <p class="mt-1 text-sm text-slate-600">
+              <p class="mt-2 text-sm leading-relaxed text-slate-600">
                 {{ reward.description }}
               </p>
             </div>
-            <div class="text-right">
-              <p class="text-xs text-slate-500">価格</p>
+            <div class="rounded-2xl bg-slate-50 px-4 py-2 text-right shadow-inner shadow-white">
+              <p class="text-xs font-medium uppercase tracking-wide text-slate-500">価格</p>
               <p class="text-lg font-semibold text-slate-900">
                 ¥{{ reward.price.toLocaleString() }}
               </p>
             </div>
           </div>
 
-          <dl class="mt-3 grid grid-cols-2 gap-2 text-sm text-slate-600 md:grid-cols-3">
-            <div>
-              <dt class="text-xs text-slate-500">支援者</dt>
-              <dd class="text-base font-semibold text-slate-900">
+          <dl class="mt-5 grid grid-cols-2 gap-3 text-sm text-slate-600 md:grid-cols-3">
+            <div class="rounded-2xl bg-slate-50/70 px-4 py-3">
+              <dt class="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+                支援者
+              </dt>
+              <dd class="mt-1 text-base font-semibold text-slate-900">
                 {{ reward.supporters }}人
               </dd>
             </div>
-            <div>
-              <dt class="text-xs text-slate-500">売り上げ</dt>
-              <dd class="text-base font-semibold text-emerald-600">
+            <div class="rounded-2xl bg-slate-50/70 px-4 py-3">
+              <dt class="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+                売り上げ
+              </dt>
+              <dd class="mt-1 text-base font-semibold text-emerald-600">
                 ¥{{ rewardSales(reward).toLocaleString() }}
               </dd>
             </div>
-            <div class="md:text-right">
-              <dt class="text-xs text-slate-500">納品目安</dt>
-              <dd class="text-base font-semibold text-slate-900">
+            <div class="rounded-2xl bg-slate-50/70 px-4 py-3 md:text-right">
+              <dt class="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+                納品目安
+              </dt>
+              <dd class="mt-1 text-base font-semibold text-slate-900">
                 {{ reward.deliverySchedule }}
               </dd>
             </div>
           </dl>
 
-          <div class="mt-4 flex flex-wrap items-center gap-2 text-xs font-semibold text-slate-500">
-            <span class="rounded-full bg-slate-100 px-3 py-1">
+          <div class="mt-5 flex flex-wrap items-center gap-2 text-xs font-semibold text-slate-500">
+            <span class="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-slate-600">
               カテゴリ: {{ reward.category }}
             </span>
             <span
               v-if="reward.limit"
-              class="rounded-full bg-emerald-50 px-3 py-1 text-emerald-700"
+              class="rounded-full border border-emerald-200 bg-emerald-50/80 px-3 py-1 text-emerald-700"
             >
               残り {{ rewardRemaining(reward) }} / 定員 {{ reward.limit }}
             </span>
-            <span v-else class="rounded-full bg-slate-100 px-3 py-1">数量無制限</span>
+            <span
+              v-else
+              class="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-slate-600"
+            >
+              数量無制限
+            </span>
           </div>
 
-          <div class="mt-4 h-2 w-full overflow-hidden rounded-full bg-slate-200/70">
+          <div class="mt-5 h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
             <div
-              class="h-full rounded-full bg-gradient-to-r from-emerald-400 via-teal-400 to-sky-400"
+              class="h-full rounded-full bg-gradient-to-r from-emerald-400 via-teal-400 to-sky-400 shadow-[0_1px_6px_rgba(16,185,129,0.45)]"
               :style="{ width: rewardCapacityRate(reward) + '%' }"
             />
           </div>
@@ -554,42 +571,46 @@
       >
         Supabaseからデータを取得しています…
       </div>
-      <div v-else class="overflow-x-auto">
-        <table class="min-w-full text-left text-sm">
+      <div
+        v-else
+        class="overflow-x-auto rounded-[28px] bg-white shadow-[0_12px_32px_rgba(15,23,42,0.08)] ring-1 ring-slate-100"
+      >
+        <!-- テーブルだけがまだおかしい -->
+        <table class="min-w-full w-full table-fixed text-left text-sm text-slate-700">
           <thead>
-            <tr class="border-b border-slate-100/80 bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
-              <th class="px-3 py-3 font-medium">支援者</th>
-              <th class="px-3 py-3 font-medium">リターン内容</th>
-              <th class="px-3 py-3 font-medium">支援金額</th>
-              <th class="px-3 py-3 font-medium">納品予定日</th>
-              <th class="px-3 py-3 font-medium">ステータス</th>
-              <th class="px-3 py-3 text-right font-medium">操作</th>
+            <tr class="border-b border-slate-100 bg-slate-50/80 text-[11px] font-semibold uppercase tracking-[0.25em] text-slate-500">
+              <th class="px-4 py-4 font-semibold">支援者</th>
+              <th class="px-4 py-4 font-semibold">リターン内容</th>
+              <th class="px-4 py-4 font-semibold">支援金額</th>
+              <th class="px-4 py-4 font-semibold">納品予定日</th>
+              <th class="px-4 py-4 font-semibold">ステータス</th>
+              <th class="px-4 py-4 text-right font-semibold">操作</th>
             </tr>
           </thead>
           <tbody>
             <tr
               v-for="delivery in filteredDeliveries"
               :key="delivery.id"
-              class="border-b border-slate-100/80 last:border-0 hover:bg-slate-50"
+              class="border-b border-slate-100 transition-colors last:border-0 hover:bg-emerald-50/40"
             >
-              <td class="px-3 py-4">
-                <div class="font-medium text-slate-800">
+              <td class="px-4 py-5">
+                <div class="font-semibold text-slate-900">
                   {{ delivery.supporterName }}
                 </div>
                 <div class="text-xs text-slate-500">
                   {{ delivery.supporterEmail }}
                 </div>
               </td>
-              <td class="px-3 py-4 text-slate-800">
+              <td class="px-4 py-5 text-slate-900">
                 {{ delivery.rewardName }}
               </td>
-              <td class="px-3 py-4">
+              <td class="px-4 py-5">
                 <template v-if="delivery.amount != null">
                   ¥{{ delivery.amount.toLocaleString() }}
                 </template>
                 <span v-else class="text-slate-400">—</span>
               </td>
-              <td class="px-3 py-4">
+              <td class="px-4 py-5">
                 <div class="flex items-center gap-2">
                   <span
                     v-if="delivery.isOverdue"
@@ -599,7 +620,7 @@
                     v-else-if="delivery.isDueSoon"
                     class="inline-flex h-2 w-2 rounded-full bg-amber-400"
                   />
-                  <span class="text-sm">
+                  <span class="text-sm font-medium text-slate-800">
                     {{ delivery.dueDate || '—' }}
                   </span>
                 </div>
@@ -607,24 +628,24 @@
                   期限超過（{{ delivery.overdueDays }}日）
                 </div>
               </td>
-              <td class="px-3 py-4">
+              <td class="px-4 py-5">
                 <span
-                  class="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold"
+                  class="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold shadow-sm"
                   :class="statusBadgeClass(delivery.status)"
                 >
                   {{ statusLabel(delivery.status) }}
                 </span>
               </td>
-              <td class="px-3 py-4 text-right">
+              <td class="px-4 py-5 text-right">
                 <div class="flex justify-end gap-2">
                   <button
-                    class="rounded-full border border-slate-200 px-3 py-1 text-xs font-medium text-slate-700 transition hover:bg-slate-50"
+                    class="rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50"
                     @click="openDetail(delivery)"
                   >
                     詳細
                   </button>
                   <button
-                    class="rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 px-3 py-1 text-xs font-semibold text-white shadow-sm shadow-emerald-200/70 transition hover:brightness-110"
+                    class="rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 px-4 py-2 text-xs font-semibold text-white shadow-[0_8px_16px_rgba(16,185,129,0.35)] transition hover:brightness-110"
                     @click="markAsCompleted(delivery)"
                   >
                     納品完了にする
@@ -634,7 +655,7 @@
             </tr>
 
             <tr v-if="filteredDeliveries.length === 0">
-              <td colspan="6" class="px-3 py-6 text-center text-sm text-slate-500">
+              <td colspan="6" class="px-4 py-8 text-center text-sm text-slate-500">
                 条件に一致する支援がありません。
               </td>
             </tr>
