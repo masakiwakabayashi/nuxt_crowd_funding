@@ -62,7 +62,8 @@
         <div
           aria-hidden="true"
           class="pointer-events-none absolute inset-x-6 top-0 h-1 rounded-full bg-gradient-to-r from-emerald-400 via-teal-400 to-sky-400"
-        />
+        >
+        </div>
         <div class="flex items-start justify-between gap-4">
           <div>
             <p class="text-[11px] font-semibold uppercase tracking-[0.35em] text-slate-400">
@@ -132,7 +133,8 @@
           <div
             class="h-full rounded-full bg-gradient-to-r from-emerald-400 via-teal-400 to-sky-400 shadow-[0_1px_6px_rgba(16,185,129,0.45)]"
             :style="{ width: rewardCapacityRate(reward) + '%' }"
-          />
+          >
+          </div>
         </div>
       </article>
     </div>

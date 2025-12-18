@@ -16,11 +16,13 @@
     <div
       aria-hidden="true"
       class="pointer-events-none absolute -left-10 bottom-0 h-40 w-40 rounded-full bg-sky-100 blur-3xl"
-    />
+    >
+    </div>
     <div
       aria-hidden="true"
       class="pointer-events-none absolute right-6 top-4 h-32 w-32 rounded-full bg-emerald-100 blur-3xl"
-    />
+    >
+    </div>
 
     <div class="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
       <div class="space-y-4">
@@ -65,7 +67,8 @@
           <div
             class="h-full rounded-full bg-gradient-to-r from-emerald-400 via-teal-400 to-sky-400"
             :style="{ width: props.goalProgress + '%' }"
-          />
+          >
+          </div>
         </div>
         <p class="mt-2 text-xs text-slate-500">達成率 {{ props.goalProgress }}%</p>
       </div>

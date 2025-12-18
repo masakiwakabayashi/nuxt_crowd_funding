@@ -128,11 +128,13 @@
                 <span
                   v-if="delivery.isOverdue"
                   class="inline-flex h-2 w-2 rounded-full bg-rose-500"
-                />
+                >
+                </span>
                 <span
                   v-else-if="delivery.isDueSoon"
                   class="inline-flex h-2 w-2 rounded-full bg-amber-400"
-                />
+                >
+                </span>
                 <span class="text-sm font-medium text-slate-800">
                   {{ delivery.dueDate || '—' }}
                 </span>

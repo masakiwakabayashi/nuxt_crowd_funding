@@ -1,3 +1,6 @@
+
+// これはあとで消す
+
 export type ProjectSummary = {
   name: string
   period: string

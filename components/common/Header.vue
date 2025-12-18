@@ -5,11 +5,13 @@
     <div
       aria-hidden="true"
       class="pointer-events-none absolute -right-12 top-0 h-48 w-48 rounded-full bg-emerald-200/70 blur-3xl"
-    />
+    >
+    </div>
     <div
       aria-hidden="true"
       class="pointer-events-none absolute bottom-0 left-10 h-16 w-36 rounded-full bg-sky-200/70 blur-2xl"
-    />
+    >
+    </div>
 
     <div class="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
       <div class="flex items-center gap-4">

@@ -5,7 +5,7 @@
     calculateRemainingDays,
     formatDisplayDate,
     formatIsoDate,
-  } from '@/shared/utils/date'
+  } from '../../shared/utils/date'
   import type {
     Delivery,
     DeliveryRecord,
@@ -15,6 +15,8 @@
     Reward,
     RewardRecord,
   } from './types'
+
+  // 表示されなくなったので修正する
 
   const props = defineProps<{
     organizationId: string
