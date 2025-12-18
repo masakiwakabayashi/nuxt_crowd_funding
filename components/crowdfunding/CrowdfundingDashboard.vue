@@ -1,6 +1,9 @@
 <script setup lang="ts">
   import { computed, ref } from 'vue'
   import { useAsyncData } from 'nuxt/app'
+  import CrowdfundingProjectOverview from './CrowdfundingProjectOverview.vue'
+  import CrowdfundingRewardList from './CrowdfundingRewardList.vue'
+  import CrowdfundingDeliveryTable from './CrowdfundingDeliveryTable.vue'
   import {
     calculateRemainingDays,
     formatDisplayDate,
@@ -24,6 +27,8 @@
 
   const filterStatus = ref<DeliveryStatus | ''>('')
   const selectedProjectId = ref<string | ''>('')
+
+  // どうやってデータを取得するのが最適だろうか？
 
   const {
     data: summaryData,
@@ -186,7 +191,7 @@
 </script>
 
 <template>
-  <div class="space-y-8" :data-organization-id="props.organizationId">
+  <div class="space-y-8">
     <CrowdfundingProjectOverview
       :project-summary="projectSummary"
       :goal-progress="goalProgress"
