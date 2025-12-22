@@ -191,7 +191,7 @@
 <template>
   <div class="space-y-8">
     <div
-      class="space-y-8 lg:grid lg:grid-cols-[minmax(320px,1fr)_minmax(0,1.4fr)] lg:items-start lg:gap-8 lg:space-y-0"
+      class="space-y-8 lg:grid lg:grid-cols-[minmax(320px,1fr)_minmax(0,1.4fr)] lg:items-stretch lg:gap-8 lg:space-y-0"
     >
       <CrowdfundingProjectOverview
         :project-summary="projectSummary"

@@ -11,7 +11,7 @@
 
 <template>
   <section
-    class="relative overflow-hidden rounded-3xl border border-white/80 bg-white/95 p-6 shadow-xl shadow-emerald-100/70"
+    class="relative flex h-full flex-col overflow-hidden rounded-3xl border border-white/80 bg-white/95 p-6 shadow-xl shadow-emerald-100/70"
   >
     <div
       aria-hidden="true"
@@ -24,21 +24,21 @@
     >
     </div>
 
-    <div class="relative z-10 space-y-6">
+    <div class="relative z-10 flex flex-1 flex-col space-y-6">
       <div class="space-y-4">
         <div>
           <p class="text-xs font-semibold uppercase tracking-[0.35em] text-slate-400">
             プロジェクト名
           </p>
-          <p class="mt-2 text-3xl font-bold text-slate-900">
+          <p class="mt-2 text-2xl font-bold text-slate-900">
             {{ props.projectSummary.name }}
           </p>
         </div>
         <div
-          class="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-4 py-2 text-xs font-semibold text-emerald-600"
+          class="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-600"
         >
           開催期間
-          <span class="text-sm font-normal text-slate-900">
+          <span class="text-base font-semibold text-slate-900">
             {{ props.projectSummary.period }}
           </span>
         </div>
@@ -57,7 +57,7 @@
         </p>
       </div>
 
-      <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div class="grid gap-4 sm:grid-cols-2">
         <div
           class="rounded-2xl bg-slate-50/80 p-4 text-sm text-slate-600 shadow-inner shadow-white"
         >

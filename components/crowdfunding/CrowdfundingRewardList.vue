@@ -22,11 +22,13 @@
 
 <template>
   <section
-    class="overflow-hidden rounded-3xl border border-white/80 bg-white/95 p-6 shadow-xl shadow-emerald-100/70"
+    class="flex h-full flex-col overflow-hidden rounded-3xl border border-white/80 bg-white/95 p-6 shadow-xl shadow-emerald-100/70"
   >
     <div class="mb-6 flex flex-col gap-2">
       <div>
-        <h2 class="text-base font-semibold text-slate-900">リターン一覧</h2>
+        <h2 class="text-2xl font-semibold text-slate-900 py-2">
+          リターン一覧
+        </h2>
         <p class="text-sm text-slate-500">
           主要なリターン別の売り上げと支援状況を確認できます。
         </p>
@@ -49,11 +51,11 @@
     </div>
     <div
       v-else-if="props.areRewardsLoading"
-      class="flex items-center justify-center rounded-2xl border border-dashed border-slate-200 px-4 py-10 text-sm text-slate-500"
+      class="flex flex-1 items-center justify-center rounded-2xl border border-dashed border-slate-200 px-4 py-10 text-sm text-slate-500"
     >
       Supabaseからリターン情報を取得しています…
     </div>
-    <div v-else class="grid gap-6 md:grid-cols-2">
+    <div v-else class="grid flex-1 gap-6 md:grid-cols-2">
       <article
         v-for="reward in props.rewards"
         :key="reward.id"
