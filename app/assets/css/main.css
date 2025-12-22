@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-:root {
+/* :root {
   --app-font-stack: "Inter", "Noto Sans JP", system-ui, -apple-system,
     BlinkMacSystemFont, "Segoe UI", sans-serif;
   color: #0f172a;
@@ -17,4 +17,4 @@ body {
 ::selection {
   background-color: #34d399;
   color: #041b17;
-}
+} */

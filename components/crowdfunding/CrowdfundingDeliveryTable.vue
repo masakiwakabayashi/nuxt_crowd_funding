@@ -50,7 +50,7 @@
 
 <template>
   <section
-    class="overflow-hidden rounded-[32px] border border-white/80 bg-white/95 p-6 shadow-xl shadow-emerald-100/70"
+    class="overflow-hidden rounded-3xl border border-white/80 bg-white/95 p-6 shadow-xl shadow-emerald-100/70"
   >
     <div class="mb-4 flex flex-col gap-3">
       <div>
@@ -87,7 +87,7 @@
     </div>
     <div
       v-else
-      class="overflow-x-auto rounded-[28px] bg-white shadow-[0_12px_32px_rgba(15,23,42,0.08)] ring-1 ring-slate-100"
+      class="overflow-x-auto rounded-3xl bg-white shadow-[0_12px_32px_rgba(15,23,42,0.08)] ring-1 ring-slate-100"
     >
       <table class="min-w-full w-full table-auto text-left text-sm text-slate-700">
         <thead>

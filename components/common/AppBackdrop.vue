@@ -12,7 +12,7 @@
       >
       </div>
       <div
-        class="absolute bottom-[-15%] left-1/3 h-96 w-[32rem] rounded-[999px] bg-white/60 blur-3xl"
+        class="absolute bottom-[-15%] left-1/3 h-96 w-[32rem] rounded-full bg-white/60 blur-3xl"
       >
       </div>
     </div>

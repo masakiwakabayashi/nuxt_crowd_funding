@@ -2,7 +2,7 @@
   <main class="flex flex-1 flex-col gap-8 pb-12">
     <section v-if="organization" class="grid gap-6">
       <article
-        class="rounded-[28px] border border-white/80 bg-white/95 p-6 shadow-xl shadow-emerald-100/70"
+        class="rounded-3xl border border-white/80 bg-white/95 p-6 shadow-xl shadow-emerald-100/70"
       >
         <h2 class="text-base font-semibold text-slate-900">基本情報</h2>
         <div class="mt-4 space-y-4 text-sm text-slate-600">
@@ -22,7 +22,7 @@
       </article>
 
       <article
-        class="rounded-[28px] border border-white/80 bg-white/95 p-6 shadow-xl shadow-emerald-100/70"
+        class="rounded-3xl border border-white/80 bg-white/95 p-6 shadow-xl shadow-emerald-100/70"
       >
         <h2 class="text-base font-semibold text-slate-900">タイムスタンプ</h2>
         <div class="mt-4 space-y-4 text-sm text-slate-600">
@@ -44,7 +44,7 @@
 
     <section
       v-else
-      class="rounded-[28px] border border-white/80 bg-white/95 p-6 text-sm text-slate-500 shadow-xl shadow-emerald-100/70"
+      class="rounded-3xl border border-white/80 bg-white/95 p-6 text-sm text-slate-500 shadow-xl shadow-emerald-100/70"
     >
       組織情報が見つかりませんでした。
     </section>

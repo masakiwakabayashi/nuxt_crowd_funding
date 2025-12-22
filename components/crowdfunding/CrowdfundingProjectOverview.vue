@@ -11,7 +11,7 @@
 
 <template>
   <section
-    class="relative overflow-hidden rounded-[32px] border border-white/80 bg-white/95 p-6 shadow-xl shadow-emerald-100/70"
+    class="relative overflow-hidden rounded-3xl border border-white/80 bg-white/95 p-6 shadow-xl shadow-emerald-100/70"
   >
     <div
       aria-hidden="true"
@@ -57,7 +57,7 @@
         </p>
       </div>
 
-      <div class="rounded-[24px] bg-slate-50/80 p-4 text-sm text-slate-600 shadow-inner shadow-white">
+      <div class="rounded-2xl bg-slate-50/80 p-4 text-sm text-slate-600 shadow-inner shadow-white">
         <p class="text-xs uppercase tracking-wide text-slate-400">Countdown</p>
         <p class="mt-2 text-2xl font-semibold text-slate-900">
           残り {{ props.projectSummary.remainingDays }} 日

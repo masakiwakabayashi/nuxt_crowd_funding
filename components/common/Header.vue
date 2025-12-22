@@ -1,6 +1,6 @@
 <template>
   <header
-    class="relative overflow-hidden rounded-[32px] border border-white/80 bg-white/90 p-6 shadow-xl shadow-emerald-100/70 backdrop-blur"
+    class="relative overflow-hidden rounded-3xl border border-white/80 bg-white/90 p-6 shadow-xl shadow-emerald-100/70 backdrop-blur"
   >
     <div
       aria-hidden="true"
@@ -13,14 +13,8 @@
     >
     </div>
 
-    <div class="relative z-10 flex flex-col gap-6">
+    <div class="relative z-10 flex gap-6">
       <div class="flex items-center gap-4">
-        <div
-          class="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 via-teal-400 to-sky-400 text-2xl font-black text-white shadow-lg shadow-emerald-200/70"
-        >
-          CF
-        </div>
-
         <div>
           <p class="text-xs font-semibold uppercase tracking-[0.35em] text-emerald-600">
             Material Workspace
@@ -35,16 +29,6 @@
       </div>
 
       <div class="flex flex-col gap-4 text-sm text-slate-500">
-        <div class="grid grid-cols-2 gap-4 text-left">
-          <div>
-            <p class="text-xs uppercase tracking-wide text-slate-400">Scope</p>
-            <p class="text-base font-semibold text-slate-900">Delivery Ops</p>
-          </div>
-          <div>
-            <p class="text-xs uppercase tracking-wide text-slate-400">Status</p>
-            <p class="text-base font-semibold text-emerald-600">リアルタイム</p>
-          </div>
-        </div>
         <div class="flex flex-1 flex-wrap justify-end gap-3">
           <NuxtLink
             to="/login"

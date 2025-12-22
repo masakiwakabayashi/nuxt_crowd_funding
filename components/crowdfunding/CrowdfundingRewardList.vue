@@ -22,7 +22,7 @@
 
 <template>
   <section
-    class="overflow-hidden rounded-[32px] border border-white/80 bg-white/95 p-6 shadow-xl shadow-emerald-100/70"
+    class="overflow-hidden rounded-3xl border border-white/80 bg-white/95 p-6 shadow-xl shadow-emerald-100/70"
   >
     <div class="mb-6 flex flex-col gap-2">
       <div>
