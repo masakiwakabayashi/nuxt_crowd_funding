@@ -53,17 +53,12 @@
     >
       Supabaseからリターン情報を取得しています…
     </div>
-    <div v-else class="grid gap-6">
+    <div v-else class="grid gap-6 md:grid-cols-2">
       <article
         v-for="reward in props.rewards"
         :key="reward.id"
         class="relative overflow-hidden rounded-3xl bg-white p-6 shadow-[0_12px_32px_rgba(15,23,42,0.08)] ring-1 ring-slate-100 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_24px_50px_rgba(15,23,42,0.12)]"
       >
-        <div
-          aria-hidden="true"
-          class="pointer-events-none absolute inset-x-6 top-0 h-1 rounded-full bg-gradient-to-r from-emerald-400 via-teal-400 to-sky-400"
-        >
-        </div>
         <div class="flex items-start justify-between gap-4">
           <div>
             <p class="text-[11px] font-semibold uppercase tracking-[0.35em] text-slate-400">
@@ -99,14 +94,6 @@
             </dt>
             <dd class="mt-1 text-base font-semibold text-emerald-600">
               ¥{{ rewardSales(reward).toLocaleString() }}
-            </dd>
-          </dl>
-          <dl class="rounded-2xl bg-slate-50/70 px-4 py-3">
-            <dt class="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
-              納品目安
-            </dt>
-            <dd class="mt-1 text-base font-semibold text-slate-900">
-              {{ reward.deliverySchedule }}
             </dd>
           </dl>
         </div>

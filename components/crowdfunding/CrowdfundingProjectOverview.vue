@@ -24,7 +24,7 @@
     >
     </div>
 
-    <div class="relative z-10 flex flex-col gap-6">
+    <div class="relative z-10 space-y-6">
       <div class="space-y-4">
         <div>
           <p class="text-xs font-semibold uppercase tracking-[0.35em] text-slate-400">
@@ -57,47 +57,48 @@
         </p>
       </div>
 
-      <div class="rounded-2xl bg-slate-50/80 p-4 text-sm text-slate-600 shadow-inner shadow-white">
-        <p class="text-xs uppercase tracking-wide text-slate-400">Countdown</p>
-        <p class="mt-2 text-2xl font-semibold text-slate-900">
-          残り {{ props.projectSummary.remainingDays }} 日
-        </p>
-        <p class="text-xs text-slate-500">終了予定日 {{ props.projectSummary.deadline }}</p>
-        <div class="mt-4 h-2 w-full overflow-hidden rounded-full bg-white">
-          <div
-            class="h-full rounded-full bg-gradient-to-r from-emerald-400 via-teal-400 to-sky-400"
-            :style="{ width: props.goalProgress + '%' }"
-          >
+      <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div
+          class="rounded-2xl bg-slate-50/80 p-4 text-sm text-slate-600 shadow-inner shadow-white"
+        >
+          <p class="text-xs uppercase tracking-wide text-slate-400">Countdown</p>
+          <p class="mt-2 text-xl font-semibold text-slate-900">
+            残り {{ props.projectSummary.remainingDays }} 日
+          </p>
+          <p class="text-xs text-slate-500">終了予定日 {{ props.projectSummary.deadline }}</p>
+          <div class="mt-4 h-2 w-full overflow-hidden rounded-full bg-white">
+            <div
+              class="h-full rounded-full bg-gradient-to-r from-emerald-400 via-teal-400 to-sky-400"
+              :style="{ width: props.goalProgress + '%' }"
+            >
+            </div>
           </div>
+          <p class="mt-2 text-xs text-slate-500">達成率 {{ props.goalProgress }}%</p>
         </div>
-        <p class="mt-2 text-xs text-slate-500">達成率 {{ props.goalProgress }}%</p>
+        <article class="rounded-2xl bg-slate-50/70 p-4 shadow-inner shadow-white">
+          <p class="text-xs uppercase tracking-wide text-slate-500">全体の売り上げ</p>
+          <p class="mt-2 text-2xl font-bold text-slate-900">
+            ¥{{ props.projectSummary.totalSales.toLocaleString() }}
+          </p>
+          <p class="text-xs text-emerald-600">達成率 {{ props.goalProgress }}%</p>
+        </article>
+        <article class="rounded-2xl bg-slate-50/70 p-4 shadow-inner shadow-white">
+          <p class="text-xs uppercase tracking-wide text-slate-500">目標金額</p>
+          <p class="mt-2 text-xl font-semibold text-slate-900">
+            ¥{{ props.projectSummary.goal.toLocaleString() }}
+          </p>
+          <p class="text-xs text-slate-500">
+            残り ¥{{ props.projectSummary.remainingSales.toLocaleString() }}
+          </p>
+        </article>
+        <article class="rounded-2xl bg-slate-50/70 p-4 shadow-inner shadow-white">
+          <p class="text-xs uppercase tracking-wide text-slate-500">締切</p>
+          <p class="mt-2 text-xl font-semibold text-slate-900">
+            {{ props.projectSummary.deadline }}
+          </p>
+          <p class="text-xs text-slate-500">残り {{ props.projectSummary.remainingDays }} 日</p>
+        </article>
       </div>
-    </div>
-
-    <div class="relative z-10 mt-6 grid gap-4">
-      <article class="rounded-3xl bg-slate-50/70 p-4 shadow-inner shadow-white">
-        <p class="text-xs uppercase tracking-wide text-slate-500">全体の売り上げ</p>
-        <p class="mt-3 text-3xl font-bold text-slate-900">
-          ¥{{ props.projectSummary.totalSales.toLocaleString() }}
-        </p>
-        <p class="text-xs text-emerald-600">達成率 {{ props.goalProgress }}%</p>
-      </article>
-      <article class="rounded-3xl bg-slate-50/70 p-4 shadow-inner shadow-white">
-        <p class="text-xs uppercase tracking-wide text-slate-500">目標金額</p>
-        <p class="mt-3 text-2xl font-semibold text-slate-900">
-          ¥{{ props.projectSummary.goal.toLocaleString() }}
-        </p>
-        <p class="text-xs text-slate-500">
-          目標まで残り ¥{{ props.projectSummary.remainingSales.toLocaleString() }}
-        </p>
-      </article>
-      <article class="rounded-3xl bg-slate-50/70 p-4 shadow-inner shadow-white">
-        <p class="text-xs uppercase tracking-wide text-slate-500">締切</p>
-        <p class="mt-3 text-2xl font-semibold text-slate-900">
-          {{ props.projectSummary.deadline }}
-        </p>
-        <p class="text-xs text-slate-500">残り {{ props.projectSummary.remainingDays }} 日</p>
-      </article>
     </div>
   </section>
 </template>

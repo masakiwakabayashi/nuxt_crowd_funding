@@ -19,8 +19,6 @@
     RewardRecord,
   } from './types'
 
-  // 表示されなくなったので修正する
-
   const props = defineProps<{
     organizationId: string
   }>()
@@ -192,19 +190,23 @@
 
 <template>
   <div class="space-y-8">
-    <CrowdfundingProjectOverview
-      :project-summary="projectSummary"
-      :goal-progress="goalProgress"
-      :summary-error="summaryError"
-      :is-summary-loading="isSummaryLoading"
-    />
+    <div
+      class="space-y-8 lg:grid lg:grid-cols-[minmax(320px,1fr)_minmax(0,1.4fr)] lg:items-start lg:gap-8 lg:space-y-0"
+    >
+      <CrowdfundingProjectOverview
+        :project-summary="projectSummary"
+        :goal-progress="goalProgress"
+        :summary-error="summaryError"
+        :is-summary-loading="isSummaryLoading"
+      />
 
-    <CrowdfundingRewardList
-      :rewards="rewards"
-      :total-reward-sales="totalRewardSales"
-      :rewards-error="rewardsError"
-      :are-rewards-loading="areRewardsLoading"
-    />
+      <CrowdfundingRewardList
+        :rewards="rewards"
+        :total-reward-sales="totalRewardSales"
+        :rewards-error="rewardsError"
+        :are-rewards-loading="areRewardsLoading"
+      />
+    </div>
 
     <CrowdfundingDeliveryTable
       v-model:filter-status="filterStatus"
