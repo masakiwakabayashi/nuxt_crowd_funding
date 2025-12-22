@@ -52,7 +52,7 @@
   <section
     class="overflow-hidden rounded-[32px] border border-white/80 bg-white/95 p-6 shadow-xl shadow-emerald-100/70"
   >
-    <div class="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+    <div class="mb-4 flex flex-col gap-3">
       <div>
         <h2 class="text-base font-semibold text-slate-900">支援ごとの納品管理</h2>
         <div class="mt-2 flex items-center gap-3 text-xs text-slate-500">

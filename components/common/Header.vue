@@ -13,7 +13,7 @@
     >
     </div>
 
-    <div class="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+    <div class="relative z-10 flex flex-col gap-6">
       <div class="flex items-center gap-4">
         <div
           class="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 via-teal-400 to-sky-400 text-2xl font-black text-white shadow-lg shadow-emerald-200/70"
@@ -34,7 +34,7 @@
         </div>
       </div>
 
-      <div class="flex flex-col gap-4 text-sm text-slate-500 lg:flex-row lg:items-center">
+      <div class="flex flex-col gap-4 text-sm text-slate-500">
         <div class="grid grid-cols-2 gap-4 text-left">
           <div>
             <p class="text-xs uppercase tracking-wide text-slate-400">Scope</p>
@@ -46,7 +46,6 @@
           </div>
         </div>
         <div class="flex flex-1 flex-wrap justify-end gap-3">
-          <slot name="actions" />
           <NuxtLink
             to="/login"
             class="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 px-5 py-2 text-sm font-semibold text-white shadow-lg shadow-emerald-200/70 transition hover:brightness-110"

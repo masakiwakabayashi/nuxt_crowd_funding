@@ -1,6 +1,6 @@
 <template>
   <AppBackdrop>
-    <div class="flex min-h-screen flex-col px-4 py-10 sm:px-8">
+    <div class="flex min-h-screen flex-col px-4 py-10">
       <slot />
     </div>
   </AppBackdrop>

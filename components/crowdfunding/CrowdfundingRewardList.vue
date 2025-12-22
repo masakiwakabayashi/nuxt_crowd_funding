@@ -24,7 +24,7 @@
   <section
     class="overflow-hidden rounded-[32px] border border-white/80 bg-white/95 p-6 shadow-xl shadow-emerald-100/70"
   >
-    <div class="mb-6 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+    <div class="mb-6 flex flex-col gap-2">
       <div>
         <h2 class="text-base font-semibold text-slate-900">リターン一覧</h2>
         <p class="text-sm text-slate-500">
@@ -53,7 +53,7 @@
     >
       Supabaseからリターン情報を取得しています…
     </div>
-    <div v-else class="grid gap-6 lg:grid-cols-2">
+    <div v-else class="grid gap-6">
       <article
         v-for="reward in props.rewards"
         :key="reward.id"
@@ -84,32 +84,32 @@
           </div>
         </div>
 
-        <dl class="mt-5 grid grid-cols-2 gap-3 text-sm text-slate-600 md:grid-cols-3">
-          <div class="rounded-2xl bg-slate-50/70 px-4 py-3">
+        <div class="mt-5 grid grid-cols-2 gap-3 text-sm text-slate-600">
+          <dl class="rounded-2xl bg-slate-50/70 px-4 py-3">
             <dt class="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
               支援者
             </dt>
             <dd class="mt-1 text-base font-semibold text-slate-900">
               {{ reward.supporters }}人
             </dd>
-          </div>
-          <div class="rounded-2xl bg-slate-50/70 px-4 py-3">
+          </dl>
+          <dl class="rounded-2xl bg-slate-50/70 px-4 py-3">
             <dt class="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
               売り上げ
             </dt>
             <dd class="mt-1 text-base font-semibold text-emerald-600">
               ¥{{ rewardSales(reward).toLocaleString() }}
             </dd>
-          </div>
-          <div class="rounded-2xl bg-slate-50/70 px-4 py-3 md:text-right">
+          </dl>
+          <dl class="rounded-2xl bg-slate-50/70 px-4 py-3">
             <dt class="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
               納品目安
             </dt>
             <dd class="mt-1 text-base font-semibold text-slate-900">
               {{ reward.deliverySchedule }}
             </dd>
-          </div>
-        </dl>
+          </dl>
+        </div>
 
         <div class="mt-5 flex flex-wrap items-center gap-2 text-xs font-semibold text-slate-500">
           <span class="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-slate-600">

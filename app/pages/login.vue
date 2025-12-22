@@ -16,7 +16,7 @@
 <template>
   <main class="flex min-h-screen items-center justify-center text-slate-900">
     <div
-      class="grid w-full max-w-5xl gap-6 rounded-[40px] border border-white/80 bg-white/95 p-8 shadow-2xl shadow-emerald-100/60 lg:grid-cols-[1.15fr,0.85fr]"
+      class="grid w-full max-w-5xl gap-6 rounded-[40px] border border-white/80 bg-white/95 p-8 shadow-2xl shadow-emerald-100/60"
     >
       <section class="bg-white/95 p-6">
         <h2 class="text-lg font-semibold text-slate-900">サインイン</h2>

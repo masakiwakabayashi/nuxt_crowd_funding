@@ -6,6 +6,7 @@
 
 <template>
   <main class="flex flex-1 flex-col gap-8 pb-12">
+    <!-- デザインの崩れはこれが悪わけじゃない -->
     <CrowdfundingDashboard :organization-id="organizationId" />
 
     <!-- 組織設定へのリンクがこのページにないと開発がしずらいので、一旦ここにリンクを置いておく -->

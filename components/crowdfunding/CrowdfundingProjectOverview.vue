@@ -24,7 +24,7 @@
     >
     </div>
 
-    <div class="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+    <div class="relative z-10 flex flex-col gap-6">
       <div class="space-y-4">
         <div>
           <p class="text-xs font-semibold uppercase tracking-[0.35em] text-slate-400">
@@ -74,7 +74,7 @@
       </div>
     </div>
 
-    <div class="relative z-10 mt-6 grid gap-4 md:grid-cols-3">
+    <div class="relative z-10 mt-6 grid gap-4">
       <article class="rounded-3xl bg-slate-50/70 p-4 shadow-inner shadow-white">
         <p class="text-xs uppercase tracking-wide text-slate-500">全体の売り上げ</p>
         <p class="mt-3 text-3xl font-bold text-slate-900">

@@ -1,44 +1,44 @@
 <template>
   <main class="flex flex-1 flex-col gap-8 pb-12">
-    <section v-if="organization" class="grid gap-6 lg:grid-cols-2">
+    <section v-if="organization" class="grid gap-6">
       <article
         class="rounded-[28px] border border-white/80 bg-white/95 p-6 shadow-xl shadow-emerald-100/70"
       >
         <h2 class="text-base font-semibold text-slate-900">基本情報</h2>
-        <dl class="mt-4 space-y-4 text-sm text-slate-600">
-          <div>
+        <div class="mt-4 space-y-4 text-sm text-slate-600">
+          <dl>
             <dt class="text-xs uppercase tracking-wide text-slate-400">組織名</dt>
             <dd class="mt-1 text-xl font-semibold text-slate-900">
               {{ organization.name }}
             </dd>
-          </div>
-          <div>
+          </dl>
+          <dl>
             <dt class="text-xs uppercase tracking-wide text-slate-400">組織 ID</dt>
             <dd class="mt-1 font-mono text-sm text-slate-600">
               {{ organization.id }}
             </dd>
-          </div>
-        </dl>
+          </dl>
+        </div>
       </article>
 
       <article
         class="rounded-[28px] border border-white/80 bg-white/95 p-6 shadow-xl shadow-emerald-100/70"
       >
         <h2 class="text-base font-semibold text-slate-900">タイムスタンプ</h2>
-        <dl class="mt-4 space-y-4 text-sm text-slate-600">
-          <div>
+        <div class="mt-4 space-y-4 text-sm text-slate-600">
+          <dl>
             <dt class="text-xs uppercase tracking-wide text-slate-400">作成日時</dt>
             <dd class="mt-1 text-base font-semibold text-slate-900">
               {{ formatDateTime(organization.createdAt) || '---' }}
             </dd>
-          </div>
-          <div>
+          </dl>
+          <dl>
             <dt class="text-xs uppercase tracking-wide text-slate-400">最終更新</dt>
             <dd class="mt-1 text-base font-semibold text-slate-900">
               {{ formatDateTime(organization.updatedAt) || '---' }}
             </dd>
-          </div>
-        </dl>
+          </dl>
+        </div>
       </article>
     </section>
 
