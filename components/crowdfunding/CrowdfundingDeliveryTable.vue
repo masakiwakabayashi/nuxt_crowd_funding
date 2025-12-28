@@ -1,5 +1,6 @@
 <script setup lang="ts">
-  import { computed } from 'vue'
+  import { computed, ref } from 'vue'
+  import EditDeliveryModal from './EditDeliveryModal.vue'
   import type { Delivery, DeliveryStatus } from './types'
 
   // 次は納品管理テーブルのUIを修正する
@@ -14,13 +15,16 @@
 
   const emit = defineEmits<{
     (e: 'update:filterStatus', value: DeliveryStatus | ''): void
-    (e: 'mark-completed', delivery: Delivery): void
+    (e: 'update-delivery', delivery: Delivery): void
   }>()
 
   const filterStatusModel = computed({
     get: () => props.filterStatus,
     set: (value) => emit('update:filterStatus', value as DeliveryStatus | ''),
   })
+
+  const isEditModalOpen = ref(false)
+  const selectedDelivery = ref<Delivery | null>(null)
 
   const statusLabel = (status: DeliveryStatus | '') => {
     switch (status) {
@@ -46,8 +50,17 @@
     }
   }
 
-  const markAsCompleted = (delivery: Delivery) => {
-    emit('mark-completed', delivery)
+  const startEditing = (delivery: Delivery) => {
+    selectedDelivery.value = delivery
+    isEditModalOpen.value = true
+  }
+
+  const closeEditModal = () => {
+    isEditModalOpen.value = false
+  }
+
+  const saveDelivery = (delivery: Delivery) => {
+    emit('update-delivery', delivery)
   }
 </script>
 
@@ -95,7 +108,7 @@
       <table class="min-w-full w-full table-auto text-left text-sm text-slate-700">
         <thead>
           <tr class="border-b border-slate-100 bg-slate-50/80 text-[11px] font-semibold uppercase tracking-[0.25em] text-slate-500">
-            <th class="w-[10%] px-6 py-4 font-semibold"></th>
+            <th class="w-[10%] px-6 py-4 font-semibold">ID</th>
             <th class="w-[20%] px-6 py-4 font-semibold">支援者</th>
             <th class="w-[20%] px-6 py-4 font-semibold">住所</th>
             <th class="w-[25%] px-6 py-4 font-semibold">リターン内容</th>
@@ -126,7 +139,7 @@
             </td>
             <td class="w-[20%] px-6 py-5 text-slate-900">
               <div class="text-sm leading-relaxed" :class="{ 'text-slate-400': !delivery.supporterAddress }">
-                {{ delivery.supporterAddress }}
+                {{ delivery.supporterAddress || '住所情報なし' }}
               </div>
             </td>
             <td class="w-[25%] px-6 py-5 text-slate-900">
@@ -169,7 +182,7 @@
             <td class="w-[13%] px-6 py-5 text-right">
               <button
                 class="rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 px-4 py-2 text-xs font-semibold text-white shadow-[0_8px_16px_rgba(16,185,129,0.35)] transition hover:brightness-110"
-                @click="markAsCompleted(delivery)"
+                @click="startEditing(delivery)"
               >
                 編集
               </button>
@@ -184,5 +197,12 @@
         </tbody>
       </table>
     </div>
+
+    <EditDeliveryModal
+      :open="isEditModalOpen"
+      :delivery="selectedDelivery"
+      @close="closeEditModal"
+      @save="saveDelivery"
+    />
   </section>
 </template>

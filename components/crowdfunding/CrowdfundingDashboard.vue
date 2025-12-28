@@ -184,8 +184,8 @@
     }),
   )
 
-  const markAsCompleted = (delivery: Delivery) => {
-    console.log(delivery);
+  const updateDelivery = (delivery: Delivery) => {
+    console.log('update delivery', delivery)
   }
 </script>
 
@@ -214,7 +214,7 @@
       :deliveries="filteredDeliveries"
       :deliveries-error="deliveriesError"
       :is-deliveries-loading="isDeliveriesLoading"
-      @mark-completed="markAsCompleted"
+      @update-delivery="updateDelivery"
     />
   </div>
 </template>
