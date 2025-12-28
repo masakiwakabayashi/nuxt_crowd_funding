@@ -11,7 +11,7 @@
 
     <!-- 組織設定へのリンクがこのページにないと開発がしずらいので、一旦ここにリンクを置いておく -->
     <NuxtLink
-      :to="`/organizations/${organizationId}/settings`"
+      :to="`/organizations/${organizationId}/setting/organization`"
       class="mt-6 inline-flex w-full items-center justify-center rounded-2xl bg-white/90 px-5 py-3 text-sm font-semibold text-emerald-600 shadow-lg shadow-emerald-900/20 transition hover:bg-white"
     >
       組織設定へ
