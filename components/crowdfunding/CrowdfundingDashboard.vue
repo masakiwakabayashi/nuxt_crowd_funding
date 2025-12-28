@@ -110,6 +110,7 @@
         rewardName: delivery.return?.title ?? 'リターン情報なし',
         amount: Number.isNaN(price) ? null : price,
         dueDate: formatIsoDate(dueDateRaw),
+        completionDate: delivery.status === '完了' ? formatIsoDate(delivery.updatedAt) : '',
         status: delivery.status,
         isOverdue,
         isDueSoon,

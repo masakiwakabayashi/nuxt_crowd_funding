@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { ref, watch } from 'vue'
+  import { computed, ref, watch } from 'vue'
   import type { Delivery, DeliveryStatus } from './types'
 
   const props = defineProps<{
@@ -13,11 +13,19 @@
   }>()
 
   const formState = ref<Delivery | null>(null)
+  const completionDateError = ref('')
   const statusOptions: DeliveryStatus[] = ['未着手', '作成中', '完了']
 
   const syncFormState = () => {
-    formState.value = props.delivery ? { ...props.delivery } : null
+    formState.value = props.delivery
+      ? { ...props.delivery, completionDate: props.delivery.completionDate ?? '' }
+      : null
+    completionDateError.value = ''
   }
+
+  const isCompletionRequired = computed(
+    () => formState.value?.status === '完了',
+  )
 
   watch(
     () => props.delivery,
@@ -36,12 +44,31 @@
     },
   )
 
+  watch(
+    () => formState.value?.status,
+    () => {
+      if (!isCompletionRequired.value) {
+        completionDateError.value = ''
+      }
+    },
+  )
+
   const handleClose = () => {
     emit('close')
   }
 
+  const validateCompletionDate = () => {
+    if (isCompletionRequired.value && !formState.value?.completionDate) {
+      completionDateError.value = 'ステータスが完了の場合は納品完了日を入力してください'
+      return false
+    }
+    completionDateError.value = ''
+    return true
+  }
+
   const handleSubmit = () => {
     if (!formState.value) return
+    if (!validateCompletionDate()) return
     emit('save', { ...formState.value })
     emit('close')
   }
@@ -76,51 +103,43 @@
 
           <form class="mt-6 space-y-4" @submit.prevent="handleSubmit">
             <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-              <label class="space-y-1 text-sm">
+              <div class="space-y-1 text-sm">
                 <span class="text-slate-600">支援者名</span>
-                <input
-                  v-model="formState.supporterName"
-                  type="text"
-                  class="w-full rounded-2xl border border-slate-200 px-4 py-2 text-sm focus:border-emerald-400 focus:outline-none"
-                />
-              </label>
-              <label class="space-y-1 text-sm">
+                <p class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm text-slate-700">
+                  {{ formState.supporterName }}
+                </p>
+              </div>
+              <div class="space-y-1 text-sm">
                 <span class="text-slate-600">メールアドレス</span>
-                <input
-                  v-model="formState.supporterEmail"
-                  type="email"
-                  class="w-full rounded-2xl border border-slate-200 px-4 py-2 text-sm focus:border-emerald-400 focus:outline-none"
-                />
-              </label>
+                <p class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm text-slate-700">
+                  {{ formState.supporterEmail || 'メール情報なし' }}
+                </p>
+              </div>
             </div>
 
-            <label class="space-y-1 text-sm">
+            <div class="space-y-1 text-sm">
               <span class="text-slate-600">住所</span>
-              <textarea
-                v-model="formState.supporterAddress"
-                rows="3"
-                class="w-full rounded-2xl border border-slate-200 px-4 py-2 text-sm focus:border-emerald-400 focus:outline-none"
-              />
-            </label>
+              <p class="min-h-[3rem] rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm leading-relaxed text-slate-700 whitespace-pre-line">
+                {{ formState.supporterAddress || '住所情報なし' }}
+              </p>
+            </div>
 
             <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-              <label class="space-y-1 text-sm">
+              <div class="space-y-1 text-sm">
                 <span class="text-slate-600">リターン内容</span>
-                <input
-                  v-model="formState.rewardName"
-                  type="text"
-                  class="w-full rounded-2xl border border-slate-200 px-4 py-2 text-sm focus:border-emerald-400 focus:outline-none"
-                />
-              </label>
-              <label class="space-y-1 text-sm">
+                <p class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm text-slate-700">
+                  {{ formState.rewardName }}
+                </p>
+              </div>
+              <div class="space-y-1 text-sm">
                 <span class="text-slate-600">支援金額</span>
-                <input
-                  v-model.number="formState.amount"
-                  type="number"
-                  min="0"
-                  class="w-full rounded-2xl border border-slate-200 px-4 py-2 text-sm focus:border-emerald-400 focus:outline-none"
-                />
-              </label>
+                <p class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm text-slate-700">
+                  <template v-if="formState.amount != null">
+                    ¥{{ formState.amount.toLocaleString() }}
+                  </template>
+                  <span v-else>—</span>
+                </p>
+              </div>
             </div>
 
             <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -147,6 +166,27 @@
                   </option>
                 </select>
               </label>
+            </div>
+
+            <div v-if="isCompletionRequired" class="space-y-1 text-sm">
+              <span class="text-slate-600">納品完了日</span>
+              <input
+                v-model="formState.completionDate"
+                type="text"
+                :class="[
+                  'w-full rounded-2xl border px-4 py-2 text-sm focus:outline-none',
+                  completionDateError
+                    ? 'border-rose-300 focus:border-rose-400'
+                    : 'border-slate-200 focus:border-emerald-400',
+                ]"
+                required
+              />
+              <p class="text-xs text-slate-400">
+                ステータスが完了の場合のみ入力が必要です
+              </p>
+              <p v-if="completionDateError" class="text-xs text-rose-500">
+                {{ completionDateError }}
+              </p>
             </div>
 
             <div class="flex justify-end gap-3 pt-4">

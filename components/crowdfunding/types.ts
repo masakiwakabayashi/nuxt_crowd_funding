@@ -57,6 +57,7 @@ export type Delivery = {
   rewardName: string
   amount: number | null
   dueDate: string
+  completionDate?: string | null
   status: DeliveryStatus
   isOverdue: boolean
   isDueSoon: boolean
