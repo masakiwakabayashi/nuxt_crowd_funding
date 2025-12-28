@@ -354,6 +354,7 @@
 <script setup lang="ts">
   import { computed, reactive, ref, watch } from 'vue'
   import { useAsyncData } from 'nuxt/app'
+  import { useRoute, useRouter } from 'vue-router'
   import {
     formatDateTime,
     formatDisplayDate,
@@ -395,6 +396,9 @@
     isNew: boolean
   }
 
+  const route = useRoute()
+  const router = useRouter()
+
   const organizationId = 'b52b352c-6dee-4ddc-bf0a-cc95d85f1a11'
 
   const {
@@ -410,27 +414,36 @@
     () => projectsData.value?.projects ?? [],
   )
 
-  const selectedProjectId = ref<string>('')
+  const initialProjectId =
+    typeof route.query.projectId === 'string' ? route.query.projectId : ''
+
+  const selectedProjectId = ref<string>(initialProjectId)
 
   watch(
-    projects,
-    (projectList) => {
-      if (!projectList.length) {
-        selectedProjectId.value = ''
-        return
-      }
-
-      if (!selectedProjectId.value) {
-        selectedProjectId.value = projectList[0].id
-        return
-      }
-
-      if (!projectList.some((project) => project.id === selectedProjectId.value)) {
-        selectedProjectId.value = projectList[0].id
+    () => route.query.projectId,
+    (projectId) => {
+      if (typeof projectId === 'string' && projectId !== selectedProjectId.value) {
+        selectedProjectId.value = projectId
       }
     },
-    { immediate: true },
   )
+
+  watch(selectedProjectId, (projectId) => {
+    const current = typeof route.query.projectId === 'string' ? route.query.projectId : ''
+    const hasCurrentQuery = Boolean(current)
+    if ((projectId && projectId === current) || (!projectId && !hasCurrentQuery)) {
+      return
+    }
+
+    const nextQuery = { ...route.query }
+    if (projectId) {
+      nextQuery.projectId = projectId
+    } else {
+      delete nextQuery.projectId
+    }
+
+    router.replace({ query: nextQuery })
+  })
 
   const selectedProject = computed<OrganizationProject | null>(() =>
     projects.value.find((project) => project.id === selectedProjectId.value) ?? null,

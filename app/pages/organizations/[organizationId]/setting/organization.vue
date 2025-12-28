@@ -62,10 +62,12 @@
         </div>
 
         <div v-if="projects.length" class="mt-6 grid gap-4">
-          <article
+          <NuxtLink
             v-for="project in projects"
             :key="project.id"
-            class="rounded-2xl border border-emerald-50 bg-emerald-50/60 p-5"
+            :to="projectSettingsLink(project.id)"
+            class="block rounded-2xl border border-emerald-50 bg-emerald-50/60 p-5 transition hover:-translate-y-0.5 hover:border-emerald-200 hover:bg-emerald-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300"
+            aria-label="{{ project.title }} の設定を開く"
           >
             <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
               <div>
@@ -105,7 +107,7 @@
                 </dd>
               </div>
             </dl>
-          </article>
+          </NuxtLink>
         </div>
 
         <p
@@ -193,5 +195,8 @@
       currency: 'JPY',
       maximumFractionDigits: 0,
     }).format(value)
+
+  const projectSettingsLink = (projectId: string): string =>
+    `/organizations/${organizationId}/setting/crowdfunding?projectId=${encodeURIComponent(projectId)}`
 
 </script>
