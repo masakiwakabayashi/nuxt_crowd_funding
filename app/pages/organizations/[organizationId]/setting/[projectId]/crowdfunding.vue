@@ -399,15 +399,21 @@
   const route = useRoute()
   const router = useRouter()
 
-  const organizationId = 'b52b352c-6dee-4ddc-bf0a-cc95d85f1a11'
+  const fallbackOrganizationId = 'b52b352c-6dee-4ddc-bf0a-cc95d85f1a11'
+  const organizationId = computed(() => {
+    const param = route.params.organizationId
+    return typeof param === 'string' && param.length > 0
+      ? param
+      : fallbackOrganizationId
+  })
 
   const {
     data: projectsData,
     pending: areProjectsLoading,
     error: projectsError,
   } = await useAsyncData<{ projects: OrganizationProject[] }>(
-    `organization-projects-${organizationId}`,
-    () => $fetch(`/api/organizations/${organizationId}/projects`),
+    `organization-projects-${organizationId.value}`,
+    () => $fetch(`/api/organizations/${organizationId.value}/projects`),
   )
 
   const projects = computed<OrganizationProject[]>(
@@ -415,35 +421,18 @@
   )
 
   const initialProjectId =
-    typeof route.query.projectId === 'string' ? route.query.projectId : ''
+    typeof route.params.projectId === 'string' ? route.params.projectId : ''
 
   const selectedProjectId = ref<string>(initialProjectId)
 
   watch(
-    () => route.query.projectId,
+    () => route.params.projectId,
     (projectId) => {
       if (typeof projectId === 'string' && projectId !== selectedProjectId.value) {
         selectedProjectId.value = projectId
       }
     },
   )
-
-  watch(selectedProjectId, (projectId) => {
-    const current = typeof route.query.projectId === 'string' ? route.query.projectId : ''
-    const hasCurrentQuery = Boolean(current)
-    if ((projectId && projectId === current) || (!projectId && !hasCurrentQuery)) {
-      return
-    }
-
-    const nextQuery = { ...route.query }
-    if (projectId) {
-      nextQuery.projectId = projectId
-    } else {
-      delete nextQuery.projectId
-    }
-
-    router.replace({ query: nextQuery })
-  })
 
   const selectedProject = computed<OrganizationProject | null>(() =>
     projects.value.find((project) => project.id === selectedProjectId.value) ?? null,
@@ -527,10 +516,10 @@
     pending: areRewardsLoading,
     error: rewardsError,
   } = await useAsyncData<{ rewards: RewardRecord[] }>(
-    `organization-rewards-${organizationId}`,
+    `organization-rewards-${organizationId.value}`,
     () =>
       $fetch('/api/crowdfunding/rewards', {
-        query: { organizationId },
+        query: { organizationId: organizationId.value },
       }),
   )
 

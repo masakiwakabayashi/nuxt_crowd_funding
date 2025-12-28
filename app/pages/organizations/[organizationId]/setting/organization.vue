@@ -67,7 +67,7 @@
             :key="project.id"
             :to="projectSettingsLink(project.id)"
             class="block rounded-2xl border border-emerald-50 bg-emerald-50/60 p-5 transition hover:-translate-y-0.5 hover:border-emerald-200 hover:bg-emerald-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300"
-            aria-label="{{ project.title }} の設定を開く"
+            :aria-label="`${project.title} の設定を開く`"
           >
             <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
               <div>
