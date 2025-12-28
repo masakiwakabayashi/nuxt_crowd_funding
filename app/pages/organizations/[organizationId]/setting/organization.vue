@@ -197,6 +197,6 @@
     }).format(value)
 
   const projectSettingsLink = (projectId: string): string =>
-    `/organizations/${organizationId}/setting/crowdfunding?projectId=${encodeURIComponent(projectId)}`
+    `/organizations/${organizationId}/setting/${encodeURIComponent(projectId)}/crowdfunding`
 
 </script>

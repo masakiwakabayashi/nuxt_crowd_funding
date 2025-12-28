@@ -98,6 +98,8 @@ create table deliveries (
   id uuid primary key default gen_random_uuid(),
   return_id uuid not null references returns(id) on delete cascade,
   supporter_id uuid not null references supporters(id) on delete cascade,
+  -- ここのステータスがちょっとおかしい
+  -- 未着手、作成中、作成済み、発送準備中、発送済み
   status text not null check (status in ('未着手', '作成中', '完了')),
   created_at timestamp with time zone default now() not null,
   updated_at timestamp with time zone default now() not null

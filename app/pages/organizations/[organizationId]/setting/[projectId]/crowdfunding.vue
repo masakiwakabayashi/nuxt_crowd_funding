@@ -358,7 +358,7 @@
   import {
     formatDateTime,
     formatDisplayDate,
-  } from './../../../../../shared/utils/date'
+  } from '../../../../../../shared/utils/date'
 
   type OrganizationProject = {
     id: string
