@@ -106,6 +106,7 @@
         projectId,
         supporterName: delivery.supporter?.name ?? '支援者情報なし',
         supporterEmail: delivery.supporter?.email ?? '',
+        supporterAddress: delivery.supporter?.address ?? '',
         rewardName: delivery.return?.title ?? 'リターン情報なし',
         amount: Number.isNaN(price) ? null : price,
         dueDate: formatIsoDate(dueDateRaw),

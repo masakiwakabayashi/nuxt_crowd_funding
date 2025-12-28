@@ -2,6 +2,9 @@
   import { computed } from 'vue'
   import type { Delivery, DeliveryStatus } from './types'
 
+  // 次は納品管理テーブルのUIを修正する
+  // 表示する項目も増やす
+
   const props = defineProps<{
     filterStatus: DeliveryStatus | ''
     deliveries: Delivery[]
@@ -92,7 +95,9 @@
       <table class="min-w-full w-full table-auto text-left text-sm text-slate-700">
         <thead>
           <tr class="border-b border-slate-100 bg-slate-50/80 text-[11px] font-semibold uppercase tracking-[0.25em] text-slate-500">
+            <th class="w-[10%] px-6 py-4 font-semibold"></th>
             <th class="w-[20%] px-6 py-4 font-semibold">支援者</th>
+            <th class="w-[20%] px-6 py-4 font-semibold">住所</th>
             <th class="w-[25%] px-6 py-4 font-semibold">リターン内容</th>
             <th class="w-[12%] px-6 py-4 font-semibold whitespace-nowrap">支援金額</th>
             <th class="w-[18%] px-6 py-4 font-semibold whitespace-nowrap">納品予定日</th>
@@ -102,16 +107,26 @@
         </thead>
         <tbody>
           <tr
-            v-for="delivery in props.deliveries"
+            v-for="(delivery, index) in props.deliveries"
             :key="delivery.id"
             class="border-b border-slate-100 transition-colors last:border-0 hover:bg-emerald-50/40"
           >
+            <td class="w-[10%] px-6 py-5 align-top">
+              <div class="font-mono text-xs font-semibold text-slate-500 break-all">
+                {{ index + 1 }}
+              </div>
+            </td>
             <td class="w-[20%] px-6 py-5">
               <div class="font-semibold text-slate-900">
                 {{ delivery.supporterName }}
               </div>
               <div class="text-xs text-slate-500">
                 {{ delivery.supporterEmail }}
+              </div>
+            </td>
+            <td class="w-[20%] px-6 py-5 text-slate-900">
+              <div class="text-sm leading-relaxed" :class="{ 'text-slate-400': !delivery.supporterAddress }">
+                {{ delivery.supporterAddress }}
               </div>
             </td>
             <td class="w-[25%] px-6 py-5 text-slate-900">
@@ -156,13 +171,13 @@
                 class="rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 px-4 py-2 text-xs font-semibold text-white shadow-[0_8px_16px_rgba(16,185,129,0.35)] transition hover:brightness-110"
                 @click="markAsCompleted(delivery)"
               >
-                納品完了にする
+                編集
               </button>
             </td>
           </tr>
 
           <tr v-if="props.deliveries.length === 0">
-            <td colspan="6" class="px-6 py-8 text-center text-sm text-slate-500">
+            <td colspan="8" class="px-6 py-8 text-center text-sm text-slate-500">
               条件に一致する支援がありません。
             </td>
           </tr>

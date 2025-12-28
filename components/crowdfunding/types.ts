@@ -53,6 +53,7 @@ export type Delivery = {
   projectId: string
   supporterName: string
   supporterEmail: string
+  supporterAddress: string
   rewardName: string
   amount: number | null
   dueDate: string
