@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { computed, ref } from 'vue'
+  import { computed, ref, watch } from 'vue'
   import { useAsyncData } from 'nuxt/app'
   import CrowdfundingProjectOverview from './CrowdfundingProjectOverview.vue'
   import CrowdfundingRewardList from './CrowdfundingRewardList.vue'
@@ -25,6 +25,8 @@
 
   const filterStatus = ref<DeliveryStatus | ''>('')
   const selectedProjectId = ref<string | ''>('')
+  const currentPage = ref(1)
+  const ITEMS_PER_PAGE = 20
 
   // どうやってデータを取得するのが最適だろうか？
 
@@ -56,13 +58,29 @@
     data: deliveriesData,
     pending: isDeliveriesLoading,
     error: deliveriesError,
-  } = await useAsyncData<{ deliveries: DeliveryRecord[] }>(
+    refresh: refreshDeliveries,
+  } = await useAsyncData<{ deliveries: DeliveryRecord[]; total: number; page: number; limit: number }>(
     `deliveries-${props.organizationId}`,
     () =>
       $fetch('/api/deliveries', {
-        query: { organizationId: props.organizationId },
+        query: {
+          organizationId: props.organizationId,
+          page: currentPage.value,
+          limit: ITEMS_PER_PAGE,
+          status: filterStatus.value || undefined,
+          projectId: selectedProjectId.value || undefined,
+        },
       }),
+    { watch: [currentPage] },
   )
+
+  watch([filterStatus, selectedProjectId], () => {
+    if (currentPage.value !== 1) {
+      currentPage.value = 1
+    } else {
+      refreshDeliveries()
+    }
+  })
 
   const evaluateDueState = (dateString: string | null | undefined) => {
     if (!dateString) {
@@ -117,6 +135,19 @@
         overdueDays,
       }
     }),
+  )
+
+  const deliveriesTotal = computed(() => deliveriesData.value?.total ?? 0)
+
+  watch(
+    deliveriesTotal,
+    (total) => {
+      const maxPage = Math.max(1, Math.ceil((total ?? 0) / ITEMS_PER_PAGE))
+      if (currentPage.value > maxPage) {
+        currentPage.value = maxPage
+      }
+    },
+    { immediate: true },
   )
 
   const projectSummaryFallback: ProjectSummary = {
@@ -212,9 +243,12 @@
 
     <CrowdfundingDeliveryTable
       v-model:filter-status="filterStatus"
+      v-model:page="currentPage"
       :deliveries="filteredDeliveries"
       :deliveries-error="deliveriesError"
       :is-deliveries-loading="isDeliveriesLoading"
+      :items-per-page="ITEMS_PER_PAGE"
+      :total-deliveries="deliveriesTotal"
       @update-delivery="updateDelivery"
     />
   </div>

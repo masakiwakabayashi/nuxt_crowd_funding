@@ -45,6 +45,17 @@ export default defineEventHandler(async (event) => {
     })
   }
 
+  const pageParam = Number(query.page ?? '1')
+  const limitParam = Number(query.limit ?? '20')
+  const page = Number.isFinite(pageParam) && pageParam > 0 ? Math.floor(pageParam) : 1
+  const limitRaw = Number.isFinite(limitParam) && limitParam > 0 ? Math.floor(limitParam) : 20
+  const limit = Math.min(limitRaw, 100)
+  const statusFilter = isDeliveryStatus(query.status) ? query.status : null
+  const projectFilter =
+    typeof query.projectId === 'string' && query.projectId.length > 0
+      ? query.projectId
+      : null
+
   const supabase = getSupabaseServerClient()
 
   const { data: projectRows, error: projectError } = await supabase
@@ -59,13 +70,21 @@ export default defineEventHandler(async (event) => {
   const projectIds = (projectRows ?? []).map((project) => project.id)
 
   if (projectIds.length === 0) {
-    return { deliveries: [] }
+    return { deliveries: [], total: 0, page, limit }
+  }
+
+  let targetProjectIds = projectIds
+  if (projectFilter) {
+    targetProjectIds = projectIds.filter((id) => id === projectFilter)
+    if (targetProjectIds.length === 0) {
+      return { deliveries: [], total: 0, page, limit }
+    }
   }
 
   const { data: returnRows, error: returnError } = await supabase
     .from('returns')
     .select('id')
-    .in('project_id', projectIds)
+    .in('project_id', targetProjectIds)
 
   if (returnError) {
     throw createError({ statusCode: 500, statusMessage: returnError.message })
@@ -74,10 +93,13 @@ export default defineEventHandler(async (event) => {
   const returnIds = (returnRows ?? []).map((returnRow) => returnRow.id)
 
   if (returnIds.length === 0) {
-    return { deliveries: [] }
+    return { deliveries: [], total: 0, page, limit }
   }
 
-  const { data, error } = await supabase
+  const rangeStart = (page - 1) * limit
+  const rangeEnd = rangeStart + limit - 1
+
+  let queryBuilder = supabase
     .from('deliveries')
     .select(
       `
@@ -104,9 +126,17 @@ export default defineEventHandler(async (event) => {
           pledged_amount
         )
       `,
+      { count: 'exact' },
     )
     .in('return_id', returnIds)
+
+  if (statusFilter) {
+    queryBuilder = queryBuilder.eq('status', statusFilter)
+  }
+
+  const { data, error, count } = await queryBuilder
     .order('created_at', { ascending: false })
+    .range(rangeStart, rangeEnd)
     .returns<DeliveryRecord[]>()
 
   if (error) {
@@ -142,5 +172,15 @@ export default defineEventHandler(async (event) => {
       : null,
   }))
 
-  return { deliveries }
+  return {
+    deliveries,
+    total: count ?? 0,
+    page,
+    limit,
+  }
 })
+
+const deliveryStatuses: DeliveryStatus[] = ['未着手', '作成中', '完了']
+
+const isDeliveryStatus = (value: unknown): value is DeliveryStatus =>
+  typeof value === 'string' && deliveryStatuses.includes(value as DeliveryStatus)

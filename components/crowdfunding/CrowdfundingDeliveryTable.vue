@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { computed, ref, watch } from 'vue'
+  import { computed, ref } from 'vue'
   import EditDeliveryModal from './EditDeliveryModal.vue'
   import type { Delivery, DeliveryStatus } from './types'
 
@@ -8,11 +8,15 @@
     deliveries: Delivery[]
     deliveriesError: Error | null | undefined
     isDeliveriesLoading: boolean
+    page: number
+    itemsPerPage: number
+    totalDeliveries: number
   }>()
 
   const emit = defineEmits<{
     (e: 'update:filterStatus', value: DeliveryStatus | ''): void
     (e: 'update-delivery', delivery: Delivery): void
+    (e: 'update:page', value: number): void
   }>()
 
   const filterStatusModel = computed({
@@ -20,32 +24,25 @@
     set: (value) => emit('update:filterStatus', value as DeliveryStatus | ''),
   })
 
-  const ITEMS_PER_PAGE = 20
-
   const isEditModalOpen = ref(false)
   const selectedDelivery = ref<Delivery | null>(null)
-  const currentPage = ref(1)
+  const paginatedDeliveries = computed(() => props.deliveries)
 
   const totalPages = computed(() => {
-    if (props.deliveries.length === 0) {
+    if (props.totalDeliveries === 0) {
       return 1
     }
 
-    return Math.ceil(props.deliveries.length / ITEMS_PER_PAGE)
-  })
-
-  const paginatedDeliveries = computed(() => {
-    const start = (currentPage.value - 1) * ITEMS_PER_PAGE
-    return props.deliveries.slice(start, start + ITEMS_PER_PAGE)
+    return Math.max(1, Math.ceil(props.totalDeliveries / props.itemsPerPage))
   })
 
   const currentRange = computed(() => {
-    if (props.deliveries.length === 0) {
+    if (props.totalDeliveries === 0 || props.deliveries.length === 0) {
       return { start: 0, end: 0 }
     }
 
-    const start = (currentPage.value - 1) * ITEMS_PER_PAGE + 1
-    const end = Math.min(start + ITEMS_PER_PAGE - 1, props.deliveries.length)
+    const start = (props.page - 1) * props.itemsPerPage + 1
+    const end = start + props.deliveries.length - 1
     return { start, end }
   })
 
@@ -87,33 +84,16 @@
   }
 
   const goToPreviousPage = () => {
-    if (currentPage.value > 1) {
-      currentPage.value -= 1
+    if (props.page > 1) {
+      emit('update:page', props.page - 1)
     }
   }
 
   const goToNextPage = () => {
-    if (currentPage.value < totalPages.value) {
-      currentPage.value += 1
+    if (props.page < totalPages.value) {
+      emit('update:page', props.page + 1)
     }
   }
-
-  watch(
-    () => props.deliveries.length,
-    () => {
-      const maxPage = Math.max(1, Math.ceil(props.deliveries.length / ITEMS_PER_PAGE))
-      if (currentPage.value > maxPage) {
-        currentPage.value = maxPage
-      }
-    }
-  )
-
-  watch(
-    () => props.filterStatus,
-    () => {
-      currentPage.value = 1
-    }
-  )
 </script>
 
 <template>
@@ -178,7 +158,7 @@
           >
             <td class="w-[10%] px-6 py-5 align-top">
               <div class="font-mono text-xs font-semibold text-slate-500 break-all">
-                {{ (currentPage - 1) * ITEMS_PER_PAGE + index + 1 }}
+                {{ (props.page - 1) * props.itemsPerPage + index + 1 }}
               </div>
             </td>
             <td class="w-[20%] px-6 py-5">
@@ -255,23 +235,23 @@
       class="mt-4 flex flex-col gap-3 text-sm text-slate-600 sm:flex-row sm:items-center sm:justify-between"
     >
       <p>
-        全{{ props.deliveries.length }}件中
+        全{{ props.totalDeliveries }}件中
         {{ currentRange.start }}〜{{ currentRange.end }}件を表示
       </p>
       <div class="flex items-center gap-3">
         <button
           class="rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
-          :disabled="currentPage === 1"
+          :disabled="props.page === 1"
           @click="goToPreviousPage"
         >
           前へ
         </button>
         <span class="text-xs font-semibold text-slate-500">
-          {{ currentPage }} / {{ totalPages }}
+          {{ props.page }} / {{ totalPages }}
         </span>
         <button
           class="rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
-          :disabled="currentPage === totalPages"
+          :disabled="props.page === totalPages"
           @click="goToNextPage"
         >
           次へ
