@@ -2,12 +2,12 @@
   import { computed, ref, watch } from 'vue'
   import { useAsyncData } from 'nuxt/app'
   import { useRoute } from 'vue-router'
-  import { formatDisplayDate } from '~/shared/utils/date'
+  import { formatDisplayDate } from '../../../shared/utils/date'
   import type {
     EditableReward,
     ProjectStats,
     RewardRecord,
-  } from '~/shared/types/Crowdfunding'
+  } from '../../../shared/types/Crowdfunding'
 
   const props = defineProps<{
     selectedProjectId: string

@@ -1,22 +1,3 @@
-
-<!-- コンポーネントをわける -->
-
-
-<template>
-  <main class="flex flex-1 flex-col gap-8 pb-16">
-    <ProjectSetting
-      :selected-project-id="selectedProjectId"
-      :project-stats="projectStats"
-      @update:selected-project-id="handleProjectSelection"
-    />
-
-    <ReturnSetting
-      :selected-project-id="selectedProjectId"
-      @update:stats="handleStatsUpdate"
-    />
-  </main>
-</template>
-
 <script setup lang="ts">
   import { ref, watch } from 'vue'
   import { useRoute } from 'vue-router'
@@ -49,3 +30,18 @@
     projectStats.value = stats
   }
 </script>
+
+<template>
+  <main class="flex flex-1 flex-col gap-8 pb-16">
+    <ProjectSetting
+      :selected-project-id="selectedProjectId"
+      :project-stats="projectStats"
+      @update:selected-project-id="handleProjectSelection"
+    />
+
+    <ReturnSetting
+      :selected-project-id="selectedProjectId"
+      @update:stats="handleStatsUpdate"
+    />
+  </main>
+</template>
