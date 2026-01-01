@@ -9,7 +9,11 @@
             Material Workspace
           </p>
           <h1 class="text-4xl font-bold text-slate-900">
-            Nuxt Crowd Funding
+            <NuxtLink
+              to="/"
+            >
+              Nuxt Crowd Funding
+            </NuxtLink>
           </h1>
           <p class="text-sm text-slate-500">
             クラウドファンディング運用ダッシュボード
