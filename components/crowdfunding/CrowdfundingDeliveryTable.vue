@@ -1,10 +1,7 @@
 <script setup lang="ts">
-  import { computed, ref } from 'vue'
+  import { computed, ref, watch } from 'vue'
   import EditDeliveryModal from './EditDeliveryModal.vue'
   import type { Delivery, DeliveryStatus } from './types'
-
-  // 次は納品管理テーブルのUIを修正する
-  // 表示する項目も増やす
 
   const props = defineProps<{
     filterStatus: DeliveryStatus | ''
@@ -23,8 +20,34 @@
     set: (value) => emit('update:filterStatus', value as DeliveryStatus | ''),
   })
 
+  const ITEMS_PER_PAGE = 20
+
   const isEditModalOpen = ref(false)
   const selectedDelivery = ref<Delivery | null>(null)
+  const currentPage = ref(1)
+
+  const totalPages = computed(() => {
+    if (props.deliveries.length === 0) {
+      return 1
+    }
+
+    return Math.ceil(props.deliveries.length / ITEMS_PER_PAGE)
+  })
+
+  const paginatedDeliveries = computed(() => {
+    const start = (currentPage.value - 1) * ITEMS_PER_PAGE
+    return props.deliveries.slice(start, start + ITEMS_PER_PAGE)
+  })
+
+  const currentRange = computed(() => {
+    if (props.deliveries.length === 0) {
+      return { start: 0, end: 0 }
+    }
+
+    const start = (currentPage.value - 1) * ITEMS_PER_PAGE + 1
+    const end = Math.min(start + ITEMS_PER_PAGE - 1, props.deliveries.length)
+    return { start, end }
+  })
 
   const statusLabel = (status: DeliveryStatus | '') => {
     switch (status) {
@@ -62,6 +85,35 @@
   const saveDelivery = (delivery: Delivery) => {
     emit('update-delivery', delivery)
   }
+
+  const goToPreviousPage = () => {
+    if (currentPage.value > 1) {
+      currentPage.value -= 1
+    }
+  }
+
+  const goToNextPage = () => {
+    if (currentPage.value < totalPages.value) {
+      currentPage.value += 1
+    }
+  }
+
+  watch(
+    () => props.deliveries.length,
+    () => {
+      const maxPage = Math.max(1, Math.ceil(props.deliveries.length / ITEMS_PER_PAGE))
+      if (currentPage.value > maxPage) {
+        currentPage.value = maxPage
+      }
+    }
+  )
+
+  watch(
+    () => props.filterStatus,
+    () => {
+      currentPage.value = 1
+    }
+  )
 </script>
 
 <template>
@@ -120,13 +172,13 @@
         </thead>
         <tbody>
           <tr
-            v-for="(delivery, index) in props.deliveries"
+            v-for="(delivery, index) in paginatedDeliveries"
             :key="delivery.id"
             class="border-b border-slate-100 transition-colors last:border-0 hover:bg-emerald-50/40"
           >
             <td class="w-[10%] px-6 py-5 align-top">
               <div class="font-mono text-xs font-semibold text-slate-500 break-all">
-                {{ index + 1 }}
+                {{ (currentPage - 1) * ITEMS_PER_PAGE + index + 1 }}
               </div>
             </td>
             <td class="w-[20%] px-6 py-5">
@@ -196,6 +248,35 @@
           </tr>
         </tbody>
       </table>
+    </div>
+
+    <div
+      v-if="props.deliveries.length > 0"
+      class="mt-4 flex flex-col gap-3 text-sm text-slate-600 sm:flex-row sm:items-center sm:justify-between"
+    >
+      <p>
+        全{{ props.deliveries.length }}件中
+        {{ currentRange.start }}〜{{ currentRange.end }}件を表示
+      </p>
+      <div class="flex items-center gap-3">
+        <button
+          class="rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
+          :disabled="currentPage === 1"
+          @click="goToPreviousPage"
+        >
+          前へ
+        </button>
+        <span class="text-xs font-semibold text-slate-500">
+          {{ currentPage }} / {{ totalPages }}
+        </span>
+        <button
+          class="rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
+          :disabled="currentPage === totalPages"
+          @click="goToNextPage"
+        >
+          次へ
+        </button>
+      </div>
     </div>
 
     <EditDeliveryModal
