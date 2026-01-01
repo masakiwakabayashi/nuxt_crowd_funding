@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { onMounted, ref } from 'vue'
   import { useRouter } from 'vue-router'
-  import { getSupabaseBrowserClient } from '../../shared/utils/supabaseBrowserClient'
+  import { getSupabaseBrowserClient } from '@/shared/utils/supabaseBrowserClient'
 
   // ログインページはヘッダーがないレイアウトを使う
   definePageMeta({ layout: 'blank' })

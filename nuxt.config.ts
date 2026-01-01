@@ -10,6 +10,7 @@ export default defineNuxtConfig({
   alias: {
     "@": projectRoot,
   },
+  modules: ['@pinia/nuxt'],
   css: ['~/assets/css/main.css'],
   vite: {
     plugins: [
