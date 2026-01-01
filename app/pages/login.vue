@@ -1,16 +1,59 @@
 <script setup lang="ts">
-  import { ref } from 'vue';
+  import { onMounted, ref } from 'vue'
+  import { useRouter } from 'vue-router'
+  import { getSupabaseBrowserClient } from '../../shared/utils/supabaseBrowserClient'
 
   // ログインページはヘッダーがないレイアウトを使う
-  definePageMeta({ layout: 'blank' });
+  definePageMeta({ layout: 'blank' })
 
-  const email = ref('');
-  const password = ref('');
+  const email = ref('')
+  const password = ref('')
+  const errorMessage = ref('')
+  const isSubmitting = ref(false)
 
-  function handleLogin() {
-    // ログイン処理をここに実装してください
-    console.log('ログイン試行:', email.value, password.value);
+  const router = useRouter()
+  const supabase = process.client ? getSupabaseBrowserClient() : null
+
+  const redirectToDashboard = async () => {
+    await router.replace('/')
   }
+
+  const handleLogin = async () => {
+    if (!supabase || isSubmitting.value) {
+      return
+    }
+
+    errorMessage.value = ''
+    isSubmitting.value = true
+
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email: email.value,
+        password: password.value,
+      })
+
+      if (error) {
+        errorMessage.value =
+          error.message || 'ログインに失敗しました。入力内容を確認してください。'
+        return
+      }
+
+      await redirectToDashboard()
+    } catch (err) {
+      errorMessage.value = '予期せぬエラーが発生しました。時間をおいて再度お試しください。'
+      console.error(err)
+    } finally {
+      isSubmitting.value = false
+    }
+  }
+
+  onMounted(async () => {
+    if (!supabase) return
+    const { data } = await supabase.auth.getSession()
+    if (data.session) {
+      await redirectToDashboard()
+    }
+  })
 </script>
 
 <template>
@@ -43,11 +86,13 @@
               required
             />
           </label>
+          <p v-if="errorMessage" class="text-sm text-rose-500">{{ errorMessage }}</p>
           <button
             type="submit"
-            class="inline-flex w-full items-center justify-center rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 px-6 py-3 text-base font-semibold text-white shadow-lg shadow-emerald-200/60 transition hover:brightness-110"
+            class="inline-flex w-full items-center justify-center rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 px-6 py-3 text-base font-semibold text-white shadow-lg shadow-emerald-200/60 transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
+            :disabled="isSubmitting"
           >
-            ログイン
+            {{ isSubmitting ? '認証中...' : 'ログイン' }}
           </button>
         </form>
       </section>

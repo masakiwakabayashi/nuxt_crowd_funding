@@ -1,5 +1,5 @@
 import { createError, getQuery } from 'h3'
-import { getSupabaseServerClient } from '../../../shared/utils/supabaseClient'
+import { getSupabaseServerClient } from '../../../shared/utils/supabaseServerClient'
 
 type ReturnRow = {
   id: string
