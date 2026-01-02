@@ -1,3 +1,5 @@
+import type { Supporter } from "./Supporter";
+
 export type DeliveryStatus = '未着手' | '作成中' | '完了';
 
 export interface Delivery {
@@ -8,4 +10,5 @@ export interface Delivery {
   status: DeliveryStatus;
   created_at: string;
   updated_at: string;
+  supporter?: Supporter;
 }

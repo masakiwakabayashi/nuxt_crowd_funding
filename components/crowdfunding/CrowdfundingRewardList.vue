@@ -1,23 +1,9 @@
 <script setup lang="ts">
-  import type { Reward } from './types'
+  import type { Reward } from '../../shared/types/Rewards'
 
   const props = defineProps<{
     rewards: Reward[]
-    totalRewardSales: number
-    rewardsError: Error | null | undefined
-    areRewardsLoading: boolean
   }>()
-
-  const rewardSales = (reward: Reward) => reward.price * reward.supporters
-
-  const rewardRemaining = (reward: Reward) =>
-    reward.limit ? Math.max(reward.limit - reward.supporters, 0) : 0
-
-  const rewardCapacityRate = (reward: Reward) => {
-    if (!reward.limit) return 100
-    if (reward.limit === 0) return 0
-    return Math.min(100, Math.round((reward.supporters / reward.limit) * 100))
-  }
 </script>
 
 <template>
@@ -38,24 +24,12 @@
           リターン売上合計
         </p>
         <p class="text-2xl font-semibold text-slate-900">
-          ¥{{ props.totalRewardSales.toLocaleString() }}
+          <!-- リターン別の売り上げを計算する関数をつくる -->
+          ¥{{ 200000 }}
         </p>
       </div>
     </div>
-
-    <div
-      v-if="props.rewardsError"
-      class="rounded-2xl border border-rose-100 bg-rose-50 px-4 py-3 text-sm text-rose-700"
-    >
-      Supabaseのリターン情報取得に失敗しました：{{ props.rewardsError?.message }}
-    </div>
-    <div
-      v-else-if="props.areRewardsLoading"
-      class="flex flex-1 items-center justify-center rounded-2xl border border-dashed border-slate-200 px-4 py-10 text-sm text-slate-500"
-    >
-      Supabaseからリターン情報を取得しています…
-    </div>
-    <div v-else class="grid flex-1 gap-6 md:grid-cols-2">
+    <div class="grid flex-1 gap-6 md:grid-cols-2">
       <article
         v-for="reward in props.rewards"
         :key="reward.id"
@@ -70,7 +44,7 @@
               {{ reward.title }}
             </h3>
             <p class="mt-2 text-sm leading-relaxed text-slate-600">
-              {{ reward.description }}
+              {{ reward.detail }}
             </p>
           </div>
           <div class="rounded-2xl bg-slate-50 px-4 py-2 text-right shadow-inner shadow-white">
@@ -87,7 +61,8 @@
               支援者
             </dt>
             <dd class="mt-1 text-base font-semibold text-slate-900">
-              {{ reward.supporters }}人
+              <!-- リターンごとの支援者数を計算する関数をつくる -->
+              {{ 30 }}人
             </dd>
           </dl>
           <dl class="rounded-2xl bg-slate-50/70 px-4 py-3">
@@ -95,20 +70,22 @@
               売り上げ
             </dt>
             <dd class="mt-1 text-base font-semibold text-emerald-600">
-              ¥{{ rewardSales(reward).toLocaleString() }}
+              ¥{{ 12000 }}
             </dd>
           </dl>
         </div>
 
         <div class="mt-5 flex flex-wrap items-center gap-2 text-xs font-semibold text-slate-500">
           <span class="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-slate-600">
-            カテゴリ: {{ reward.category }}
+            <!-- 型定義を修正してリワードにカテゴリーを入れる -->
+            カテゴリ: {{ reward.category_id }}
           </span>
           <span
-            v-if="reward.limit"
+            v-if="reward.max_quantity"
             class="rounded-full border border-emerald-200 bg-emerald-50/80 px-3 py-1 text-emerald-700"
           >
-            残り {{ rewardRemaining(reward) }} / 定員 {{ reward.limit }}
+          <!-- 特定のリターンの残りの個数を計算する関数をつくる -->
+            残り {{ 5 }} / 定員 {{ reward.max_quantity }}
           </span>
           <span
             v-else
@@ -121,7 +98,7 @@
         <div class="mt-5 h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
           <div
             class="h-full rounded-full bg-gradient-to-r from-emerald-400 via-teal-400 to-sky-400 shadow-[0_1px_6px_rgba(16,185,129,0.45)]"
-            :style="{ width: rewardCapacityRate(reward) + '%' }"
+            :style="{ width: 10 + '%' }"
           >
           </div>
         </div>

@@ -1,47 +1,38 @@
 <script setup lang="ts">
   import { computed, ref } from 'vue'
   import EditDeliveryModal from './EditDeliveryModal.vue'
-  import type { Delivery, DeliveryStatus } from './types'
+  import type { Delivery, DeliveryStatus } from '../../shared/types/Delivery'
 
   const props = defineProps<{
-    filterStatus: DeliveryStatus | ''
     deliveries: Delivery[]
-    deliveriesError: Error | null | undefined
-    isDeliveriesLoading: boolean
-    page: number
+    currentPage: number
     itemsPerPage: number
-    totalDeliveries: number
   }>()
 
   const emit = defineEmits<{
-    (e: 'update:filterStatus', value: DeliveryStatus | ''): void
     (e: 'update-delivery', delivery: Delivery): void
     (e: 'update:page', value: number): void
   }>()
-
-  const filterStatusModel = computed({
-    get: () => props.filterStatus,
-    set: (value) => emit('update:filterStatus', value as DeliveryStatus | ''),
-  })
 
   const isEditModalOpen = ref(false)
   const selectedDelivery = ref<Delivery | null>(null)
   const paginatedDeliveries = computed(() => props.deliveries)
 
   const totalPages = computed(() => {
-    if (props.totalDeliveries === 0) {
-      return 1
-    }
+    return 1
+    // if (props.totalDeliveries === 0) {
+    //   return 1
+    // }
 
-    return Math.max(1, Math.ceil(props.totalDeliveries / props.itemsPerPage))
+    // return Math.max(1, Math.ceil(props.totalDeliveries / props.itemsPerPage))
   })
 
   const currentRange = computed(() => {
-    if (props.totalDeliveries === 0 || props.deliveries.length === 0) {
+    if (props.deliveries.length === 0) {
       return { start: 0, end: 0 }
     }
 
-    const start = (props.page - 1) * props.itemsPerPage + 1
+    const start = (props.currentPage - 1) * props.itemsPerPage + 1
     const end = start + props.deliveries.length - 1
     return { start, end }
   })
@@ -84,14 +75,14 @@
   }
 
   const goToPreviousPage = () => {
-    if (props.page > 1) {
-      emit('update:page', props.page - 1)
+    if (props.currentPage > 1) {
+      emit('update:page', props.currentPage - 1)
     }
   }
 
   const goToNextPage = () => {
-    if (props.page < totalPages.value) {
-      emit('update:page', props.page + 1)
+    if (props.currentPage < totalPages.value) {
+      emit('update:page', props.currentPage + 1)
     }
   }
 </script>
@@ -108,33 +99,9 @@
           <span class="inline-flex h-2 w-2 rounded-full bg-amber-400" /> 期限間近
         </div>
       </div>
-      <div class="flex flex-wrap items-center gap-3">
-        <select
-          v-model="filterStatusModel"
-          class="rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm focus:border-emerald-400 focus:outline-none"
-        >
-          <option value="">すべてのステータス</option>
-          <option value="未着手">未着手</option>
-          <option value="作成中">作成中</option>
-          <option value="完了">完了</option>
-        </select>
-      </div>
     </div>
 
     <div
-      v-if="props.deliveriesError"
-      class="rounded-2xl border border-rose-100 bg-rose-50 px-4 py-3 text-sm text-rose-700"
-    >
-      Supabaseのデータ取得に失敗しました：{{ props.deliveriesError?.message }}
-    </div>
-    <div
-      v-else-if="props.isDeliveriesLoading"
-      class="flex items-center justify-center rounded-2xl border border-dashed border-slate-200 px-4 py-10 text-sm text-slate-500"
-    >
-      Supabaseからデータを取得しています…
-    </div>
-    <div
-      v-else
       class="overflow-x-auto rounded-3xl bg-white shadow-[0_12px_32px_rgba(15,23,42,0.08)] ring-1 ring-slate-100"
     >
       <table class="min-w-full w-full table-auto text-left text-sm text-slate-700">
@@ -158,33 +125,35 @@
           >
             <td class="w-[10%] px-6 py-5 align-top">
               <div class="font-mono text-xs font-semibold text-slate-500 break-all">
-                {{ (props.page - 1) * props.itemsPerPage + index + 1 }}
+                {{ (props.currentPage - 1) * props.itemsPerPage + index + 1 }}
               </div>
             </td>
             <td class="w-[20%] px-6 py-5">
               <div class="font-semibold text-slate-900">
-                {{ delivery.supporterName }}
+                {{ delivery.supporter?.name }}
               </div>
               <div class="text-xs text-slate-500">
-                {{ delivery.supporterEmail }}
+                {{ delivery.supporter?.email }}
               </div>
             </td>
             <td class="w-[20%] px-6 py-5 text-slate-900">
-              <div class="text-sm leading-relaxed" :class="{ 'text-slate-400': !delivery.supporterAddress }">
-                {{ delivery.supporterAddress || '住所情報なし' }}
+              <div class="text-sm leading-relaxed" :class="{ 'text-slate-400': !delivery.supporter?.address }">
+                {{ delivery.supporter?.address }}
               </div>
             </td>
             <td class="w-[25%] px-6 py-5 text-slate-900">
-              {{ delivery.rewardName }}
+              <!-- リターンの一覧はすでに取得されているので、そこからidで名前を取得する -->
+              {{ delivery.reward_id }}
             </td>
             <td class="w-[12%] px-6 py-5 whitespace-nowrap">
-              <template v-if="delivery.amount != null">
+              <!-- <template v-if="delivery.amount != null">
                 ¥{{ delivery.amount.toLocaleString() }}
               </template>
-              <span v-else class="text-slate-400">—</span>
+              <span v-else class="text-slate-400">—</span> -->
             </td>
+            <!-- 納品テーブルに配送期限を入れる -->
             <td class="w-[18%] px-6 py-5 whitespace-nowrap">
-              <div class="flex items-center gap-2">
+              <!-- <div class="flex items-center gap-2">
                 <span
                   v-if="delivery.isOverdue"
                   class="inline-flex h-2 w-2 rounded-full bg-rose-500"
@@ -201,7 +170,7 @@
               </div>
               <div v-if="delivery.isOverdue" class="text-xs text-rose-600">
                 期限超過（{{ delivery.overdueDays }}日）
-              </div>
+              </div> -->
             </td>
             <td class="w-[12%] px-6 py-5">
               <span
@@ -235,23 +204,23 @@
       class="mt-4 flex flex-col gap-3 text-sm text-slate-600 sm:flex-row sm:items-center sm:justify-between"
     >
       <p>
-        全{{ props.totalDeliveries }}件中
+        全{{ props.deliveries.length }}件中
         {{ currentRange.start }}〜{{ currentRange.end }}件を表示
       </p>
       <div class="flex items-center gap-3">
         <button
           class="rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
-          :disabled="props.page === 1"
+          :disabled="props.currentPage === 1"
           @click="goToPreviousPage"
         >
           前へ
         </button>
         <span class="text-xs font-semibold text-slate-500">
-          {{ props.page }} / {{ totalPages }}
+          {{ props.currentPage }} / {{ totalPages }}
         </span>
         <button
           class="rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
-          :disabled="props.page === totalPages"
+          :disabled="props.currentPage === totalPages"
           @click="goToNextPage"
         >
           次へ

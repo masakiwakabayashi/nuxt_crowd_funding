@@ -2,6 +2,8 @@ import { createError, getQuery } from 'h3'
 import { getSupabaseServerClient } from '@/shared/utils/supabaseServerClient'
 import type { Project } from '@/shared/types/Project'
 
+// もう少しわかりやすい感じに修正する
+
 export default defineEventHandler(async (event) => {
   const query = getQuery(event)
   const projectId = query.projectId
@@ -21,7 +23,10 @@ export default defineEventHandler(async (event) => {
       `
         *,
         rewards:rewards(*),
-        deliveries:deliveries(*)
+        deliveries:deliveries(
+          *,
+          supporter:supporters(*)
+        )
       `,
     )
     .eq('id', projectId)
