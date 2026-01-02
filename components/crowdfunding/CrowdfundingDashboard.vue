@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { computed, ref, watch } from 'vue'
+  import { ref, watchEffect } from 'vue'
   import { useAsyncData } from 'nuxt/app'
   import CrowdfundingProjectOverview from './CrowdfundingProjectOverview.vue'
   import CrowdfundingRewardList from './CrowdfundingRewardList.vue'
@@ -14,9 +14,6 @@
   import type { Reward } from '../../shared/types/Rewards'
   import type { Delivery } from '../../shared/types/Delivery'
 
-  // 次は子コンポーネントに値を渡すところを修正
-
-
   const props = defineProps<{
     organizationId: string,
     projectId: string,
@@ -26,17 +23,17 @@
   const ITEMS_PER_PAGE = 20
 
   // これは使うやつ
-  const project = ref<Project>();
-  const deliveries = ref<Delivery[]>([]);
-  const rewards = ref<Reward[]>([]);
+  const project = ref<Project>()
+  const deliveries = ref<Delivery[]>([])
+  const rewards = ref<Reward[]>([])
 
 
   // 表示するデータは全てこれに置き換える
   const {
-    data: data,
+    data,
     pending: isLoading,
-    error: error,
-  } = await useAsyncData<{ project: Project }>(
+    error,
+  } = await useAsyncData<Project>(
     `project-${props.organizationId}`,
     () =>
       // あとでページネーションを考慮した取得の仕方に変える
@@ -45,9 +42,14 @@
       }),
   )
 
-  // // データは取得できている
-  // console.log(data.value?.project.deliveries);
+  watchEffect(() => {
+    const fetchedProject = data.value
+    if (!fetchedProject) return
 
+    project.value = fetchedProject
+    deliveries.value = fetchedProject.deliveries ?? []
+    rewards.value = fetchedProject.rewards ?? []
+  })
 
   // この関数はモーダルに移行する、中身もちゃんと書く
   const updateDelivery = (delivery: Delivery) => {
@@ -66,13 +68,13 @@
       />
 
       <CrowdfundingRewardList
-        v-if="rewards"
+        v-if="rewards.length > 0"
         :rewards="rewards"
       />
     </div>
 
     <CrowdfundingDeliveryTable
-      v-if="deliveries"
+      v-if="deliveries.length > 0"
       :currentPage="currentPage"
       :deliveries="deliveries"
       :itemsPerPage="ITEMS_PER_PAGE"
