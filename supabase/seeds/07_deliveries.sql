@@ -237,8 +237,17 @@ with delivery_seed(id, reward_id, supporter_id, status) as (
       '未着手'
     )
 )
-insert into deliveries (id, reward_id, supporter_id, status, created_at, updated_at)
-select id, reward_id, supporter_id, status, now(), now()
-from delivery_seed;
+insert into deliveries (id, project_id, reward_id, supporter_id, status, created_at, updated_at)
+select
+  ds.id,
+  r.project_id,
+  ds.reward_id,
+  ds.supporter_id,
+  ds.status,
+  now(),
+  now()
+from delivery_seed ds
+join rewards r
+  on r.id = ds.reward_id;
 
 commit;

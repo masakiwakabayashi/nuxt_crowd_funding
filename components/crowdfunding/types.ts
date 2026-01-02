@@ -25,6 +25,7 @@ export type DeliveryStatus = '未着手' | '作成中' | '完了'
 
 export type DeliveryRecord = {
   id: string
+  projectId: string
   status: DeliveryStatus
   createdAt: string
   updatedAt: string

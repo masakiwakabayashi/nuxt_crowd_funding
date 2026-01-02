@@ -59,6 +59,7 @@ export default defineEventHandler(async (event) => {
 
     const deliveries = (rewardRow.deliveries ?? []).map((deliveryRow) => ({
       id: deliveryRow.id,
+      project_id: deliveryRow.project_id,
       reward_id: deliveryRow.reward_id,
       supporter_id: deliveryRow.supporter_id,
       status: deliveryRow.status,

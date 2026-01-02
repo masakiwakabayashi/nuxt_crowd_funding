@@ -2,6 +2,7 @@ export type DeliveryStatus = '未着手' | '作成中' | '完了';
 
 export interface Delivery {
   id: string;
+  project_id: string;
   reward_id: string;
   supporter_id: string;
   status: DeliveryStatus;
@@ -11,6 +12,7 @@ export interface Delivery {
 
 export type DeliveryInsert = {
   id?: string;
+  project_id: string;
   reward_id: string;
   supporter_id: string;
   status: DeliveryStatus;

@@ -96,6 +96,7 @@ create index idx_supporters_project_id on supporters(project_id);
 -------------------------------------------------------------------------------
 create table deliveries (
   id uuid primary key default gen_random_uuid(),
+  project_id uuid not null references projects(id) on delete cascade,
   reward_id uuid not null references rewards(id) on delete cascade,
   supporter_id uuid not null references supporters(id) on delete cascade,
   -- ここのステータスがちょっとおかしい
@@ -105,5 +106,6 @@ create table deliveries (
   updated_at timestamp with time zone default now() not null
 );
 
+create index idx_deliveries_project_id on deliveries(project_id);
 create index idx_deliveries_reward_id on deliveries(reward_id);
 create index idx_deliveries_supporter_id on deliveries(supporter_id);

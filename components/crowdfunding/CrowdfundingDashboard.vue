@@ -127,8 +127,7 @@
 
   const deliveries = computed<Delivery[]>(() =>
     (deliveriesData.value?.deliveries ?? []).map((delivery) => {
-      const projectId =
-        delivery.reward?.projectId ?? delivery.supporter?.projectId ?? ''
+      const projectId = delivery.projectId
       const price = Number(delivery.reward?.price ?? 0)
       const dueDateRaw =
         delivery.reward?.estimatedDelivery ?? delivery.updatedAt ?? delivery.createdAt

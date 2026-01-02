@@ -424,12 +424,10 @@ for select
 using (
   exists (
     select 1
-    from rewards r
-    join projects p
-      on p.id = r.project_id
+    from projects p
     join organization_members om
       on om.organization_id = p.organization_id
-    where r.id = deliveries.reward_id
+    where p.id = deliveries.project_id
       and om.user_id = auth.uid()
   )
 );
@@ -441,12 +439,10 @@ for insert
 with check (
   exists (
     select 1
-    from rewards r
-    join projects p
-      on p.id = r.project_id
+    from projects p
     join organization_members om
       on om.organization_id = p.organization_id
-    where r.id = deliveries.reward_id
+    where p.id = deliveries.project_id
       and om.user_id = auth.uid()
       and om.role in ('admin', 'staff')
   )
@@ -458,12 +454,10 @@ for update
 using (
   exists (
     select 1
-    from rewards r
-    join projects p
-      on p.id = r.project_id
+    from projects p
     join organization_members om
       on om.organization_id = p.organization_id
-    where r.id = deliveries.reward_id
+    where p.id = deliveries.project_id
       and om.user_id = auth.uid()
       and om.role in ('admin', 'staff')
   )
@@ -471,12 +465,10 @@ using (
 with check (
   exists (
     select 1
-    from rewards r
-    join projects p
-      on p.id = r.project_id
+    from projects p
     join organization_members om
       on om.organization_id = p.organization_id
-    where r.id = deliveries.reward_id
+    where p.id = deliveries.project_id
       and om.user_id = auth.uid()
       and om.role in ('admin', 'staff')
   )
@@ -488,12 +480,10 @@ for delete
 using (
   exists (
     select 1
-    from rewards r
-    join projects p
-      on p.id = r.project_id
+    from projects p
     join organization_members om
       on om.organization_id = p.organization_id
-    where r.id = deliveries.reward_id
+    where p.id = deliveries.project_id
       and om.user_id = auth.uid()
       and om.role in ('admin', 'staff')
   )

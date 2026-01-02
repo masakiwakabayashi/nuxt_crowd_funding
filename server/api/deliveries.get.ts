@@ -7,6 +7,7 @@ type DeliveryStatus = '未着手' | '作成中' | '完了'
 
 type DeliveryRecord = {
   id: string
+  project_id: string
   status: DeliveryStatus
   created_at: string
   updated_at: string
@@ -81,21 +82,6 @@ export default defineEventHandler(async (event) => {
     }
   }
 
-  const { data: rewardRows, error: rewardError } = await supabase
-    .from('rewards')
-    .select('id')
-    .in('project_id', targetProjectIds)
-
-  if (rewardError) {
-    throw createError({ statusCode: 500, statusMessage: rewardError.message })
-  }
-
-  const rewardIds = (rewardRows ?? []).map((rewardRow) => rewardRow.id)
-
-  if (rewardIds.length === 0) {
-    return { deliveries: [], total: 0, page, limit }
-  }
-
   const rangeStart = (page - 1) * limit
   const rangeEnd = rangeStart + limit - 1
 
@@ -104,6 +90,7 @@ export default defineEventHandler(async (event) => {
     .select(
       `
         id,
+        project_id,
         status,
         created_at,
         updated_at,
@@ -128,7 +115,7 @@ export default defineEventHandler(async (event) => {
       `,
       { count: 'exact' },
     )
-    .in('reward_id', rewardIds)
+    .in('project_id', targetProjectIds)
 
   if (statusFilter) {
     queryBuilder = queryBuilder.eq('status', statusFilter)
@@ -145,6 +132,7 @@ export default defineEventHandler(async (event) => {
 
   const deliveries = (data ?? []).map((delivery) => ({
     id: delivery.id,
+    projectId: delivery.project_id,
     status: delivery.status,
     createdAt: delivery.created_at,
     updatedAt: delivery.updated_at,
