@@ -9,15 +9,3 @@ export interface Delivery {
   created_at: string;
   updated_at: string;
 }
-
-export type DeliveryInsert = {
-  id?: string;
-  project_id: string;
-  reward_id: string;
-  supporter_id: string;
-  status: DeliveryStatus;
-};
-
-export type DeliveryUpdate = {
-  id: string;
-} & Partial<Omit<Delivery, 'created_at' | 'updated_at'>>;

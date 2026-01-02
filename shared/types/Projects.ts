@@ -1,3 +1,6 @@
+import type { Reward } from "./Rewards";
+import type { Delivery } from "#imports";
+
 export interface Project {
   id: string;
   organization_id: string;
@@ -8,4 +11,6 @@ export interface Project {
   goal: number;
   created_at: string;
   updated_at: string;
+  rewards?: Reward[];
+  deliveries?: Delivery[];
 }
