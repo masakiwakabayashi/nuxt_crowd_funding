@@ -20,22 +20,30 @@
   } from './types'
 
   const props = defineProps<{
-    organizationId: string
+    // オーガニゼーションのidは必要か？
+    organizationId: string,
+    projectId: string,
   }>()
-
-  // データ取得や型定義に関する部分が全体的にごちゃついてるので、
-  // このあたりを整理する
-
-
-
-
 
   const filterStatus = ref<DeliveryStatus | ''>('')
   const selectedProjectId = ref<string | ''>('')
   const currentPage = ref(1)
   const ITEMS_PER_PAGE = 20
 
-  // どうやってデータを取得するのが最適だろうか？
+  // このデータ取得は1つにまとめたい
+
+  // プロジェクトのデータを取得する
+  // リターンや納品データなども紐づけて取得する
+
+
+
+
+
+
+
+
+
+
 
   const {
     data: summaryData,
