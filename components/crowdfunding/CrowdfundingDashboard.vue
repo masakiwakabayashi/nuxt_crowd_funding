@@ -19,6 +19,12 @@
     RewardRecord,
   } from './types'
 
+
+  import type { Project } from '#imports'
+
+
+
+
   const props = defineProps<{
     // オーガニゼーションのidは必要か？
     organizationId: string,
@@ -30,11 +36,21 @@
   const currentPage = ref(1)
   const ITEMS_PER_PAGE = 20
 
-  // このデータ取得は1つにまとめたい
+  // 表示するデータは全てこれに置き換える
+  const {
+    data: data,
+    pending: isLoading,
+    error: error,
+  } = await useAsyncData<{ project: Project }>(
+    `project-${props.organizationId}`,
+    () =>
+      $fetch('/api/project', {
+        query: { projectId: props.projectId },
+      }),
+  )
 
-  // プロジェクトのデータを取得する
-  // リターンや納品データなども紐づけて取得する
-
+  // データは取得できている
+  console.log(data.value);
 
 
 
