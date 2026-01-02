@@ -33,34 +33,10 @@ export default defineEventHandler(async (event) => {
     .from('projects')
     .select(
       `
-        id,
-        organization_id,
-        title,
-        description,
-        start_at,
-        end_at,
-        goal,
-        created_at,
-        updated_at,
+        *,
         rewards:rewards (
-          id,
-          project_id,
-          title,
-          detail,
-          max_quantity,
-          category_id,
-          price,
-          estimated_delivery,
-          created_at,
-          updated_at,
-          deliveries:deliveries (
-            id,
-            reward_id,
-            supporter_id,
-            status,
-            created_at,
-            updated_at
-          )
+          *,
+          deliveries:deliveries(*)
         )
       `,
     )
