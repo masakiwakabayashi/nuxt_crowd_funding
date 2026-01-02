@@ -60,9 +60,9 @@ create table categories (
 create index idx_categories_project_id on categories(project_id);
 
 -------------------------------------------------------------------------------
--- リターン
+-- リワード
 -------------------------------------------------------------------------------
-create table returns (
+create table rewards (
   id uuid primary key default gen_random_uuid(),
   project_id uuid not null references projects(id) on delete cascade,
   title text not null,
@@ -73,8 +73,8 @@ create table returns (
   updated_at timestamp with time zone default now() not null
 );
 
-create index idx_returns_project_id on returns(project_id);
-create index idx_returns_category_id on returns(category_id);
+create index idx_rewards_project_id on rewards(project_id);
+create index idx_rewards_category_id on rewards(category_id);
 
 -------------------------------------------------------------------------------
 -- 支援者
@@ -92,11 +92,11 @@ create table supporters (
 create index idx_supporters_project_id on supporters(project_id);
 
 -------------------------------------------------------------------------------
--- 納品（リターン × 支援者 × ステータス）
+-- 納品（リワード × 支援者 × ステータス）
 -------------------------------------------------------------------------------
 create table deliveries (
   id uuid primary key default gen_random_uuid(),
-  return_id uuid not null references returns(id) on delete cascade,
+  reward_id uuid not null references rewards(id) on delete cascade,
   supporter_id uuid not null references supporters(id) on delete cascade,
   -- ここのステータスがちょっとおかしい
   -- 未着手、作成中、作成済み、発送準備中、発送済み
@@ -105,5 +105,5 @@ create table deliveries (
   updated_at timestamp with time zone default now() not null
 );
 
-create index idx_deliveries_return_id on deliveries(return_id);
+create index idx_deliveries_reward_id on deliveries(reward_id);
 create index idx_deliveries_supporter_id on deliveries(supporter_id);

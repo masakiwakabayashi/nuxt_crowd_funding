@@ -1,7 +1,7 @@
 import { createError, getQuery } from 'h3'
 import { getSupabaseServerClient } from '../../../shared/utils/supabaseServerClient'
 
-type ReturnRow = {
+type RewardRow = {
   id: string
   project_id: string
   title: string
@@ -13,7 +13,7 @@ type ReturnRow = {
 }
 
 type DeliveryRow = {
-  return_id: string
+  reward_id: string
   supporter_id: string
 }
 
@@ -45,8 +45,8 @@ export default defineEventHandler(async (event) => {
     return { rewards: [] }
   }
 
-  const { data: returnRows, error: returnError } = await supabase
-    .from('returns')
+  const { data: rewardRows, error: rewardError } = await supabase
+    .from('rewards')
     .select(
       `
         id,
@@ -63,22 +63,22 @@ export default defineEventHandler(async (event) => {
       `,
     )
     .in('project_id', projectIds)
-    .returns<ReturnRow[]>()
+    .returns<RewardRow[]>()
 
-  if (returnError) {
-    throw createError({ statusCode: 500, statusMessage: returnError.message })
+  if (rewardError) {
+    throw createError({ statusCode: 500, statusMessage: rewardError.message })
   }
 
-  const returnIds = (returnRows ?? []).map((reward) => reward.id)
+  const rewardIds = (rewardRows ?? []).map((reward) => reward.id)
 
-  if (returnIds.length === 0) {
+  if (rewardIds.length === 0) {
     return { rewards: [] }
   }
 
   const { data: deliveryRows, error: deliveryError } = await supabase
     .from('deliveries')
-    .select('return_id, supporter_id')
-    .in('return_id', returnIds)
+    .select('reward_id, supporter_id')
+    .in('reward_id', rewardIds)
     .returns<DeliveryRow[]>()
 
   if (deliveryError) {
@@ -88,14 +88,14 @@ export default defineEventHandler(async (event) => {
   const supportersMap = new Map<string, Set<string>>()
 
   for (const delivery of deliveryRows ?? []) {
-    if (!supportersMap.has(delivery.return_id)) {
-      supportersMap.set(delivery.return_id, new Set())
+    if (!supportersMap.has(delivery.reward_id)) {
+      supportersMap.set(delivery.reward_id, new Set())
     }
 
-    supportersMap.get(delivery.return_id)?.add(delivery.supporter_id)
+    supportersMap.get(delivery.reward_id)?.add(delivery.supporter_id)
   }
 
-  const rewards = (returnRows ?? []).map((reward) => {
+  const rewards = (rewardRows ?? []).map((reward) => {
     const price = Number(reward.price ?? 0)
     const supporters = supportersMap.get(reward.id)?.size ?? 0
 

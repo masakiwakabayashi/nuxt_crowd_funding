@@ -256,14 +256,14 @@ using (
 );
 
 --------------------------------------------------------------------------------
--- returns
+-- rewards
 --------------------------------------------------------------------------------
-alter table returns enable row level security;
-alter table returns force row level security;
+alter table rewards enable row level security;
+alter table rewards force row level security;
 
 -- 閲覧: メンバーならOK
-create policy "returns_select_by_members"
-on returns
+create policy "rewards_select_by_members"
+on rewards
 for select
 using (
   exists (
@@ -271,14 +271,14 @@ using (
     from projects p
     join organization_members om
       on om.organization_id = p.organization_id
-    where p.id = returns.project_id
+    where p.id = rewards.project_id
       and om.user_id = auth.uid()
   )
 );
 
 -- 作成・更新・削除: admin / staff のみ
-create policy "returns_insert_by_admin_or_staff"
-on returns
+create policy "rewards_insert_by_admin_or_staff"
+on rewards
 for insert
 with check (
   exists (
@@ -286,14 +286,14 @@ with check (
     from projects p
     join organization_members om
       on om.organization_id = p.organization_id
-    where p.id = returns.project_id
+    where p.id = rewards.project_id
       and om.user_id = auth.uid()
       and om.role in ('admin', 'staff')
   )
 );
 
-create policy "returns_update_by_admin_or_staff"
-on returns
+create policy "rewards_update_by_admin_or_staff"
+on rewards
 for update
 using (
   exists (
@@ -301,7 +301,7 @@ using (
     from projects p
     join organization_members om
       on om.organization_id = p.organization_id
-    where p.id = returns.project_id
+    where p.id = rewards.project_id
       and om.user_id = auth.uid()
       and om.role in ('admin', 'staff')
   )
@@ -312,14 +312,14 @@ with check (
     from projects p
     join organization_members om
       on om.organization_id = p.organization_id
-    where p.id = returns.project_id
+    where p.id = rewards.project_id
       and om.user_id = auth.uid()
       and om.role in ('admin', 'staff')
   )
 );
 
-create policy "returns_delete_by_admin_or_staff"
-on returns
+create policy "rewards_delete_by_admin_or_staff"
+on rewards
 for delete
 using (
   exists (
@@ -327,7 +327,7 @@ using (
     from projects p
     join organization_members om
       on om.organization_id = p.organization_id
-    where p.id = returns.project_id
+    where p.id = rewards.project_id
       and om.user_id = auth.uid()
       and om.role in ('admin', 'staff')
   )
@@ -424,12 +424,12 @@ for select
 using (
   exists (
     select 1
-    from returns r
+    from rewards r
     join projects p
       on p.id = r.project_id
     join organization_members om
       on om.organization_id = p.organization_id
-    where r.id = deliveries.return_id
+    where r.id = deliveries.reward_id
       and om.user_id = auth.uid()
   )
 );
@@ -441,12 +441,12 @@ for insert
 with check (
   exists (
     select 1
-    from returns r
+    from rewards r
     join projects p
       on p.id = r.project_id
     join organization_members om
       on om.organization_id = p.organization_id
-    where r.id = deliveries.return_id
+    where r.id = deliveries.reward_id
       and om.user_id = auth.uid()
       and om.role in ('admin', 'staff')
   )
@@ -458,12 +458,12 @@ for update
 using (
   exists (
     select 1
-    from returns r
+    from rewards r
     join projects p
       on p.id = r.project_id
     join organization_members om
       on om.organization_id = p.organization_id
-    where r.id = deliveries.return_id
+    where r.id = deliveries.reward_id
       and om.user_id = auth.uid()
       and om.role in ('admin', 'staff')
   )
@@ -471,12 +471,12 @@ using (
 with check (
   exists (
     select 1
-    from returns r
+    from rewards r
     join projects p
       on p.id = r.project_id
     join organization_members om
       on om.organization_id = p.organization_id
-    where r.id = deliveries.return_id
+    where r.id = deliveries.reward_id
       and om.user_id = auth.uid()
       and om.role in ('admin', 'staff')
   )
@@ -488,12 +488,12 @@ for delete
 using (
   exists (
     select 1
-    from returns r
+    from rewards r
     join projects p
       on p.id = r.project_id
     join organization_members om
       on om.organization_id = p.organization_id
-    where r.id = deliveries.return_id
+    where r.id = deliveries.reward_id
       and om.user_id = auth.uid()
       and om.role in ('admin', 'staff')
   )

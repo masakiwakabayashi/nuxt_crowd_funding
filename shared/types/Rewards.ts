@@ -1,4 +1,4 @@
-export interface Return {
+export interface Reward {
   id: string;
   project_id: string;
   title: string;
@@ -11,7 +11,7 @@ export interface Return {
   updated_at: string;
 }
 
-export type ReturnInsert = {
+export type RewardInsert = {
   id?: string;
   project_id: string;
   title: string;
@@ -22,6 +22,6 @@ export type ReturnInsert = {
   estimated_delivery?: string | null;
 };
 
-export type ReturnUpdate = {
+export type RewardUpdate = {
   id: string;
-} & Partial<Omit<Return, 'created_at' | 'updated_at'>>;
+} & Partial<Omit<Reward, 'created_at' | 'updated_at'>>;

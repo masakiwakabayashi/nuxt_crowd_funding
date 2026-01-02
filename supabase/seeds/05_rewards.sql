@@ -1,6 +1,6 @@
 begin;
 
-with return_seed(
+with reward_seed(
   id,
   project_id,
   title,
@@ -32,8 +32,8 @@ with return_seed(
       '2025-10-15T00:00:00+09:00'::timestamptz
     )
 )
-insert into returns (id, project_id, title, detail, max_quantity, category_id, price, estimated_delivery, created_at, updated_at)
+insert into rewards (id, project_id, title, detail, max_quantity, category_id, price, estimated_delivery, created_at, updated_at)
 select id, project_id, title, detail, max_quantity, category_id, price, estimated_delivery, now(), now()
-from return_seed;
+from reward_seed;
 
 commit;

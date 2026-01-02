@@ -128,10 +128,10 @@
   const deliveries = computed<Delivery[]>(() =>
     (deliveriesData.value?.deliveries ?? []).map((delivery) => {
       const projectId =
-        delivery.return?.projectId ?? delivery.supporter?.projectId ?? ''
-      const price = Number(delivery.return?.price ?? 0)
+        delivery.reward?.projectId ?? delivery.supporter?.projectId ?? ''
+      const price = Number(delivery.reward?.price ?? 0)
       const dueDateRaw =
-        delivery.return?.estimatedDelivery ?? delivery.updatedAt ?? delivery.createdAt
+        delivery.reward?.estimatedDelivery ?? delivery.updatedAt ?? delivery.createdAt
       const { isDueSoon, isOverdue, overdueDays } = evaluateDueState(dueDateRaw)
 
       return {
@@ -140,7 +140,7 @@
         supporterName: delivery.supporter?.name ?? '支援者情報なし',
         supporterEmail: delivery.supporter?.email ?? '',
         supporterAddress: delivery.supporter?.address ?? '',
-        rewardName: delivery.return?.title ?? 'リターン情報なし',
+        rewardName: delivery.reward?.title ?? 'リターン情報なし',
         amount: Number.isNaN(price) ? null : price,
         dueDate: formatIsoDate(dueDateRaw),
         completionDate: delivery.status === '完了' ? formatIsoDate(delivery.updatedAt) : '',

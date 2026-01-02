@@ -1,13 +1,13 @@
 -------------------------------------------------------------------------------
--- Extend returns and supporters with pricing/schedule fields for dashboard data
+-- Extend rewards and supporters with pricing/schedule fields for dashboard data
 -------------------------------------------------------------------------------
 
-alter table returns
+alter table rewards
   add column if not exists price numeric(20, 0) not null default 0,
   add column if not exists estimated_delivery timestamp with time zone;
 
-comment on column returns.price is 'Price of the reward tier in the project''s currency';
-comment on column returns.estimated_delivery is 'Estimated delivery date for the reward tier';
+comment on column rewards.price is 'Price of the reward tier in the project''s currency';
+comment on column rewards.estimated_delivery is 'Estimated delivery date for the reward tier';
 
 alter table supporters
   add column if not exists pledged_amount numeric(20, 0) not null default 0;

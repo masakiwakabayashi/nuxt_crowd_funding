@@ -3,7 +3,7 @@ begin;
 truncate table
   deliveries,
   supporters,
-  returns,
+  rewards,
   categories,
   projects,
   organization_members,

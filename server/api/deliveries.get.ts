@@ -10,11 +10,11 @@ type DeliveryRecord = {
   status: DeliveryStatus
   created_at: string
   updated_at: string
-  return: ReturnRecord | null
+  reward: RewardRecord | null
   supporter: SupporterRecord | null
 }
 
-type ReturnRecord = {
+type RewardRecord = {
   id: string
   project_id: string
   title: string
@@ -81,18 +81,18 @@ export default defineEventHandler(async (event) => {
     }
   }
 
-  const { data: returnRows, error: returnError } = await supabase
-    .from('returns')
+  const { data: rewardRows, error: rewardError } = await supabase
+    .from('rewards')
     .select('id')
     .in('project_id', targetProjectIds)
 
-  if (returnError) {
-    throw createError({ statusCode: 500, statusMessage: returnError.message })
+  if (rewardError) {
+    throw createError({ statusCode: 500, statusMessage: rewardError.message })
   }
 
-  const returnIds = (returnRows ?? []).map((returnRow) => returnRow.id)
+  const rewardIds = (rewardRows ?? []).map((rewardRow) => rewardRow.id)
 
-  if (returnIds.length === 0) {
+  if (rewardIds.length === 0) {
     return { deliveries: [], total: 0, page, limit }
   }
 
@@ -107,7 +107,7 @@ export default defineEventHandler(async (event) => {
         status,
         created_at,
         updated_at,
-        return:returns (
+        reward:rewards (
           id,
           project_id,
           title,
@@ -128,7 +128,7 @@ export default defineEventHandler(async (event) => {
       `,
       { count: 'exact' },
     )
-    .in('return_id', returnIds)
+    .in('reward_id', rewardIds)
 
   if (statusFilter) {
     queryBuilder = queryBuilder.eq('status', statusFilter)
@@ -148,16 +148,16 @@ export default defineEventHandler(async (event) => {
     status: delivery.status,
     createdAt: delivery.created_at,
     updatedAt: delivery.updated_at,
-    return: delivery.return
+    reward: delivery.reward
       ? {
-          id: delivery.return.id,
-          projectId: delivery.return.project_id,
-          title: delivery.return.title,
-          detail: delivery.return.detail,
-          maxQuantity: delivery.return.max_quantity,
-          categoryId: delivery.return.category_id,
-          price: delivery.return.price,
-          estimatedDelivery: delivery.return.estimated_delivery,
+          id: delivery.reward.id,
+          projectId: delivery.reward.project_id,
+          title: delivery.reward.title,
+          detail: delivery.reward.detail,
+          maxQuantity: delivery.reward.max_quantity,
+          categoryId: delivery.reward.category_id,
+          price: delivery.reward.price,
+          estimatedDelivery: delivery.reward.estimated_delivery,
         }
       : null,
     supporter: delivery.supporter

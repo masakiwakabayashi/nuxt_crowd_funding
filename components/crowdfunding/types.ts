@@ -28,7 +28,7 @@ export type DeliveryRecord = {
   status: DeliveryStatus
   createdAt: string
   updatedAt: string
-  return: {
+  reward: {
     id: string
     projectId: string
     title: string

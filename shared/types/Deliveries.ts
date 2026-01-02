@@ -2,7 +2,7 @@ export type DeliveryStatus = '未着手' | '作成中' | '完了';
 
 export interface Delivery {
   id: string;
-  return_id: string;
+  reward_id: string;
   supporter_id: string;
   status: DeliveryStatus;
   created_at: string;
@@ -11,7 +11,7 @@ export interface Delivery {
 
 export type DeliveryInsert = {
   id?: string;
-  return_id: string;
+  reward_id: string;
   supporter_id: string;
   status: DeliveryStatus;
 };

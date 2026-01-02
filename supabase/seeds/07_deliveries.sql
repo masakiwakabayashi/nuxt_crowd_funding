@@ -1,6 +1,6 @@
 begin;
 
-with delivery_seed(id, return_id, supporter_id, status) as (
+with delivery_seed(id, reward_id, supporter_id, status) as (
   values
     (
       'a9962003-2d85-4e31-9309-47bb829bfcd4'::uuid,
@@ -237,8 +237,8 @@ with delivery_seed(id, return_id, supporter_id, status) as (
       '未着手'
     )
 )
-insert into deliveries (id, return_id, supporter_id, status, created_at, updated_at)
-select id, return_id, supporter_id, status, now(), now()
+insert into deliveries (id, reward_id, supporter_id, status, created_at, updated_at)
+select id, reward_id, supporter_id, status, now(), now()
 from delivery_seed;
 
 commit;
