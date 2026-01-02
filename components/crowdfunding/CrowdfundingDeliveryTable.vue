@@ -94,10 +94,6 @@
     <div class="mb-4 flex flex-col gap-3">
       <div>
         <h2 class="text-base font-semibold text-slate-900">支援ごとの納品管理</h2>
-        <div class="mt-2 flex items-center gap-3 text-xs text-slate-500">
-          <span class="inline-flex h-2 w-2 rounded-full bg-rose-500" /> 期限超過
-          <span class="inline-flex h-2 w-2 rounded-full bg-amber-400" /> 期限間近
-        </div>
       </div>
     </div>
 
@@ -111,7 +107,6 @@
             <th class="w-[20%] px-6 py-4 font-semibold">支援者</th>
             <th class="w-[20%] px-6 py-4 font-semibold">住所</th>
             <th class="w-[25%] px-6 py-4 font-semibold">リターン内容</th>
-            <th class="w-[12%] px-6 py-4 font-semibold whitespace-nowrap">支援金額</th>
             <th class="w-[18%] px-6 py-4 font-semibold whitespace-nowrap">納品予定日</th>
             <th class="w-[12%] px-6 py-4 font-semibold">ステータス</th>
             <th class="w-[13%] px-6 py-4 text-right font-semibold">操作</th>
@@ -145,32 +140,9 @@
               <!-- リターンの一覧はすでに取得されているので、そこからidで名前を取得する -->
               {{ delivery.reward_id }}
             </td>
-            <td class="w-[12%] px-6 py-5 whitespace-nowrap">
-              <!-- <template v-if="delivery.amount != null">
-                ¥{{ delivery.amount.toLocaleString() }}
-              </template>
-              <span v-else class="text-slate-400">—</span> -->
-            </td>
             <!-- 納品テーブルに配送期限を入れる -->
             <td class="w-[18%] px-6 py-5 whitespace-nowrap">
-              <!-- <div class="flex items-center gap-2">
-                <span
-                  v-if="delivery.isOverdue"
-                  class="inline-flex h-2 w-2 rounded-full bg-rose-500"
-                >
-                </span>
-                <span
-                  v-else-if="delivery.isDueSoon"
-                  class="inline-flex h-2 w-2 rounded-full bg-amber-400"
-                >
-                </span>
-                <span class="text-sm font-medium text-slate-800">
-                  {{ delivery.dueDate || '—' }}
-                </span>
-              </div>
-              <div v-if="delivery.isOverdue" class="text-xs text-rose-600">
-                期限超過（{{ delivery.overdueDays }}日）
-              </div> -->
+              {{ delivery.due_date }}
             </td>
             <td class="w-[12%] px-6 py-5">
               <span

@@ -236,18 +236,35 @@ with delivery_seed(id, reward_id, supporter_id, status) as (
       'f1363f7a-8eea-4076-8890-a8e10059d7ae'::uuid,
       '未着手'
     )
+),
+delivery_seed_with_due as (
+  select
+    ds.*,
+    coalesce(r.estimated_delivery, now() + interval '30 days') as due_date,
+    r.project_id
+  from delivery_seed ds
+  join rewards r
+    on r.id = ds.reward_id
 )
-insert into deliveries (id, project_id, reward_id, supporter_id, status, created_at, updated_at)
+insert into deliveries (
+  id,
+  project_id,
+  reward_id,
+  supporter_id,
+  status,
+  due_date,
+  created_at,
+  updated_at
+)
 select
   ds.id,
-  r.project_id,
+  ds.project_id,
   ds.reward_id,
   ds.supporter_id,
   ds.status,
+  ds.due_date,
   now(),
   now()
-from delivery_seed ds
-join rewards r
-  on r.id = ds.reward_id;
+from delivery_seed_with_due ds;
 
 commit;
