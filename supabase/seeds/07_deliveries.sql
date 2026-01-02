@@ -15,18 +15,6 @@ with delivery_seed(id, return_id, supporter_id, status) as (
       '未着手'
     ),
     (
-      '6fdd2b3f-5a50-4c6c-9e32-1234c6c84f0e'::uuid,
-      'c8d7d996-82a6-4a09-9560-319f52f9a463'::uuid,
-      'ac3070c6-5961-4d19-a7ea-7de636a7e840'::uuid,
-      '完了'
-    ),
-    (
-      'f93dcdb5-2bee-4d3c-a78e-48c20a8c4ebf'::uuid,
-      '849b9a3c-1fd8-488f-8919-6aa701d89f5a'::uuid,
-      '0b758e5a-eb39-4349-aceb-5c0889ec76db'::uuid,
-      '未着手'
-    ),
-    (
       '0b9a3d4f-8c61-4c20-932b-5df1c54a9cc1'::uuid,
       '9cbf9545-132b-4b65-a7c3-1de68d8dfa5a'::uuid,
       '1a0cb5f0-4bb3-4dd3-9ebf-6ab6c0f1e90c'::uuid,
@@ -39,45 +27,9 @@ with delivery_seed(id, return_id, supporter_id, status) as (
       '未着手'
     ),
     (
-      '2cecd0ef-1600-42f6-86cb-97521116f980'::uuid,
-      '9cbf9545-132b-4b65-a7c3-1de68d8dfa5a'::uuid,
-      '33c9f144-90fb-45a1-8481-f823a58ebc2a'::uuid,
-      '完了'
-    ),
-    (
-      '3b90f9d5-3f00-4982-a4f2-8ce7e093e0af'::uuid,
-      'c8d7d996-82a6-4a09-9560-319f52f9a463'::uuid,
-      '4a59cf67-2b43-4bf5-8ec7-227aa9c1a64f'::uuid,
-      '作成中'
-    ),
-    (
-      '4d5b90ab-0f51-4a1d-8d75-451f54fd2db2'::uuid,
-      '849b9a3c-1fd8-488f-8919-6aa701d89f5a'::uuid,
-      '9f00e669-b668-4341-89a1-28a741b93d7c'::uuid,
-      '未着手'
-    ),
-    (
       '5a2ed3fe-0db7-44f6-83ce-075c3666c882'::uuid,
       '22a33722-c32c-40a3-8e3a-66b0c5733686'::uuid,
       'd6c9eaa7-959d-4fb7-8ea3-fa7b3b88045a'::uuid,
-      '作成中'
-    ),
-    (
-      '67ddf2a7-910e-49ff-a002-d1da25b43390'::uuid,
-      '9cbf9545-132b-4b65-a7c3-1de68d8dfa5a'::uuid,
-      '706d3f27-1ab1-4a1c-99f3-c5ead1bfb214'::uuid,
-      '未着手'
-    ),
-    (
-      '78c39511-6b0b-4011-b0fd-6c0a949cdf08'::uuid,
-      'c8d7d996-82a6-4a09-9560-319f52f9a463'::uuid,
-      '548c5fc6-6a37-4597-bd6c-4a2f0c6018d0'::uuid,
-      '完了'
-    ),
-    (
-      '89a54c62-8cdb-4cf8-b0d4-cb1e676e9cee'::uuid,
-      '849b9a3c-1fd8-488f-8919-6aa701d89f5a'::uuid,
-      'af4b5993-ae9f-4f63-83f7-4e64afd262aa'::uuid,
       '作成中'
     ),
     (
@@ -85,36 +37,6 @@ with delivery_seed(id, return_id, supporter_id, status) as (
       '22a33722-c32c-40a3-8e3a-66b0c5733686'::uuid,
       '76c76e7b-bd6a-4e76-9f69-17d24d08bf9c'::uuid,
       '未着手'
-    ),
-    (
-      'a1f49b17-9016-4bf7-afad-46f5ad78856d'::uuid,
-      'c8d7d996-82a6-4a09-9560-319f52f9a463'::uuid,
-      '6482c82d-0c61-4c00-9585-e5b62db4c0b7'::uuid,
-      '作成中'
-    ),
-    (
-      'b2965de6-2665-4d66-8b64-8840a8b9b506'::uuid,
-      '9cbf9545-132b-4b65-a7c3-1de68d8dfa5a'::uuid,
-      '4ef9b2a8-6d14-4c7b-b33a-ccd7b032cde7'::uuid,
-      '完了'
-    ),
-    (
-      'c394e0a0-2a2f-468f-a3fc-0f8d77e9d34c'::uuid,
-      '849b9a3c-1fd8-488f-8919-6aa701d89f5a'::uuid,
-      'c2d5dafa-5181-495f-98a7-2f5d94a83b9d'::uuid,
-      '未着手'
-    ),
-    (
-      'd48d46d1-6561-4e51-9cf2-a7ea8f0a6ac2'::uuid,
-      'c8d7d996-82a6-4a09-9560-319f52f9a463'::uuid,
-      '518f9b10-60c2-4c5d-b317-6e7d8b3245b7'::uuid,
-      '作成中'
-    ),
-    (
-      'e58063fd-7b69-4bff-8331-8718570f6d57'::uuid,
-      '22a33722-c32c-40a3-8e3a-66b0c5733686'::uuid,
-      'fe9355aa-0e7f-4488-9d27-ea9248b721a5'::uuid,
-      '完了'
     ),
     (
       'f6b736f9-13f3-4eca-9df2-2d24b6ca82ab'::uuid,
@@ -129,39 +51,9 @@ with delivery_seed(id, return_id, supporter_id, status) as (
       '作成中'
     ),
     (
-      '1925a260-3e8c-4857-9672-5f23e4995d1a'::uuid,
-      'c8d7d996-82a6-4a09-9560-319f52f9a463'::uuid,
-      'ac3070c6-5961-4d19-a7ea-7de636a7e840'::uuid,
-      '未着手'
-    ),
-    (
-      '2a41344c-122e-45a6-9a51-6c1d6d0d5361'::uuid,
-      '849b9a3c-1fd8-488f-8919-6aa701d89f5a'::uuid,
-      '0b758e5a-eb39-4349-aceb-5c0889ec76db'::uuid,
-      '作成中'
-    ),
-    (
       '3b8decb7-6c7b-45fb-9ce5-d1e19ca8e436'::uuid,
       '22a33722-c32c-40a3-8e3a-66b0c5733686'::uuid,
       '1a0cb5f0-4bb3-4dd3-9ebf-6ab6c0f1e90c'::uuid,
-      '完了'
-    ),
-    (
-      '4ca0e2cc-7289-4bba-8d79-2316a09430ba'::uuid,
-      'c8d7d996-82a6-4a09-9560-319f52f9a463'::uuid,
-      '7b5f7a13-9b87-4a7e-8d3c-b1fb345afefe'::uuid,
-      '未着手'
-    ),
-    (
-      '5dbb6588-25d0-4d70-867c-ff3788c74972'::uuid,
-      '9cbf9545-132b-4b65-a7c3-1de68d8dfa5a'::uuid,
-      '33c9f144-90fb-45a1-8481-f823a58ebc2a'::uuid,
-      '作成中'
-    ),
-    (
-      '6e17ad52-4ffa-4b25-8fc5-34f671aa23c1'::uuid,
-      '849b9a3c-1fd8-488f-8919-6aa701d89f5a'::uuid,
-      '4a59cf67-2b43-4bf5-8ec7-227aa9c1a64f'::uuid,
       '完了'
     ),
     (
@@ -177,18 +69,6 @@ with delivery_seed(id, return_id, supporter_id, status) as (
       '完了'
     ),
     (
-      '9b4f0f67-1c03-45c1-a77e-d1f5b8897e41'::uuid,
-      'c8d7d996-82a6-4a09-9560-319f52f9a463'::uuid,
-      '706d3f27-1ab1-4a1c-99f3-c5ead1bfb214'::uuid,
-      '作成中'
-    ),
-    (
-      'ad5088f6-6f9c-4ad0-95b2-1faaf9a7e0d4'::uuid,
-      '849b9a3c-1fd8-488f-8919-6aa701d89f5a'::uuid,
-      '548c5fc6-6a37-4597-bd6c-4a2f0c6018d0'::uuid,
-      '未着手'
-    ),
-    (
       'be61a43a-2971-4c5f-9b19-7c6b76223eab'::uuid,
       '22a33722-c32c-40a3-8e3a-66b0c5733686'::uuid,
       'af4b5993-ae9f-4f63-83f7-4e64afd262aa'::uuid,
@@ -201,34 +81,10 @@ with delivery_seed(id, return_id, supporter_id, status) as (
       '完了'
     ),
     (
-      'd083e4b5-3e43-41ae-94a8-92507bbbaf67'::uuid,
-      'c8d7d996-82a6-4a09-9560-319f52f9a463'::uuid,
-      '6482c82d-0c61-4c00-9585-e5b62db4c0b7'::uuid,
-      '未着手'
-    ),
-    (
-      '8494d614-1c9d-4a0c-9f57-19b0d3e9c2d4'::uuid,
-      '22a33722-c32c-40a3-8e3a-66b0c5733686'::uuid,
-      '4ef9b2a8-6d14-4c7b-b33a-ccd7b032cde7'::uuid,
-      '作成中'
-    ),
-    (
       '3fd24a77-0181-4c72-af04-478da28a8fce'::uuid,
       '9cbf9545-132b-4b65-a7c3-1de68d8dfa5a'::uuid,
       'e3c27350-149f-4d6f-b171-1adf9ba5480d'::uuid,
       '未着手'
-    ),
-    (
-      'c5efc481-4a31-4bc1-9461-48d84d90ac95'::uuid,
-      'c8d7d996-82a6-4a09-9560-319f52f9a463'::uuid,
-      '9f00e669-b668-4341-89a1-28a741b93d7c'::uuid,
-      '完了'
-    ),
-    (
-      'fda7c33b-28b2-491a-a1f1-6e83ec60d306'::uuid,
-      '849b9a3c-1fd8-488f-8919-6aa701d89f5a'::uuid,
-      '76c76e7b-bd6a-4e76-9f69-17d24d08bf9c'::uuid,
-      '作成中'
     ),
     (
       'cb5c1a23-09ba-4288-a1de-d532b1541ec0'::uuid,
@@ -243,75 +99,9 @@ with delivery_seed(id, return_id, supporter_id, status) as (
       '完了'
     ),
     (
-      '2e4fc1c1-f1ba-4ecb-8fbe-84be33537c78'::uuid,
-      'c8d7d996-82a6-4a09-9560-319f52f9a463'::uuid,
-      '548c5fc6-6a37-4597-bd6c-4a2f0c6018d0'::uuid,
-      '作成中'
-    ),
-    (
-      'd573f418-92a7-4821-8266-419b62b09c3e'::uuid,
-      '22a33722-c32c-40a3-8e3a-66b0c5733686'::uuid,
-      '706d3f27-1ab1-4a1c-99f3-c5ead1bfb214'::uuid,
-      '完了'
-    ),
-    (
-      'd8ced2b3-7670-409e-9c90-9602be4aa834'::uuid,
-      '849b9a3c-1fd8-488f-8919-6aa701d89f5a'::uuid,
-      '4a59cf67-2b43-4bf5-8ec7-227aa9c1a64f'::uuid,
-      '作成中'
-    ),
-    (
-      '2533c550-37cb-4e62-9b3d-4c047d243913'::uuid,
-      '9cbf9545-132b-4b65-a7c3-1de68d8dfa5a'::uuid,
-      '0b758e5a-eb39-4349-aceb-5c0889ec76db'::uuid,
-      '未着手'
-    ),
-    (
-      '5ce811b0-85d4-40e3-a9ee-3a23e218a564'::uuid,
-      'c8d7d996-82a6-4a09-9560-319f52f9a463'::uuid,
-      'd6c9eaa7-959d-4fb7-8ea3-fa7b3b88045a'::uuid,
-      '完了'
-    ),
-    (
-      'ddf12679-7271-4154-b247-7b128f6bc307'::uuid,
-      '22a33722-c32c-40a3-8e3a-66b0c5733686'::uuid,
-      '33c9f144-90fb-45a1-8481-f823a58ebc2a'::uuid,
-      '作成中'
-    ),
-    (
-      'a70c487a-66af-448c-8031-c0604d0f2ea3'::uuid,
-      '849b9a3c-1fd8-488f-8919-6aa701d89f5a'::uuid,
-      '6482c82d-0c61-4c00-9585-e5b62db4c0b7'::uuid,
-      '未着手'
-    ),
-    (
-      '96d6206b-1f7c-4e4e-9ed3-fa3003698a72'::uuid,
-      'c8d7d996-82a6-4a09-9560-319f52f9a463'::uuid,
-      '1a0cb5f0-4bb3-4dd3-9ebf-6ab6c0f1e90c'::uuid,
-      '完了'
-    ),
-    (
       '654da021-9d6c-4b97-94a5-d35daaefab4b'::uuid,
       '9cbf9545-132b-4b65-a7c3-1de68d8dfa5a'::uuid,
       '7b5f7a13-9b87-4a7e-8d3c-b1fb345afefe'::uuid,
-      '作成中'
-    ),
-    (
-      '58050769-c014-43f1-a82d-26400756b451'::uuid,
-      '22a33722-c32c-40a3-8e3a-66b0c5733686'::uuid,
-      'fe9355aa-0e7f-4488-9d27-ea9248b721a5'::uuid,
-      '未着手'
-    ),
-    (
-      '0ae77dfb-4fa1-428d-868b-24b33a75ee7a'::uuid,
-      '849b9a3c-1fd8-488f-8919-6aa701d89f5a'::uuid,
-      '0c2ed864-5e5d-4e2c-89e7-f9d2d6588365'::uuid,
-      '完了'
-    ),
-    (
-      '060e9645-676a-4c3f-9bfe-98bcb290c372'::uuid,
-      'c8d7d996-82a6-4a09-9560-319f52f9a463'::uuid,
-      'ac3070c6-5961-4d19-a7ea-7de636a7e840'::uuid,
       '作成中'
     ),
     (
@@ -325,6 +115,126 @@ with delivery_seed(id, return_id, supporter_id, status) as (
       '22a33722-c32c-40a3-8e3a-66b0c5733686'::uuid,
       'e3c27350-149f-4d6f-b171-1adf9ba5480d'::uuid,
       '完了'
+    ),
+    (
+      '2e58a57d-6c4c-4fce-a054-eb39b26e809d'::uuid,
+      '9cbf9545-132b-4b65-a7c3-1de68d8dfa5a'::uuid,
+      '982ad175-afd5-4066-9ea0-25500a1e6dcd'::uuid,
+      '未着手'
+    ),
+    (
+      'efbb53a0-5519-4427-a65c-42e409efac3e'::uuid,
+      '22a33722-c32c-40a3-8e3a-66b0c5733686'::uuid,
+      '298eba7e-6bb1-4148-9808-6a9bfaead8ff'::uuid,
+      '作成中'
+    ),
+    (
+      'c37b0d9e-1fff-43dd-bba8-6adbac59cef7'::uuid,
+      '9cbf9545-132b-4b65-a7c3-1de68d8dfa5a'::uuid,
+      '6159be03-0204-4905-a6e6-8b29b46e4db0'::uuid,
+      '完了'
+    ),
+    (
+      '1c335d95-92f1-4240-9c02-31cd673aa219'::uuid,
+      '22a33722-c32c-40a3-8e3a-66b0c5733686'::uuid,
+      '97ffbc64-d509-4571-a11c-4c6c71ecb59c'::uuid,
+      '未着手'
+    ),
+    (
+      'c9fedc53-72e2-46d9-bd0a-78011fdff585'::uuid,
+      '9cbf9545-132b-4b65-a7c3-1de68d8dfa5a'::uuid,
+      'a57ab4f8-0971-44b2-8d80-364fab1f95f7'::uuid,
+      '作成中'
+    ),
+    (
+      'd4dd58c5-501d-4134-97b0-c6c1af78a583'::uuid,
+      '22a33722-c32c-40a3-8e3a-66b0c5733686'::uuid,
+      '85a7cb79-30bb-4b63-974b-2ad02b301864'::uuid,
+      '完了'
+    ),
+    (
+      '449a06f2-1943-40e6-bf13-4211d771e446'::uuid,
+      '9cbf9545-132b-4b65-a7c3-1de68d8dfa5a'::uuid,
+      '74a69cf7-86a9-4e53-9b17-c1421ec48b30'::uuid,
+      '未着手'
+    ),
+    (
+      '71921b13-3ac1-4f8e-8740-94c248287014'::uuid,
+      '22a33722-c32c-40a3-8e3a-66b0c5733686'::uuid,
+      'f12163ee-8523-406d-9120-d0af085deafa'::uuid,
+      '作成中'
+    ),
+    (
+      '112e68a7-b562-4e4e-afc2-aaa2578fb1bb'::uuid,
+      '9cbf9545-132b-4b65-a7c3-1de68d8dfa5a'::uuid,
+      '5bbd817b-0133-4046-abdc-124e5056a1cf'::uuid,
+      '完了'
+    ),
+    (
+      '2e1f9036-345f-4a05-96ba-6a0425de1de5'::uuid,
+      '22a33722-c32c-40a3-8e3a-66b0c5733686'::uuid,
+      'dfa08615-f25d-42b4-a03c-554b01fb28a1'::uuid,
+      '作成中'
+    ),
+    (
+      '1c0683e3-e8ca-47da-afb1-df664afdfd76'::uuid,
+      '9cbf9545-132b-4b65-a7c3-1de68d8dfa5a'::uuid,
+      '100fa744-feea-423b-b0a0-d62e5c6ff5a9'::uuid,
+      '未着手'
+    ),
+    (
+      '5dd38b17-0feb-4864-881c-e0f7e0653f1b'::uuid,
+      '22a33722-c32c-40a3-8e3a-66b0c5733686'::uuid,
+      'ec469829-bc65-473e-98c1-2ef5b2a2e1b5'::uuid,
+      '完了'
+    ),
+    (
+      'f63bb366-e023-4a6a-ada5-63609ee87271'::uuid,
+      '9cbf9545-132b-4b65-a7c3-1de68d8dfa5a'::uuid,
+      '567258ce-5d09-40cc-9394-1f90693779eb'::uuid,
+      '作成中'
+    ),
+    (
+      '0de50e1d-e813-4929-bc58-46f3eeb64fe8'::uuid,
+      '22a33722-c32c-40a3-8e3a-66b0c5733686'::uuid,
+      'e38561a0-a0bb-4082-8985-980148cd3f32'::uuid,
+      '未着手'
+    ),
+    (
+      '3b28f475-f96f-4836-b9c3-7e7beefa125e'::uuid,
+      '9cbf9545-132b-4b65-a7c3-1de68d8dfa5a'::uuid,
+      '2fbebb76-1788-46a0-9622-cab57587ff10'::uuid,
+      '完了'
+    ),
+    (
+      'ce5bf866-0aa7-4348-8721-937745416ff8'::uuid,
+      '22a33722-c32c-40a3-8e3a-66b0c5733686'::uuid,
+      'dc30f555-b8c2-401e-a9e3-30da0a9c9aea'::uuid,
+      '作成中'
+    ),
+    (
+      '700a3dc6-9ce1-4ce9-8a02-30366f4d9964'::uuid,
+      '9cbf9545-132b-4b65-a7c3-1de68d8dfa5a'::uuid,
+      '544dd5c5-9b26-4aae-8b05-2e00b21c5338'::uuid,
+      '未着手'
+    ),
+    (
+      '2ebc8d4d-d59b-481c-add8-0bd9489ee512'::uuid,
+      '22a33722-c32c-40a3-8e3a-66b0c5733686'::uuid,
+      '2f4b0bc0-c4bf-4fd8-aecf-845d86b2dd36'::uuid,
+      '完了'
+    ),
+    (
+      'b54f6973-ef25-497b-90d0-2f322d0eb492'::uuid,
+      '9cbf9545-132b-4b65-a7c3-1de68d8dfa5a'::uuid,
+      '906e73c2-d793-4a3e-90d3-34912fb2003e'::uuid,
+      '作成中'
+    ),
+    (
+      'd8a9fcdd-658c-498e-aee4-45bf85334ba4'::uuid,
+      '22a33722-c32c-40a3-8e3a-66b0c5733686'::uuid,
+      'f1363f7a-8eea-4076-8890-a8e10059d7ae'::uuid,
+      '未着手'
     )
 )
 insert into deliveries (id, return_id, supporter_id, status, created_at, updated_at)

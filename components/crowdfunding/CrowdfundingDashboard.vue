@@ -23,6 +23,13 @@
     organizationId: string
   }>()
 
+  // データ取得や型定義に関する部分が全体的にごちゃついてるので、
+  // このあたりを整理する
+
+
+
+
+
   const filterStatus = ref<DeliveryStatus | ''>('')
   const selectedProjectId = ref<string | ''>('')
   const currentPage = ref(1)

@@ -26,22 +26,6 @@ with supporter_seed(
       12000::numeric
     ),
     (
-      'ac3070c6-5961-4d19-a7ea-7de636a7e840'::uuid,
-      '9bd380be-1c2b-4f05-95a7-15bd36716577'::uuid,
-      '佐藤 真司',
-      '千葉県柏市若柴 7-8-9',
-      'satoshi@example.com',
-      20000::numeric
-    ),
-    (
-      '0b758e5a-eb39-4349-aceb-5c0889ec76db'::uuid,
-      '9bd380be-1c2b-4f05-95a7-15bd36716577'::uuid,
-      '森山 亮',
-      '茨城県つくば市研究学園 10-11-12',
-      'moriyama@example.com',
-      9000::numeric
-    ),
-    (
       '1a0cb5f0-4bb3-4dd3-9ebf-6ab6c0f1e90c'::uuid,
       '312f579c-e5a7-4c4f-9e6c-a0b2fdfa2099'::uuid,
       '鈴木 花',
@@ -56,22 +40,6 @@ with supporter_seed(
       '東京都港区芝浦 2-3-4',
       'yamaken@example.com',
       15000::numeric
-    ),
-    (
-      '33c9f144-90fb-45a1-8481-f823a58ebc2a'::uuid,
-      '9bd380be-1c2b-4f05-95a7-15bd36716577'::uuid,
-      '伊藤 美月',
-      '神奈川県横浜市都筑区 5-6-7',
-      'mizuki@example.com',
-      18000::numeric
-    ),
-    (
-      '4a59cf67-2b43-4bf5-8ec7-227aa9c1a64f'::uuid,
-      '9bd380be-1c2b-4f05-95a7-15bd36716577'::uuid,
-      '福田 誠',
-      '埼玉県さいたま市浦和区 1-2-3',
-      'makoto@example.com',
-      16000::numeric
     ),
     (
       '9f00e669-b668-4341-89a1-28a741b93d7c'::uuid,
@@ -90,22 +58,6 @@ with supporter_seed(
       14000::numeric
     ),
     (
-      '706d3f27-1ab1-4a1c-99f3-c5ead1bfb214'::uuid,
-      '9bd380be-1c2b-4f05-95a7-15bd36716577'::uuid,
-      '高木 彩',
-      '茨城県水戸市見川 6-7-8',
-      'aya@example.com',
-      11000::numeric
-    ),
-    (
-      '548c5fc6-6a37-4597-bd6c-4a2f0c6018d0'::uuid,
-      '9bd380be-1c2b-4f05-95a7-15bd36716577'::uuid,
-      '岡本 勇',
-      '群馬県高崎市末広町 3-4-5',
-      'isamu@example.com',
-      10000::numeric
-    ),
-    (
       'af4b5993-ae9f-4f63-83f7-4e64afd262aa'::uuid,
       '312f579c-e5a7-4c4f-9e6c-a0b2fdfa2099'::uuid,
       '西村 千夏',
@@ -120,22 +72,6 @@ with supporter_seed(
       '東京都板橋区常盤台 9-10-11',
       'toru@example.com',
       17000::numeric
-    ),
-    (
-      '6482c82d-0c61-4c00-9585-e5b62db4c0b7'::uuid,
-      '9bd380be-1c2b-4f05-95a7-15bd36716577'::uuid,
-      '前田 結衣',
-      '神奈川県藤沢市辻堂 12-13-14',
-      'yui@example.com',
-      13000::numeric
-    ),
-    (
-      '4ef9b2a8-6d14-4c7b-b33a-ccd7b032cde7'::uuid,
-      '9bd380be-1c2b-4f05-95a7-15bd36716577'::uuid,
-      '森内 亮太',
-      '栃木県宇都宮市東峰町 7-8-9',
-      'ryota@example.com',
-      19000::numeric
     ),
     (
       'c2d5dafa-5181-495f-98a7-2f5d94a83b9d'::uuid,
@@ -154,12 +90,164 @@ with supporter_seed(
       21000::numeric
     ),
     (
-      'fe9355aa-0e7f-4488-9d27-ea9248b721a5'::uuid,
-      '9bd380be-1c2b-4f05-95a7-15bd36716577'::uuid,
-      '平野 梢',
-      '千葉県習志野市谷津 5-6-7',
-      'kozue@example.com',
+      '982ad175-afd5-4066-9ea0-25500a1e6dcd'::uuid,
+      '312f579c-e5a7-4c4f-9e6c-a0b2fdfa2099'::uuid,
+      '中村 悠人',
+      '東京都豊島区巣鴨 1-2-3',
+      'yuto@example.com',
+      18000::numeric
+    ),
+    (
+      '298eba7e-6bb1-4148-9808-6a9bfaead8ff'::uuid,
+      '312f579c-e5a7-4c4f-9e6c-a0b2fdfa2099'::uuid,
+      '堀内 美沙',
+      '神奈川県川崎市宮前区 5-6-7',
+      'misa.h@example.com',
       9000::numeric
+    ),
+    (
+      '6159be03-0204-4905-a6e6-8b29b46e4db0'::uuid,
+      '312f579c-e5a7-4c4f-9e6c-a0b2fdfa2099'::uuid,
+      '吉田 一真',
+      '埼玉県川口市本町 8-9-10',
+      'kazuma@example.com',
+      16000::numeric
+    ),
+    (
+      '97ffbc64-d509-4571-a11c-4c6c71ecb59c'::uuid,
+      '312f579c-e5a7-4c4f-9e6c-a0b2fdfa2099'::uuid,
+      '川村 美佳',
+      '千葉県松戸市馬橋 2-3-4',
+      'mika@example.com',
+      12500::numeric
+    ),
+    (
+      'a57ab4f8-0971-44b2-8d80-364fab1f95f7'::uuid,
+      '312f579c-e5a7-4c4f-9e6c-a0b2fdfa2099'::uuid,
+      '近藤 直樹',
+      '東京都品川区大井 6-7-8',
+      'naoki@example.com',
+      22000::numeric
+    ),
+    (
+      '85a7cb79-30bb-4b63-974b-2ad02b301864'::uuid,
+      '312f579c-e5a7-4c4f-9e6c-a0b2fdfa2099'::uuid,
+      '柴田 梨沙',
+      '東京都世田谷区砧 3-4-5',
+      'risa@example.com',
+      10500::numeric
+    ),
+    (
+      '74a69cf7-86a9-4e53-9b17-c1421ec48b30'::uuid,
+      '312f579c-e5a7-4c4f-9e6c-a0b2fdfa2099'::uuid,
+      '秋山 俊平',
+      '神奈川県相模原市南区 9-10-11',
+      'shunpei@example.com',
+      14000::numeric
+    ),
+    (
+      'f12163ee-8523-406d-9120-d0af085deafa'::uuid,
+      '312f579c-e5a7-4c4f-9e6c-a0b2fdfa2099'::uuid,
+      '村上 純',
+      '東京都江東区森下 12-13-14',
+      'jun@example.com',
+      19500::numeric
+    ),
+    (
+      '5bbd817b-0133-4046-abdc-124e5056a1cf'::uuid,
+      '312f579c-e5a7-4c4f-9e6c-a0b2fdfa2099'::uuid,
+      '片岡 真帆',
+      '千葉県流山市西初石 5-6-7',
+      'maho@example.com',
+      11000::numeric
+    ),
+    (
+      'dfa08615-f25d-42b4-a03c-554b01fb28a1'::uuid,
+      '312f579c-e5a7-4c4f-9e6c-a0b2fdfa2099'::uuid,
+      '松永 誠司',
+      '東京都台東区根岸 2-3-4',
+      'seiji@example.com',
+      17500::numeric
+    ),
+    (
+      '100fa744-feea-423b-b0a0-d62e5c6ff5a9'::uuid,
+      '312f579c-e5a7-4c4f-9e6c-a0b2fdfa2099'::uuid,
+      '青木 香織',
+      '東京都江戸川区船堀 7-8-9',
+      'kaori@example.com',
+      9000::numeric
+    ),
+    (
+      'ec469829-bc65-473e-98c1-2ef5b2a2e1b5'::uuid,
+      '312f579c-e5a7-4c4f-9e6c-a0b2fdfa2099'::uuid,
+      '武田 大地',
+      '埼玉県越谷市レイクタウン 10-11-12',
+      'daichi@example.com',
+      13000::numeric
+    ),
+    (
+      '567258ce-5d09-40cc-9394-1f90693779eb'::uuid,
+      '312f579c-e5a7-4c4f-9e6c-a0b2fdfa2099'::uuid,
+      '大塚 あやめ',
+      '東京都文京区千駄木 4-5-6',
+      'ayame@example.com',
+      15000::numeric
+    ),
+    (
+      'e38561a0-a0bb-4082-8985-980148cd3f32'::uuid,
+      '312f579c-e5a7-4c4f-9e6c-a0b2fdfa2099'::uuid,
+      '藤田 弘樹',
+      '神奈川県鎌倉市御成町 1-2-3',
+      'hiroki@example.com',
+      20000::numeric
+    ),
+    (
+      '2fbebb76-1788-46a0-9622-cab57587ff10'::uuid,
+      '312f579c-e5a7-4c4f-9e6c-a0b2fdfa2099'::uuid,
+      '菅原 さき',
+      '千葉県市川市八幡 6-7-8',
+      'saki@example.com',
+      8500::numeric
+    ),
+    (
+      'dc30f555-b8c2-401e-a9e3-30da0a9c9aea'::uuid,
+      '312f579c-e5a7-4c4f-9e6c-a0b2fdfa2099'::uuid,
+      '本田 祐介',
+      '東京都練馬区春日町 9-10-11',
+      'yusuke@example.com',
+      14500::numeric
+    ),
+    (
+      '544dd5c5-9b26-4aae-8b05-2e00b21c5338'::uuid,
+      '312f579c-e5a7-4c4f-9e6c-a0b2fdfa2099'::uuid,
+      '谷口 亜美',
+      '東京都北区十条 3-4-5',
+      'ami@example.com',
+      11500::numeric
+    ),
+    (
+      '2f4b0bc0-c4bf-4fd8-aecf-845d86b2dd36'::uuid,
+      '312f579c-e5a7-4c4f-9e6c-a0b2fdfa2099'::uuid,
+      '小原 圭吾',
+      '神奈川県横浜市金沢区 2-3-4',
+      'keigo@example.com',
+      21000::numeric
+    ),
+    (
+      '906e73c2-d793-4a3e-90d3-34912fb2003e'::uuid,
+      '312f579c-e5a7-4c4f-9e6c-a0b2fdfa2099'::uuid,
+      '白石 渚',
+      '東京都杉並区高円寺南 5-6-7',
+      'nagisa@example.com',
+      9500::numeric
+    ),
+    (
+      'f1363f7a-8eea-4076-8890-a8e10059d7ae'::uuid,
+      '312f579c-e5a7-4c4f-9e6c-a0b2fdfa2099'::uuid,
+      '森岡 剛',
+      '東京都足立区千住 8-9-10',
+      'tsuyoshi@example.com',
+      18500::numeric
     )
 )
 insert into supporters (id, project_id, name, address, email, pledged_amount, created_at, updated_at)
