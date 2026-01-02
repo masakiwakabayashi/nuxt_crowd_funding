@@ -12,4 +12,5 @@ export interface Delivery {
   updated_at: string;
   supporter?: Supporter;
   due_date: string;
+  completed_at: string | null;
 }

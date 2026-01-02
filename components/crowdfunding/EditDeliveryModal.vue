@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { computed, ref, watch } from 'vue'
-  import type { Delivery, DeliveryStatus } from './types'
+  import type { Delivery, DeliveryStatus } from '../../shared/types/Delivery'
 
   const props = defineProps<{
     open: boolean

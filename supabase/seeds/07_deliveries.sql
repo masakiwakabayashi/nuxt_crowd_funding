@@ -241,6 +241,10 @@ delivery_seed_with_due as (
   select
     ds.*,
     coalesce(r.estimated_delivery, now() + interval '30 days') as due_date,
+    case
+      when ds.status = '完了' then coalesce(r.estimated_delivery, now())
+      else null
+    end as completed_at,
     r.project_id
   from delivery_seed ds
   join rewards r
@@ -253,6 +257,7 @@ insert into deliveries (
   supporter_id,
   status,
   due_date,
+  completed_at,
   created_at,
   updated_at
 )
@@ -263,6 +268,7 @@ select
   ds.supporter_id,
   ds.status,
   ds.due_date,
+  ds.completed_at,
   now(),
   now()
 from delivery_seed_with_due ds;

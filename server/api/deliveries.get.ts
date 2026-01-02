@@ -8,7 +8,11 @@ type DeliveryStatus = '未着手' | '作成中' | '完了'
 type DeliveryRecord = {
   id: string
   project_id: string
+  reward_id: string
+  supporter_id: string
   status: DeliveryStatus
+  due_date: string | null
+  completed_at: string | null
   created_at: string
   updated_at: string
   reward: RewardRecord | null
@@ -91,7 +95,11 @@ export default defineEventHandler(async (event) => {
       `
         id,
         project_id,
+        reward_id,
+        supporter_id,
         status,
+        due_date,
+        completed_at,
         created_at,
         updated_at,
         reward:rewards (
@@ -133,7 +141,11 @@ export default defineEventHandler(async (event) => {
   const deliveries = (data ?? []).map((delivery) => ({
     id: delivery.id,
     projectId: delivery.project_id,
+    rewardId: delivery.reward_id,
+    supporterId: delivery.supporter_id,
     status: delivery.status,
+    dueDate: delivery.due_date,
+    completedAt: delivery.completed_at,
     createdAt: delivery.created_at,
     updatedAt: delivery.updated_at,
     reward: delivery.reward
