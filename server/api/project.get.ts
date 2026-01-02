@@ -1,6 +1,6 @@
 import { createError, getQuery } from 'h3'
 import { getSupabaseServerClient } from '@/shared/utils/supabaseServerClient'
-import type { Project } from '@/shared/types/Projects'
+import type { Project } from '@/shared/types/Project'
 
 export default defineEventHandler(async (event) => {
   const query = getQuery(event)
