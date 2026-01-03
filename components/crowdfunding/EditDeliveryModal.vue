@@ -1,12 +1,12 @@
 <script setup lang="ts">
   import { computed, ref, watch } from 'vue'
   import type { Delivery, DeliveryStatus } from '../../shared/types/Delivery'
-
-  // 次はここのモーダルを修正する
+  import type { Reward } from '../../shared/types/Rewards'
 
   const props = defineProps<{
     open: boolean
-    delivery: Delivery | null
+    delivery: Delivery
+    rewards: Reward[]
   }>()
 
   const emit = defineEmits<{
@@ -57,6 +57,14 @@
 
   const handleClose = () => {
     emit('close')
+  }
+
+  const rewardNameById = (rewardId: string | null | undefined) => {
+    if (!rewardId) {
+      return ''
+    }
+    const reward = props.rewards.find((item) => item.id === rewardId)
+    return reward?.title ?? ''
   }
 
   const validateCompletionDate = () => {
@@ -130,7 +138,7 @@
               <div class="space-y-1 text-sm">
                 <span class="text-slate-600">リターン内容</span>
                 <p class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm text-slate-700">
-                  {{ draftDelivery.reward_id }}
+                  {{ rewardNameById(draftDelivery.reward_id) }}
                 </p>
               </div>
             </div>

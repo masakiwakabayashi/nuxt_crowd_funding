@@ -74,9 +74,10 @@
     </div>
 
     <CrowdfundingDeliveryTable
-      v-if="deliveries.length > 0"
+      v-if="deliveries.length > 0 && rewards.length > 0"
       :currentPage="currentPage"
       :deliveries="deliveries"
+      :rewards="rewards"
       :itemsPerPage="ITEMS_PER_PAGE"
       @update-delivery="updateDelivery"
     />

@@ -1,10 +1,12 @@
 <script setup lang="ts">
   import { computed, ref } from 'vue'
   import EditDeliveryModal from './EditDeliveryModal.vue'
+  import type { Reward } from '../../shared/types/Rewards'
   import type { Delivery, DeliveryStatus } from '../../shared/types/Delivery'
 
   const props = defineProps<{
     deliveries: Delivery[]
+    rewards: Reward[]
     currentPage: number
     itemsPerPage: number
   }>()
@@ -17,6 +19,14 @@
   const isEditModalOpen = ref(false)
   const selectedDelivery = ref<Delivery | null>(null)
   const paginatedDeliveries = computed(() => props.deliveries)
+
+  const rewardNameById = (rewardId: string | null | undefined) => {
+    if (!rewardId) {
+      return ''
+    }
+    const reward = props.rewards.find((item) => item.id === rewardId)
+    return reward?.title ?? ''
+  }
 
   const totalPages = computed(() => {
     return 1
@@ -137,10 +147,8 @@
               </div>
             </td>
             <td class="w-[25%] px-6 py-5 text-slate-900">
-              <!-- リターンの一覧はすでに取得されているので、そこからidで名前を取得する -->
-              {{ delivery.reward_id }}
+              {{ rewardNameById(delivery.reward_id) }}
             </td>
-            <!-- 納品テーブルに配送期限を入れる -->
             <td class="w-[18%] px-6 py-5 whitespace-nowrap">
               {{ delivery.due_date }}
             </td>
@@ -201,8 +209,10 @@
     </div>
 
     <EditDeliveryModal
+      v-if="selectedDelivery"
       :open="isEditModalOpen"
       :delivery="selectedDelivery"
+      :rewards="rewards"
       @close="closeEditModal"
       @save="saveDelivery"
     />
