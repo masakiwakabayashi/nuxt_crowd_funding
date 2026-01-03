@@ -1,9 +1,27 @@
 <script setup lang="ts">
+  import { computed } from 'vue'
   import type { Project } from '../../shared/types/Project'
+  import {
+    calculateRemainingDays,
+    formatJapaneseDate,
+  } from '../../shared/utils/date'
 
   const props = defineProps<{
     project: Project
   }>()
+
+  const projectStartDate = computed(
+    () => formatJapaneseDate(props.project.start_at) || '---',
+  )
+
+  const projectEndDate = computed(
+    () => formatJapaneseDate(props.project.end_at) || '---',
+  )
+
+  const remainingDays = computed(() => {
+    if (!props.project.end_at) return null
+    return calculateRemainingDays(props.project.end_at)
+  })
 </script>
 
 <template>
@@ -36,7 +54,7 @@
         >
           開催期間
           <span class="text-base font-semibold text-slate-900">
-            {{ props.project.start_at }} ~ {{ props.project.end_at }}
+            {{ projectStartDate }} ~ {{ projectEndDate }}
           </span>
         </div>
       </div>
@@ -48,9 +66,9 @@
           <p class="text-xs uppercase tracking-wide text-slate-400">Countdown</p>
           <p class="mt-2 text-xl font-semibold text-slate-900">
             <!-- スタートとエンドの日付から残りの日数を計算する -->
-            残り {{ 10 }} 日
+            残り {{ remainingDays ?? '--' }} 日
           </p>
-          <p class="text-xs text-slate-500">終了予定日 {{ props.project.end_at }}</p>
+          <p class="text-xs text-slate-500">終了予定日 {{ projectEndDate }}</p>
           <div class="mt-4 h-2 w-full overflow-hidden rounded-full bg-white">
             <!-- 進捗を計算する関数もつくる -->
             <div
@@ -81,10 +99,10 @@
         <article class="rounded-2xl bg-slate-50/70 p-4 shadow-inner shadow-white">
           <p class="text-xs uppercase tracking-wide text-slate-500">締切</p>
           <p class="mt-2 text-xl font-semibold text-slate-900">
-            {{ props.project.end_at }}
+            {{ projectEndDate }}
           </p>
           <!-- 残りの日数を計算する関数をつくる -->
-          <p class="text-xs text-slate-500">残り {{ 30 }} 日</p>
+          <p class="text-xs text-slate-500">残り {{ remainingDays ?? '--' }} 日</p>
         </article>
       </div>
     </div>

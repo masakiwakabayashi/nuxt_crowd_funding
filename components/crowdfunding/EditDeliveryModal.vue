@@ -1,6 +1,10 @@
 <script setup lang="ts">
   import { computed, ref, watch } from 'vue'
   import type { Delivery, DeliveryStatus } from '../../shared/types/Delivery'
+  import {
+    formatIsoDate,
+    formatJapaneseDate,
+  } from '../../shared/utils/date'
   import type { Reward } from '../../shared/types/Rewards'
 
   const props = defineProps<{
@@ -19,9 +23,17 @@
   const deliveryStatusOptions: DeliveryStatus[] = ['未着手', '作成中', '完了']
 
   const resetDraftDelivery = () => {
-    draftDelivery.value = props.delivery
-      ? { ...props.delivery, completed_at: props.delivery.completed_at ?? '' }
-      : null
+    if (!props.delivery) {
+      draftDelivery.value = null
+      completionDateMessage.value = ''
+      return
+    }
+
+    draftDelivery.value = {
+      ...props.delivery,
+      due_date: formatIsoDate(props.delivery.due_date) || '',
+      completed_at: props.delivery.completed_at ?? '',
+    }
     completionDateMessage.value = ''
   }
 
@@ -148,9 +160,12 @@
                 <span class="text-slate-600">納品予定日</span>
                 <input
                   v-model="draftDelivery.due_date"
-                  type="text"
+                  type="date"
                   class="w-full rounded-2xl border border-slate-200 px-4 py-2 text-sm focus:border-emerald-400 focus:outline-none"
                 />
+                <p class="text-xs text-slate-400">
+                  表示: {{ formatJapaneseDate(draftDelivery.due_date) || '未設定' }}
+                </p>
               </label>
               <label class="space-y-1 text-sm">
                 <span class="text-slate-600">ステータス</span>

@@ -3,6 +3,7 @@
   import EditDeliveryModal from './EditDeliveryModal.vue'
   import type { Reward } from '../../shared/types/Rewards'
   import type { Delivery, DeliveryStatus } from '../../shared/types/Delivery'
+  import { formatJapaneseDate } from '../../shared/utils/date'
 
   const props = defineProps<{
     deliveries: Delivery[]
@@ -22,10 +23,10 @@
 
   const rewardNameById = (rewardId: string | null | undefined) => {
     if (!rewardId) {
-      return ''
+      return '不明なリターン'
     }
     const reward = props.rewards.find((item) => item.id === rewardId)
-    return reward?.title ?? ''
+    return reward?.title ?? '不明なリターン'
   }
 
   const totalPages = computed(() => {
@@ -150,7 +151,7 @@
               {{ rewardNameById(delivery.reward_id) }}
             </td>
             <td class="w-[18%] px-6 py-5 whitespace-nowrap">
-              {{ delivery.due_date }}
+              {{ formatJapaneseDate(delivery.due_date) || '未設定' }}
             </td>
             <td class="w-[12%] px-6 py-5">
               <span
