@@ -2,6 +2,8 @@
   import { computed, ref, watch } from 'vue'
   import type { Delivery, DeliveryStatus } from '../../shared/types/Delivery'
 
+  // 次はここのモーダルを修正する
+
   const props = defineProps<{
     open: boolean
     delivery: Delivery | null
@@ -12,25 +14,25 @@
     (e: 'save', value: Delivery): void
   }>()
 
-  const formState = ref<Delivery | null>(null)
-  const completionDateError = ref('')
-  const statusOptions: DeliveryStatus[] = ['未着手', '作成中', '完了']
+  const draftDelivery = ref<Delivery | null>(null)
+  const completionDateMessage = ref('')
+  const deliveryStatusOptions: DeliveryStatus[] = ['未着手', '作成中', '完了']
 
-  const syncFormState = () => {
-    formState.value = props.delivery
-      ? { ...props.delivery, completionDate: props.delivery.completionDate ?? '' }
+  const resetDraftDelivery = () => {
+    draftDelivery.value = props.delivery
+      ? { ...props.delivery, completed_at: props.delivery.completed_at ?? '' }
       : null
-    completionDateError.value = ''
+    completionDateMessage.value = ''
   }
 
-  const isCompletionRequired = computed(
-    () => formState.value?.status === '完了',
+  const shouldRequireCompletionDate = computed(
+    () => draftDelivery.value?.status === '完了',
   )
 
   watch(
     () => props.delivery,
     () => {
-      syncFormState()
+      resetDraftDelivery()
     },
     { immediate: true },
   )
@@ -39,16 +41,16 @@
     () => props.open,
     (isOpen) => {
       if (!isOpen) {
-        syncFormState()
+        resetDraftDelivery()
       }
     },
   )
 
   watch(
-    () => formState.value?.status,
+    () => draftDelivery.value?.status,
     () => {
-      if (!isCompletionRequired.value) {
-        completionDateError.value = ''
+      if (!shouldRequireCompletionDate.value) {
+        completionDateMessage.value = ''
       }
     },
   )
@@ -58,18 +60,18 @@
   }
 
   const validateCompletionDate = () => {
-    if (isCompletionRequired.value && !formState.value?.completionDate) {
-      completionDateError.value = 'ステータスが完了の場合は納品完了日を入力してください'
+    if (shouldRequireCompletionDate.value && !draftDelivery.value?.completed_at) {
+      completionDateMessage.value = 'ステータスが完了の場合は納品完了日を入力してください'
       return false
     }
-    completionDateError.value = ''
+    completionDateMessage.value = ''
     return true
   }
 
   const handleSubmit = () => {
-    if (!formState.value) return
+    if (!draftDelivery.value) return
     if (!validateCompletionDate()) return
-    emit('save', { ...formState.value })
+    emit('save', { ...draftDelivery.value })
     emit('close')
   }
 </script>
@@ -78,7 +80,7 @@
   <Teleport to="body">
     <transition name="fade">
       <div
-        v-if="open && formState"
+        v-if="open && draftDelivery"
         class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 px-4"
       >
         <div
@@ -106,13 +108,13 @@
               <div class="space-y-1 text-sm">
                 <span class="text-slate-600">支援者名</span>
                 <p class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm text-slate-700">
-                  {{ formState.supporterName }}
+                  {{ draftDelivery.supporter?.name }}
                 </p>
               </div>
               <div class="space-y-1 text-sm">
                 <span class="text-slate-600">メールアドレス</span>
                 <p class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm text-slate-700">
-                  {{ formState.supporterEmail || 'メール情報なし' }}
+                  {{ draftDelivery.supporter?.email }}
                 </p>
               </div>
             </div>
@@ -120,7 +122,7 @@
             <div class="space-y-1 text-sm">
               <span class="text-slate-600">住所</span>
               <p class="min-h-[3rem] rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm leading-relaxed text-slate-700 whitespace-pre-line">
-                {{ formState.supporterAddress || '住所情報なし' }}
+                {{ draftDelivery.supporter?.address }}
               </p>
             </div>
 
@@ -128,16 +130,7 @@
               <div class="space-y-1 text-sm">
                 <span class="text-slate-600">リターン内容</span>
                 <p class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm text-slate-700">
-                  {{ formState.rewardName }}
-                </p>
-              </div>
-              <div class="space-y-1 text-sm">
-                <span class="text-slate-600">支援金額</span>
-                <p class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm text-slate-700">
-                  <template v-if="formState.amount != null">
-                    ¥{{ formState.amount.toLocaleString() }}
-                  </template>
-                  <span v-else>—</span>
+                  {{ draftDelivery.reward_id }}
                 </p>
               </div>
             </div>
@@ -146,7 +139,7 @@
               <label class="space-y-1 text-sm">
                 <span class="text-slate-600">納品予定日</span>
                 <input
-                  v-model="formState.dueDate"
+                  v-model="draftDelivery.due_date"
                   type="text"
                   class="w-full rounded-2xl border border-slate-200 px-4 py-2 text-sm focus:border-emerald-400 focus:outline-none"
                 />
@@ -154,11 +147,11 @@
               <label class="space-y-1 text-sm">
                 <span class="text-slate-600">ステータス</span>
                 <select
-                  v-model="formState.status"
+                  v-model="draftDelivery.status"
                   class="w-full rounded-2xl border border-slate-200 px-4 py-2 text-sm focus:border-emerald-400 focus:outline-none"
                 >
                   <option
-                    v-for="status in statusOptions"
+                  v-for="status in deliveryStatusOptions"
                     :key="status"
                     :value="status"
                   >
@@ -168,14 +161,14 @@
               </label>
             </div>
 
-            <div v-if="isCompletionRequired" class="space-y-1 text-sm">
+            <div v-if="shouldRequireCompletionDate" class="space-y-1 text-sm">
               <span class="text-slate-600">納品完了日</span>
               <input
-                v-model="formState.completionDate"
+                v-model="draftDelivery.completed_at"
                 type="text"
                 :class="[
                   'w-full rounded-2xl border px-4 py-2 text-sm focus:outline-none',
-                  completionDateError
+                  completionDateMessage
                     ? 'border-rose-300 focus:border-rose-400'
                     : 'border-slate-200 focus:border-emerald-400',
                 ]"
@@ -184,8 +177,8 @@
               <p class="text-xs text-slate-400">
                 ステータスが完了の場合のみ入力が必要です
               </p>
-              <p v-if="completionDateError" class="text-xs text-rose-500">
-                {{ completionDateError }}
+              <p v-if="completionDateMessage" class="text-xs text-rose-500">
+                {{ completionDateMessage }}
               </p>
             </div>
 
