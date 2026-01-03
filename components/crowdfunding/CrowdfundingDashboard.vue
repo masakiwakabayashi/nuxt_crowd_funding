@@ -4,12 +4,6 @@
   import CrowdfundingProjectOverview from './CrowdfundingProjectOverview.vue'
   import CrowdfundingRewardList from './CrowdfundingRewardList.vue'
   import CrowdfundingDeliveryTable from './CrowdfundingDeliveryTable.vue'
-  import {
-    calculateRemainingDays,
-    formatDisplayDate,
-    formatIsoDate,
-  } from '../../shared/utils/date'
-
   import type { Project } from '../../shared/types/Project'
   import type { Reward } from '../../shared/types/Rewards'
   import type { Delivery } from '../../shared/types/Delivery'

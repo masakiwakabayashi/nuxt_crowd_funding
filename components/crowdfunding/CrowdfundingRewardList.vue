@@ -76,10 +76,6 @@
         </div>
 
         <div class="mt-5 flex flex-wrap items-center gap-2 text-xs font-semibold text-slate-500">
-          <span class="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-slate-600">
-            <!-- 型定義を修正してリワードにカテゴリーを入れる -->
-            カテゴリ: {{ reward.category_id }}
-          </span>
           <span
             v-if="reward.max_quantity"
             class="rounded-full border border-emerald-200 bg-emerald-50/80 px-3 py-1 text-emerald-700"
