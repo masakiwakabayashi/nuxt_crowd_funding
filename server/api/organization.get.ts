@@ -18,7 +18,10 @@ export default defineEventHandler(async (event) => {
   const supabase = getSupabaseServerClient()
   const { data, error } = await supabase
     .from('organizations')
-    .select('*')
+    .select(`
+      *,
+      projects:projects(*)
+    `)
     .eq('id', organizationId)
     .maybeSingle()
   if (error) {

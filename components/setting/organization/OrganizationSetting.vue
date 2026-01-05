@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { computed, ref } from 'vue'
+  import { computed, ref, watchEffect } from 'vue'
   import { useAsyncData } from 'nuxt/app'
   import { formatDateTime, formatDisplayDate } from '../../../shared/utils/date'
   import type { Organization } from "../../../shared/types/Organization"
@@ -23,6 +23,14 @@
         query: { organizationId: props.organizationId },
       }),
   )
+
+  watchEffect(() => {
+    const fetchedOrganization = data.value
+    if (!fetchedOrganization) return
+
+    organization.value = fetchedOrganization
+    projects.value = fetchedOrganization.projects ?? []
+  })
 
   const formatCurrency = (value: number): string =>
     new Intl.NumberFormat('ja-JP', {
