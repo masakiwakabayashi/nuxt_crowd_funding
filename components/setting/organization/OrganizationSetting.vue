@@ -1,61 +1,27 @@
 <script setup lang="ts">
-  import { computed } from 'vue'
+  import { computed, ref } from 'vue'
   import { useAsyncData } from 'nuxt/app'
   import { formatDateTime, formatDisplayDate } from '../../../shared/utils/date'
-
-  type Organization = {
-    id: string
-    name: string
-    createdAt: string
-    updatedAt: string
-  }
-
-  type CrowdfundingProject = {
-    id: string
-    title: string
-    description: string | null
-    startAt: string
-    endAt: string
-    goal: number
-    createdAt: string
-    updatedAt: string
-  }
+  import type { Organization } from "../../../shared/types/Organization"
+  import type { Project } from '../../../shared/types/Project'
 
   const props = defineProps<{
     organizationId: string
   }>()
 
-  const fallbackOrganizationId = 'b52b352c-6dee-4ddc-bf0a-cc95d85f1a11'
-  const resolvedOrganizationId = computed(() =>
-    props.organizationId?.length ? props.organizationId : fallbackOrganizationId,
-  )
+  const organization = ref<Organization>()
+  const projects = ref<Project[]>([])
 
   const {
-    data: organizationData,
-    pending: isOrganizationLoading,
-    error: organizationError,
-  } = await useAsyncData<{ organization: Organization | null }>(
-    () => `organization-settings-${resolvedOrganizationId.value}`,
-    () => $fetch(`/api/organizations/${resolvedOrganizationId.value}`),
-    { watch: [resolvedOrganizationId] },
-  )
-
-  const organization = computed<Organization | null>(
-    () => organizationData.value?.organization ?? null,
-  )
-
-  const {
-    data: projectData,
-    pending: areProjectsLoading,
-    error: projectsError,
-  } = await useAsyncData<{ projects: CrowdfundingProject[] }>(
-    () => `organization-projects-${resolvedOrganizationId.value}`,
-    () => $fetch(`/api/organizations/${resolvedOrganizationId.value}/projects`),
-    { watch: [resolvedOrganizationId] },
-  )
-
-  const projects = computed<CrowdfundingProject[]>(
-    () => projectData.value?.projects ?? [],
+    data,
+    pending: isLoading,
+    error,
+  } = await useAsyncData<Organization>(
+    `organization-${props.organizationId}`,
+    () =>
+      $fetch('/api/organization', {
+        query: { organizationId: props.organizationId },
+      }),
   )
 
   const formatCurrency = (value: number): string =>
@@ -66,7 +32,7 @@
     }).format(value)
 
   const projectSettingsLink = (projectId: string): string =>
-    `/organizations/${resolvedOrganizationId.value}/setting/${encodeURIComponent(projectId)}/crowdfunding`
+    `/organizations/${props.organizationId}/setting/${encodeURIComponent(projectId)}/crowdfunding`
 </script>
 
 <template>
@@ -101,13 +67,13 @@
             <dl>
               <dt class="text-xs uppercase tracking-wide text-slate-400">作成日時</dt>
               <dd class="mt-1 text-base font-semibold text-slate-900">
-                {{ formatDateTime(organization.createdAt) || '---' }}
+                {{ formatDateTime(organization.created_at) }}
               </dd>
             </dl>
             <dl>
               <dt class="text-xs uppercase tracking-wide text-slate-400">最終更新</dt>
               <dd class="mt-1 text-base font-semibold text-slate-900">
-                {{ formatDateTime(organization.updatedAt) || '---' }}
+                {{ formatDateTime(organization.updated_at) }}
               </dd>
             </dl>
           </div>
@@ -124,12 +90,6 @@
               この組織に紐づいているプロジェクトの一覧です。
             </p>
           </div>
-          <span
-            v-if="areProjectsLoading"
-            class="text-xs font-medium text-emerald-600"
-          >
-            読み込み中...
-          </span>
         </div>
 
         <div v-if="projects.length" class="mt-6 grid gap-4">
@@ -161,44 +121,26 @@
               <div>
                 <dt class="text-xs uppercase tracking-wide text-slate-400">募集期間</dt>
                 <dd class="mt-1 font-medium text-slate-900">
-                  {{ formatDisplayDate(project.startAt) || '-' }} 〜
-                  {{ formatDisplayDate(project.endAt) || '-' }}
+                  {{ formatDisplayDate(project.start_at) || '-' }} 〜
+                  {{ formatDisplayDate(project.end_at) || '-' }}
                 </dd>
               </div>
               <div>
                 <dt class="text-xs uppercase tracking-wide text-slate-400">作成</dt>
                 <dd class="mt-1">
-                  {{ formatDateTime(project.createdAt) || '-' }}
+                  {{ formatDateTime(project.created_at) || '-' }}
                 </dd>
               </div>
               <div>
                 <dt class="text-xs uppercase tracking-wide text-slate-400">最終更新</dt>
                 <dd class="mt-1">
-                  {{ formatDateTime(project.updatedAt) || '-' }}
+                  {{ formatDateTime(project.updated_at) || '-' }}
                 </dd>
               </div>
             </dl>
           </NuxtLink>
         </div>
-
-        <p
-          v-else-if="!areProjectsLoading && !projectsError"
-          class="mt-6 text-sm text-slate-500"
-        >
-          紐づいているクラウドファンディングはまだありません。
-        </p>
-
-        <p v-else-if="projectsError" class="mt-6 text-sm text-rose-500">
-          クラウドファンディング情報の取得に失敗しました。
-        </p>
       </section>
     </template>
-
-    <section
-      v-else
-      class="rounded-3xl border border-white/80 bg-white/95 p-6 text-sm text-slate-500 shadow-xl shadow-emerald-100/70"
-    >
-      組織情報が見つかりませんでした。
-    </section>
   </main>
 </template>
