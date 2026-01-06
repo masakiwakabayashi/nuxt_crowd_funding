@@ -1,6 +1,5 @@
 <script setup lang="ts">
-  import { computed, reactive, ref, watch, watchEffect } from 'vue'
-  import { useAsyncData } from 'nuxt/app'
+  import { computed, reactive, ref, watch } from 'vue'
   import { formatDateTime, formatDisplayDate } from '../../../shared/utils/date'
   import type {
     ProjectFormValues,
@@ -10,11 +9,9 @@
 
   const props = defineProps<{
     organizationId: string
-    selectedProjectId: string
     projectStats: ProjectStatsType
+    project: Project
   }>()
-
-  const project = ref<Project | null>(null)
 
   const createEmptyFormValues = (): ProjectFormValues => ({
     title: '',
@@ -27,18 +24,6 @@
   const projectForm = reactive<ProjectFormValues>(createEmptyFormValues())
   const lastSavedForm = ref<ProjectFormValues | null>(null)
 
-  const toDateTimeLocal = (value: string | null | undefined): string => {
-    if (!value) return ''
-    const date = new Date(value)
-    if (Number.isNaN(date.getTime())) return ''
-    const year = date.getFullYear()
-    const month = String(date.getMonth() + 1).padStart(2, '0')
-    const day = String(date.getDate()).padStart(2, '0')
-    const hours = String(date.getHours()).padStart(2, '0')
-    const minutes = String(date.getMinutes()).padStart(2, '0')
-    return `${year}-${month}-${day}T${hours}:${minutes}`
-  }
-
   const assignFormValues = (values: ProjectFormValues) => {
     projectForm.title = values.title
     projectForm.description = values.description
@@ -46,50 +31,6 @@
     projectForm.endAt = values.endAt
     projectForm.goal = values.goal
   }
-
-  const projectToFormValues = (projectData: Project): ProjectFormValues => ({
-    title: projectData.title ?? '',
-    description: projectData.description ?? '',
-    startAt: toDateTimeLocal(projectData.start_at),
-    endAt: toDateTimeLocal(projectData.end_at),
-    goal: projectData.goal ?? 0,
-  })
-
-  const syncFormWithProject = (projectData: Project | null) => {
-    if (!projectData) {
-      assignFormValues(createEmptyFormValues())
-      lastSavedForm.value = null
-      return
-    }
-
-    const values = projectToFormValues(projectData)
-    assignFormValues(values)
-    lastSavedForm.value = { ...values }
-  }
-
-  const {
-    data,
-    pending: isLoading,
-    error,
-  } = await useAsyncData<Project>(
-    `project-${props.organizationId}`,
-    () =>
-      $fetch('/api/project', {
-        query: { projectId: props.selectedProjectId },
-      }),
-  )
-
-  watchEffect(() => {
-    project.value = data.value ?? null
-  })
-
-  watch(
-    () => project.value,
-    (currentProject) => {
-      syncFormWithProject(currentProject)
-    },
-    { immediate: true },
-  )
 
   const formatCurrency = (value: number) =>
     new Intl.NumberFormat('ja-JP', {
@@ -107,14 +48,7 @@
     return `${start || '未設定'} 〜 ${end || '未設定'}`
   })
 
-  const projectSaveError = ref('')
   const isSavingProject = ref(false)
-
-  const toIsoString = (value: string): string | null => {
-    if (!value) return null
-    const date = new Date(value)
-    return Number.isNaN(date.getTime()) ? null : date.toISOString()
-  }
 
   const resetProjectForm = () => {
     if (lastSavedForm.value) {
@@ -126,34 +60,7 @@
   }
 
   const handleProjectSave = async () => {
-    if (!project.value || isSavingProject.value) return
-
-    projectSaveError.value = ''
-    isSavingProject.value = true
-
-    try {
-      const payload = {
-        projectId: project.value.id,
-        title: projectForm.title,
-        description: projectForm.description || null,
-        startAt: toIsoString(projectForm.startAt),
-        endAt: toIsoString(projectForm.endAt),
-        goal: Number.isFinite(projectForm.goal) ? projectForm.goal : 0,
-      }
-
-      const updatedProject = await $fetch<Project>('/api/project', {
-        method: 'PUT',
-        body: payload,
-      })
-
-      project.value = updatedProject
-      syncFormWithProject(updatedProject)
-    } catch (err) {
-      projectSaveError.value =
-        err instanceof Error ? err.message : 'プロジェクトの更新に失敗しました。'
-    } finally {
-      isSavingProject.value = false
-    }
+    // あとで実装する
   }
 </script>
 

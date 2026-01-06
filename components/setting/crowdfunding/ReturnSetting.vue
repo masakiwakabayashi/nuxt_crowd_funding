@@ -1,72 +1,18 @@
 <script setup lang="ts">
   import { computed, ref, watch } from 'vue'
-  import { useAsyncData } from 'nuxt/app'
   import { formatDisplayDate } from '../../../shared/utils/date'
-  import type {
-    EditableReward,
-    ProjectStats,
-    RewardRecord,
-  } from '../../../shared/types/Crowdfunding'
-
-  // ここも整理する
 
   const props = defineProps<{
     organizationId: string
     selectedProjectId: string
+    rewards: Reward[]
   }>()
 
   const emit = defineEmits<{
     (e: 'update:stats', stats: ProjectStats): void
   }>()
 
-  const fallbackOrganizationId = 'b52b352c-6dee-4ddc-bf0a-cc95d85f1a11'
-  const organizationId = computed(() => {
-    return props.organizationId && props.organizationId.length > 0
-      ? props.organizationId
-      : fallbackOrganizationId
-  })
-
-  const {
-    data: rewardsData,
-    pending: areRewardsLoading,
-    error: rewardsError,
-  } = await useAsyncData<{ rewards: RewardRecord[] }>(
-    `organization-rewards-${organizationId.value}`,
-    () =>
-      $fetch('/api/crowdfunding/rewards', {
-        query: { organizationId: organizationId.value },
-      }),
-  )
-
   const rewardDrafts = ref<EditableReward[]>([])
-  const rewardList = computed<RewardRecord[]>(() => rewardsData.value?.rewards ?? [])
-
-  watch(
-    [() => props.selectedProjectId, rewardList],
-    ([projectId, list]) => {
-      if (!projectId) {
-        rewardDrafts.value = []
-        return
-      }
-
-      const filtered = list.filter((reward) => reward.projectId === projectId)
-
-      rewardDrafts.value = filtered.map((reward) => ({
-        ...reward,
-        draft: {
-          title: reward.title,
-          description: reward.description,
-          price: reward.price,
-          limit: reward.limit,
-          deliverySchedule: reward.deliverySchedule,
-          category: reward.category,
-        },
-        isEditing: false,
-        isNew: false,
-      }))
-    },
-    { immediate: true },
-  )
 
   const formatCurrency = (value: number) =>
     new Intl.NumberFormat('ja-JP', {
@@ -198,30 +144,14 @@
         type="button"
         class="rounded-2xl border border-emerald-200 bg-emerald-500/10 px-4 py-2 text-sm font-semibold text-emerald-700 shadow-sm disabled:opacity-60"
         @click="addNewReward"
-        :disabled="!hasSelectedProject || areRewardsLoading"
+        :disabled="!hasSelectedProject"
       >
         ＋ 新規リターン
       </button>
     </div>
 
-    <div v-if="!hasSelectedProject" class="mt-6 rounded-2xl border border-dashed border-slate-200 p-6 text-sm text-slate-500">
-      編集するプロジェクトを先に選択してください。
-    </div>
-
-    <div v-else>
-      <p v-if="areRewardsLoading" class="mt-6 text-sm text-slate-500">
-        リターン情報を読み込み中です...
-      </p>
-
-      <p v-else-if="!rewardDrafts.length && !rewardsError" class="mt-6 text-sm text-slate-500">
-        登録されているリターンはありません。新しいリターンを追加してください。
-      </p>
-
-      <p v-else-if="rewardsError" class="mt-6 text-sm text-rose-500">
-        リターン情報の取得に失敗しました。
-      </p>
-
-      <div v-else class="mt-6 space-y-4">
+    <div>
+      <div class="mt-6 space-y-4">
         <article
           v-for="reward in rewardDrafts"
           :key="reward.id"
