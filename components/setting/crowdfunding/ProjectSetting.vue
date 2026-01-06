@@ -1,13 +1,12 @@
 <script setup lang="ts">
-  import { computed, reactive, ref, watch } from 'vue'
+  import { computed, reactive, ref, watch, watchEffect } from 'vue'
   import { useAsyncData } from 'nuxt/app'
-  import { useRoute } from 'vue-router'
   import { formatDateTime, formatDisplayDate } from '../../../shared/utils/date'
   import type {
-    OrganizationProject,
     ProjectFormValues,
     ProjectStats as ProjectStatsType,
   } from '../../../shared/types/Crowdfunding'
+  import type { Project } from '../../../shared/types/Project'
 
   const props = defineProps<{
     organizationId: string
@@ -15,13 +14,59 @@
     projectStats: ProjectStatsType
   }>()
 
-  const emit = defineEmits<{
-    (e: 'update:selectedProjectId', value: string): void
-  }>()
+  const project = ref<Project | null>(null)
 
-  const project = ref<Project>()
+  const createEmptyFormValues = (): ProjectFormValues => ({
+    title: '',
+    description: '',
+    startAt: '',
+    endAt: '',
+    goal: 0,
+  })
 
-  // 表示するデータは全てこれに置き換える
+  const projectForm = reactive<ProjectFormValues>(createEmptyFormValues())
+  const lastSavedForm = ref<ProjectFormValues | null>(null)
+
+  const toDateTimeLocal = (value: string | null | undefined): string => {
+    if (!value) return ''
+    const date = new Date(value)
+    if (Number.isNaN(date.getTime())) return ''
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, '0')
+    const day = String(date.getDate()).padStart(2, '0')
+    const hours = String(date.getHours()).padStart(2, '0')
+    const minutes = String(date.getMinutes()).padStart(2, '0')
+    return `${year}-${month}-${day}T${hours}:${minutes}`
+  }
+
+  const assignFormValues = (values: ProjectFormValues) => {
+    projectForm.title = values.title
+    projectForm.description = values.description
+    projectForm.startAt = values.startAt
+    projectForm.endAt = values.endAt
+    projectForm.goal = values.goal
+  }
+
+  const projectToFormValues = (projectData: Project): ProjectFormValues => ({
+    title: projectData.title ?? '',
+    description: projectData.description ?? '',
+    startAt: toDateTimeLocal(projectData.start_at),
+    endAt: toDateTimeLocal(projectData.end_at),
+    goal: projectData.goal ?? 0,
+  })
+
+  const syncFormWithProject = (projectData: Project | null) => {
+    if (!projectData) {
+      assignFormValues(createEmptyFormValues())
+      lastSavedForm.value = null
+      return
+    }
+
+    const values = projectToFormValues(projectData)
+    assignFormValues(values)
+    lastSavedForm.value = { ...values }
+  }
+
   const {
     data,
     pending: isLoading,
@@ -29,18 +74,87 @@
   } = await useAsyncData<Project>(
     `project-${props.organizationId}`,
     () =>
-      // あとでページネーションを考慮した取得の仕方に変える
       $fetch('/api/project', {
         query: { projectId: props.selectedProjectId },
       }),
   )
 
   watchEffect(() => {
-    const fetchedProject = data.value
-    if (!fetchedProject) return
-
-    project.value = fetchedProject
+    project.value = data.value ?? null
   })
+
+  watch(
+    () => project.value,
+    (currentProject) => {
+      syncFormWithProject(currentProject)
+    },
+    { immediate: true },
+  )
+
+  const formatCurrency = (value: number) =>
+    new Intl.NumberFormat('ja-JP', {
+      style: 'currency',
+      currency: 'JPY',
+      maximumFractionDigits: 0,
+    }).format(Number.isNaN(value) ? 0 : value)
+
+  const projectPeriodLabel = computed(() => {
+    const start = projectForm.startAt ? formatDisplayDate(projectForm.startAt) : ''
+    const end = projectForm.endAt ? formatDisplayDate(projectForm.endAt) : ''
+
+    if (!start && !end) return '未設定'
+    if (start && end) return `${start} 〜 ${end}`
+    return `${start || '未設定'} 〜 ${end || '未設定'}`
+  })
+
+  const projectSaveError = ref('')
+  const isSavingProject = ref(false)
+
+  const toIsoString = (value: string): string | null => {
+    if (!value) return null
+    const date = new Date(value)
+    return Number.isNaN(date.getTime()) ? null : date.toISOString()
+  }
+
+  const resetProjectForm = () => {
+    if (lastSavedForm.value) {
+      assignFormValues(lastSavedForm.value)
+      return
+    }
+
+    assignFormValues(createEmptyFormValues())
+  }
+
+  const handleProjectSave = async () => {
+    if (!project.value || isSavingProject.value) return
+
+    projectSaveError.value = ''
+    isSavingProject.value = true
+
+    try {
+      const payload = {
+        projectId: project.value.id,
+        title: projectForm.title,
+        description: projectForm.description || null,
+        startAt: toIsoString(projectForm.startAt),
+        endAt: toIsoString(projectForm.endAt),
+        goal: Number.isFinite(projectForm.goal) ? projectForm.goal : 0,
+      }
+
+      const updatedProject = await $fetch<Project>('/api/project', {
+        method: 'PUT',
+        body: payload,
+      })
+
+      project.value = updatedProject
+      syncFormWithProject(updatedProject)
+    } catch (err) {
+      projectSaveError.value =
+        err instanceof Error ? err.message : 'プロジェクトの更新に失敗しました。'
+    } finally {
+      isSavingProject.value = false
+    }
+  }
 </script>
 
 <template>
@@ -69,7 +183,7 @@
         <div>
           <label class="text-xs font-medium text-slate-500">プロジェクト名</label>
           <input
-            v-model="project.title"
+            v-model="projectForm.title"
             type="text"
             class="mt-1 w-full rounded-2xl border border-slate-200 px-4 py-3 text-base text-slate-900 focus:border-emerald-400 focus:outline-none"
             placeholder="例：地域菜園の拡張プロジェクト"
@@ -79,7 +193,7 @@
         <div>
           <label class="text-xs font-medium text-slate-500">概要</label>
           <textarea
-            v-model="project.description"
+            v-model="projectForm.description"
             rows="4"
             class="mt-1 w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-900 focus:border-emerald-400 focus:outline-none"
             placeholder="プロジェクトの内容や目的を記載してください"
@@ -90,7 +204,7 @@
           <div>
             <label class="text-xs font-medium text-slate-500">募集開始</label>
             <input
-              v-model="project.start_at"
+              v-model="projectForm.startAt"
               type="datetime-local"
               class="mt-1 w-full rounded-2xl border border-slate-200 px-4 py-2 text-sm text-slate-900 focus:border-emerald-400 focus:outline-none"
             />
@@ -98,7 +212,7 @@
           <div>
             <label class="text-xs font-medium text-slate-500">募集終了</label>
             <input
-              v-model="project.end_at"
+              v-model="projectForm.endAt"
               type="datetime-local"
               class="mt-1 w-full rounded-2xl border border-slate-200 px-4 py-2 text-sm text-slate-900 focus:border-emerald-400 focus:outline-none"
             />
@@ -175,13 +289,13 @@
             <div>
               <dt>作成日時</dt>
               <dd class="mt-1 text-sm font-semibold text-slate-900">
-                {{ formatDateTime(selectedProject.createdAt) || '-' }}
+                {{ formatDateTime(project.created_at) || '-' }}
               </dd>
             </div>
             <div>
               <dt>最終更新</dt>
               <dd class="mt-1 text-sm font-semibold text-slate-900">
-                {{ formatDateTime(selectedProject.updatedAt) || '-' }}
+                {{ formatDateTime(project.updated_at) || '-' }}
               </dd>
             </div>
           </dl>
