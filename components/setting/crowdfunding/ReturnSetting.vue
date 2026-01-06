@@ -1,7 +1,6 @@
 <script setup lang="ts">
   import { computed, ref, watch } from 'vue'
   import { useAsyncData } from 'nuxt/app'
-  import { useRoute } from 'vue-router'
   import { formatDisplayDate } from '../../../shared/utils/date'
   import type {
     EditableReward,
@@ -9,7 +8,10 @@
     RewardRecord,
   } from '../../../shared/types/Crowdfunding'
 
+  // ここも整理する
+
   const props = defineProps<{
+    organizationId: string
     selectedProjectId: string
   }>()
 
@@ -17,12 +19,10 @@
     (e: 'update:stats', stats: ProjectStats): void
   }>()
 
-  const route = useRoute()
   const fallbackOrganizationId = 'b52b352c-6dee-4ddc-bf0a-cc95d85f1a11'
   const organizationId = computed(() => {
-    const param = route.params.organizationId
-    return typeof param === 'string' && param.length > 0
-      ? param
+    return props.organizationId && props.organizationId.length > 0
+      ? props.organizationId
       : fallbackOrganizationId
   })
 

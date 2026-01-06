@@ -37,6 +37,7 @@ export default defineEventHandler(async (event) => {
     name: data.name,
     created_at: data.created_at,
     updated_at: data.updated_at,
+    projects: data.projects
   }
 
   return response

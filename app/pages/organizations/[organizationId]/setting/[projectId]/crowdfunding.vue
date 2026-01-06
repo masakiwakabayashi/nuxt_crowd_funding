@@ -10,12 +10,23 @@
   const selectedProjectId = ref(
     typeof route.params.projectId === 'string' ? route.params.projectId : '',
   )
+  const organizationId = ref(
+    typeof route.params.organizationId === 'string' ? route.params.organizationId : '',
+  )
 
   watch(
     () => route.params.projectId,
     (projectId) => {
       if (typeof projectId === 'string' && projectId !== selectedProjectId.value) {
         selectedProjectId.value = projectId
+      }
+    },
+  )
+  watch(
+    () => route.params.organizationId,
+    (id) => {
+      if (typeof id === 'string' && id !== organizationId.value) {
+        organizationId.value = id
       }
     },
   )
@@ -34,12 +45,14 @@
 <template>
   <main class="flex flex-1 flex-col gap-8 pb-16">
     <ProjectSetting
+      :organization-id="organizationId"
       :selected-project-id="selectedProjectId"
       :project-stats="projectStats"
       @update:selected-project-id="handleProjectSelection"
     />
 
     <ReturnSetting
+      :organization-id="organizationId"
       :selected-project-id="selectedProjectId"
       @update:stats="handleStatsUpdate"
     />
