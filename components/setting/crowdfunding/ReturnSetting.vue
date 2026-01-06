@@ -1,6 +1,11 @@
 <script setup lang="ts">
   import { computed, ref, watch } from 'vue'
   import { formatDisplayDate } from '../../../shared/utils/date'
+  import type {
+    EditableReward,
+    ProjectStats,
+  } from '../../../shared/types/Crowdfunding'
+  import type { Reward } from '../../../shared/types/Rewards'
 
   const props = defineProps<{
     organizationId: string
@@ -13,6 +18,38 @@
   }>()
 
   const rewardDrafts = ref<EditableReward[]>([])
+
+  watch(
+    () => props.rewards,
+    (rewards) => {
+      rewardDrafts.value = (rewards || []).map((reward) => {
+        const price = Number(reward.price ?? 0)
+
+        return {
+          id: reward.id,
+          projectId: reward.project_id,
+          title: reward.title ?? '',
+          description: reward.detail ?? '',
+          price: Number.isNaN(price) ? 0 : price,
+          supporters: 0,
+          limit: reward.max_quantity ?? null,
+          deliverySchedule: reward.estimated_delivery ?? '',
+          category: reward.category_id ?? '未分類',
+          draft: {
+            title: reward.title ?? '',
+            description: reward.detail ?? '',
+            price: Number.isNaN(price) ? 0 : price,
+            limit: reward.max_quantity ?? null,
+            deliverySchedule: reward.estimated_delivery ?? '',
+            category: reward.category_id ?? '未分類',
+          },
+          isEditing: false,
+          isNew: false,
+        }
+      })
+    },
+    { immediate: true },
+  )
 
   const formatCurrency = (value: number) =>
     new Intl.NumberFormat('ja-JP', {
@@ -185,14 +222,6 @@
                   <label class="text-xs font-medium text-slate-500">リターン名</label>
                   <input
                     v-model="reward.draft.title"
-                    type="text"
-                    class="mt-1 w-full rounded-2xl border border-slate-200 px-4 py-2 text-sm text-slate-900 focus:border-emerald-400 focus:outline-none"
-                  />
-                </div>
-                <div>
-                  <label class="text-xs font-medium text-slate-500">カテゴリ</label>
-                  <input
-                    v-model="reward.draft.category"
                     type="text"
                     class="mt-1 w-full rounded-2xl border border-slate-200 px-4 py-2 text-sm text-slate-900 focus:border-emerald-400 focus:outline-none"
                   />
