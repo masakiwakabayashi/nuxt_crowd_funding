@@ -9,6 +9,7 @@
   const { user } = storeToRefs(authStore)
 
   const isAuthenticated = computed(() => Boolean(user.value))
+  const userEmail = computed(() => user.value?.email ?? '')
 
   const handleLogout = async () => {
     await authStore.logout()
@@ -42,15 +43,17 @@
 
       <div class="ml-auto flex flex-col gap-4 text-sm text-slate-500">
         <ClientOnly>
-          <div class="flex flex-wrap justify-end gap-3">
-            <button
-              v-if="isAuthenticated"
-              type="button"
-              class="inline-flex items-center justify-center rounded-full border border-emerald-200 px-5 py-2 text-sm font-semibold text-emerald-700 shadow-sm transition hover:bg-emerald-50"
-              @click="handleLogout"
-            >
-              ログアウト
-            </button>
+          <div class="flex flex-wrap items-center justify-end gap-3">
+            <template v-if="isAuthenticated">
+              <span class=" text-slate-500">{{ userEmail }}</span>
+              <button
+                type="button"
+                class="inline-flex items-center justify-center rounded-full border border-emerald-200 px-5 py-2 text-sm font-semibold text-emerald-700 shadow-sm transition hover:bg-emerald-50"
+                @click="handleLogout"
+              >
+                ログアウト
+              </button>
+            </template>
           </div>
           <template #fallback>
             <div class="flex flex-wrap justify-end gap-3">
