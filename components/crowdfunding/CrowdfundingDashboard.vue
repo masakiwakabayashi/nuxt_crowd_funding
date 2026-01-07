@@ -67,6 +67,7 @@
       />
     </div>
 
+    <!-- これはページネーションにしたいから、個別でデータを取得する -->
     <CrowdfundingDeliveryTable
       v-if="deliveries.length > 0 && rewards.length > 0"
       :currentPage="currentPage"
