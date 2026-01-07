@@ -61,14 +61,15 @@ enabled = true
 # Specifies an ordered list of seed files to load during db reset.
 # Supports glob patterns relative to supabase directory: "./seeds/*.sql"
 sql_paths = [
-  "./seeds/00_reset.sql",
-  "./seeds/01_organizations.sql",
-  "./seeds/02_organization_members.sql",
-  "./seeds/03_projects.sql",
-  "./seeds/04_categories.sql",
-  "./seeds/05_rewards.sql",
-  "./seeds/06_supporters.sql",
-  "./seeds/07_deliveries.sql"
+  "./seeds/000_reset.sql",
+  "./seeds/001_users.sql",
+  "./seeds/002_organizations.sql",
+  "./seeds/003_organization_members.sql",
+  "./seeds/004_projects.sql",
+  "./seeds/005_categories.sql",
+  "./seeds/006_rewards.sql",
+  "./seeds/007_supporters.sql",
+  "./seeds/008_deliveries.sql"
 ]
 
 [db.network_restrictions]
