@@ -41,24 +41,28 @@
       </div>
 
       <div class="ml-auto flex flex-col gap-4 text-sm text-slate-500">
-        <div class="flex flex-wrap justify-end gap-3">
-          <button
-            v-if="isAuthenticated"
-            type="button"
-            class="inline-flex items-center justify-center rounded-full border border-emerald-200 px-5 py-2 text-sm font-semibold text-emerald-700 shadow-sm transition hover:bg-emerald-50"
-            @click="handleLogout"
-          >
-            ログアウト
-          </button>
-          <!-- 今は開発のために表示しておく -->
-          <NuxtLink
-            v-else
-            to="/login"
-            class="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 px-5 py-2 text-sm font-semibold text-white shadow-lg shadow-emerald-200/70 transition hover:brightness-110"
-          >
-            ログイン
-          </NuxtLink>
-        </div>
+        <ClientOnly>
+          <div class="flex flex-wrap justify-end gap-3">
+            <button
+              v-if="isAuthenticated"
+              type="button"
+              class="inline-flex items-center justify-center rounded-full border border-emerald-200 px-5 py-2 text-sm font-semibold text-emerald-700 shadow-sm transition hover:bg-emerald-50"
+              @click="handleLogout"
+            >
+              ログアウト
+            </button>
+          </div>
+          <template #fallback>
+            <div class="flex flex-wrap justify-end gap-3">
+              <NuxtLink
+                to="/login"
+                class="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 px-5 py-2 text-sm font-semibold text-white shadow-lg shadow-emerald-200/70 transition hover:brightness-110"
+              >
+                ログイン
+              </NuxtLink>
+            </div>
+          </template>
+        </ClientOnly>
       </div>
     </div>
   </header>
