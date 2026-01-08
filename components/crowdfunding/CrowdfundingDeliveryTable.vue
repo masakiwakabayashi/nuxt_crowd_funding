@@ -1,12 +1,12 @@
 <script setup lang="ts">
-  import { computed, ref } from 'vue'
+  import { computed, ref, watch } from 'vue'
   import EditDeliveryModal from './EditDeliveryModal.vue'
   import type { Reward } from '../../shared/types/Rewards'
   import type { Delivery, DeliveryStatus } from '../../shared/types/Delivery'
   import { formatJapaneseDate } from '../../shared/utils/date'
 
   const props = defineProps<{
-    deliveries: Delivery[]
+    projectId: string
     rewards: Reward[]
     currentPage: number
     itemsPerPage: number
@@ -19,7 +19,68 @@
 
   const isEditModalOpen = ref(false)
   const selectedDelivery = ref<Delivery | null>(null)
-  const paginatedDeliveries = computed(() => props.deliveries)
+  const deliveries = ref<Delivery[]>([])
+  const paginatedDeliveries = computed(() => deliveries.value)
+  const totalDeliveries = ref(0)
+  const isLoading = ref(false)
+  const fetchError = ref<string | null>(null)
+
+  interface PaginatedDeliveryResponse {
+    deliveries: Delivery[]
+    totalDeliveries: number
+  }
+
+  let latestFetchToken = 0
+
+  const fetchDeliveries = async () => {
+    if (!props.projectId) {
+      deliveries.value = []
+      totalDeliveries.value = 0
+      return
+    }
+
+    const fetchId = ++latestFetchToken
+    isLoading.value = true
+    fetchError.value = null
+
+    try {
+      const response = await $fetch<PaginatedDeliveryResponse>('/api/deliveries', {
+        query: {
+          projectId: props.projectId,
+          page: props.currentPage,
+          itemsPerPage: props.itemsPerPage,
+        },
+      })
+
+      if (fetchId !== latestFetchToken) {
+        return
+      }
+
+      deliveries.value = response.deliveries || []
+      totalDeliveries.value = response.totalDeliveries || 0
+    } catch (error) {
+      if (fetchId !== latestFetchToken) {
+        return
+      }
+
+      const message = error instanceof Error ? error.message : '不明なエラーが発生しました'
+      fetchError.value = message
+      deliveries.value = []
+      totalDeliveries.value = 0
+    } finally {
+      if (fetchId === latestFetchToken) {
+        isLoading.value = false
+      }
+    }
+  }
+
+  watch(
+    () => [props.projectId, props.currentPage, props.itemsPerPage],
+    () => {
+      fetchDeliveries()
+    },
+    { immediate: true },
+  )
 
   const rewardNameById = (rewardId: string | null | undefined) => {
     if (!rewardId) {
@@ -30,21 +91,20 @@
   }
 
   const totalPages = computed(() => {
-    return 1
-    // if (props.totalDeliveries === 0) {
-    //   return 1
-    // }
+    if (totalDeliveries.value === 0) {
+      return 1
+    }
 
-    // return Math.max(1, Math.ceil(props.totalDeliveries / props.itemsPerPage))
+    return Math.max(1, Math.ceil(totalDeliveries.value / props.itemsPerPage))
   })
 
   const currentRange = computed(() => {
-    if (props.deliveries.length === 0) {
+    if (paginatedDeliveries.value.length === 0) {
       return { start: 0, end: 0 }
     }
 
     const start = (props.currentPage - 1) * props.itemsPerPage + 1
-    const end = start + props.deliveries.length - 1
+    const end = start + paginatedDeliveries.value.length - 1
     return { start, end }
   })
 
@@ -171,7 +231,17 @@
             </td>
           </tr>
 
-          <tr v-if="props.deliveries.length === 0">
+          <tr v-if="isLoading">
+            <td colspan="8" class="px-6 py-8 text-center text-sm text-slate-500">
+              読み込み中です...
+            </td>
+          </tr>
+          <tr v-else-if="fetchError">
+            <td colspan="8" class="px-6 py-8 text-center text-sm text-rose-500">
+              データの取得に失敗しました: {{ fetchError }}
+            </td>
+          </tr>
+          <tr v-else-if="paginatedDeliveries.length === 0">
             <td colspan="8" class="px-6 py-8 text-center text-sm text-slate-500">
               条件に一致する支援がありません。
             </td>
@@ -181,11 +251,11 @@
     </div>
 
     <div
-      v-if="props.deliveries.length > 0"
+      v-if="totalDeliveries > 0"
       class="mt-4 flex flex-col gap-3 text-sm text-slate-600 sm:flex-row sm:items-center sm:justify-between"
     >
       <p>
-        全{{ props.deliveries.length }}件中
+        全{{ totalDeliveries }}件中
         {{ currentRange.start }}〜{{ currentRange.end }}件を表示
       </p>
       <div class="flex items-center gap-3">

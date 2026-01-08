@@ -18,7 +18,6 @@
 
   // これは使うやつ
   const project = ref<Project>()
-  const deliveries = ref<Delivery[]>([])
   const rewards = ref<Reward[]>([])
 
 
@@ -41,7 +40,6 @@
     if (!fetchedProject) return
 
     project.value = fetchedProject
-    deliveries.value = fetchedProject.deliveries ?? []
     rewards.value = fetchedProject.rewards ?? []
   })
 
@@ -67,11 +65,11 @@
       />
     </div>
 
-    <!-- これはページネーションにしたいから、個別でデータを取得する -->
+    <!-- ページネーションにして、最初のページのみSSRで2ページ目移行はCSRにする -->
     <CrowdfundingDeliveryTable
-      v-if="deliveries.length > 0 && rewards.length > 0"
+      v-if="project"
+      :project-id="project.id"
       :currentPage="currentPage"
-      :deliveries="deliveries"
       :rewards="rewards"
       :itemsPerPage="ITEMS_PER_PAGE"
       @update-delivery="updateDelivery"
