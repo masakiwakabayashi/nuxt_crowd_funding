@@ -1,5 +1,5 @@
 import { createError, getQuery } from 'h3'
-import { getSupabaseServerClient } from '@/plugins/supabaseServerClient'
+import { getSupabaseServerClient } from '@/app/plugins/supabase.server'
 import type { Delivery } from '@/shared/types/Delivery'
 
 interface DeliveryQuery {
