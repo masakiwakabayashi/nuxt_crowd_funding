@@ -20,8 +20,6 @@
   const project = ref<Project>()
   const rewards = ref<Reward[]>([])
 
-
-  // 表示するデータは全てこれに置き換える
   const {
     data,
     pending: isLoading,
@@ -46,6 +44,10 @@
   // この関数はモーダルに移行する、中身もちゃんと書く
   const updateDelivery = (delivery: Delivery) => {
     console.log('update delivery', delivery)
+  }
+
+  const handlePageChange = (page: number) => {
+    currentPage.value = page
   }
 </script>
 
@@ -73,6 +75,7 @@
       :rewards="rewards"
       :itemsPerPage="ITEMS_PER_PAGE"
       @update-delivery="updateDelivery"
+      @update:page="handlePageChange"
     />
   </div>
 </template>
