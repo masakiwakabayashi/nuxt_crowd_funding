@@ -1,4 +1,3 @@
-import { defineNuxtPlugin } from '#app'
 import { useRuntimeConfig } from '#imports'
 import { createRequire } from 'node:module'
 import type { SupabaseClient } from '@supabase/supabase-js'
@@ -34,10 +33,10 @@ export const getSupabaseServerClient = (): SupabaseClient => {
   return cachedClient
 }
 
-export default defineNuxtPlugin(() => {
+export default () => {
   if (process.client) {
     return
   }
 
   getSupabaseServerClient()
-})
+}

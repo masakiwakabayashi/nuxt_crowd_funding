@@ -1,5 +1,5 @@
-import { defineNuxtPlugin } from '#app'
 import { useRuntimeConfig } from '#imports'
+import type { NuxtApp } from 'nuxt/app'
 import { createClient } from '@supabase/supabase-js'
 import type { SupabaseClient } from '@supabase/supabase-js'
 
@@ -32,11 +32,11 @@ export const getSupabaseBrowserClient = (): SupabaseClient => {
   return browserClient
 }
 
-export default defineNuxtPlugin((nuxtApp) => {
+export default (nuxtApp: NuxtApp) => {
   if (process.server) {
     return
   }
 
   const supabase = getSupabaseBrowserClient()
   nuxtApp.provide('supabaseBrowserClient', supabase)
-})
+}
