@@ -32,7 +32,7 @@ export const getSupabaseBrowserClient = (): SupabaseClient => {
   return browserClient
 }
 
-export default (nuxtApp: NuxtApp) => {
+export default (nuxtApp: NuxtApp): void => {
   if (process.server) {
     return
   }

@@ -215,7 +215,7 @@
             </td>
             <td class="w-[12%] px-6 py-5">
               <span
-                class="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold shadow-sm"
+                class="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold shadow-sm whitespace-nowrap"
                 :class="statusBadgeClass(delivery.status)"
               >
                 {{ statusLabel(delivery.status) }}
@@ -223,7 +223,7 @@
             </td>
             <td class="w-[13%] px-6 py-5 text-right">
               <button
-                class="rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 px-4 py-2 text-xs font-semibold text-white shadow-[0_8px_16px_rgba(16,185,129,0.35)] transition hover:brightness-110"
+                class="rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 px-4 py-2 text-xs font-semibold text-white shadow-[0_8px_16px_rgba(16,185,129,0.35)] transition hover:brightness-110 whitespace-nowrap"
                 @click="startEditing(delivery)"
               >
                 編集
