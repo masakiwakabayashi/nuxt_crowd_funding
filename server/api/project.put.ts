@@ -1,5 +1,5 @@
 import { createError, readBody } from 'h3'
-import { getSupabaseServerClient } from '@/shared/utils/supabaseServerClient'
+import { getSupabaseServerClient } from '@/plugins/supabaseServerClient'
 import type { Project } from '@/shared/types/Project'
 
 interface UpdateProjectBody {
