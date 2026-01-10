@@ -2,6 +2,10 @@ import { createError, getQuery } from 'h3'
 import { getSupabaseServerClient } from '@/app/plugins/supabase.server'
 import type { Delivery } from '@/shared/types/Delivery'
 
+// 全体的にAPIの書き方をなんとかしたい
+// あとリポジトリも使う
+// validatorsにzodのファイルを入れる
+
 interface DeliveryQuery {
   projectId?: string | string[]
   page?: string | string[]
