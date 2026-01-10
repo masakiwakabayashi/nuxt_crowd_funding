@@ -1,6 +1,5 @@
 import { createError, getQuery } from 'h3'
-import { getSupabaseServerClient } from '@/app/plugins/supabase.server'
-import type { Delivery } from '@/shared/types/Delivery'
+import { fetchDeliveriesByProjectId } from '@/server/repositories/deliveriesRepository'
 
 // 全体的にAPIの書き方をなんとかしたい
 // あとリポジトリも使う
@@ -41,27 +40,15 @@ export default defineEventHandler(async (event) => {
   const from = (page - 1) * itemsPerPage
   const to = from + itemsPerPage - 1
 
-  const supabase = getSupabaseServerClient()
+  try {
+    const { deliveries, totalDeliveries } = await fetchDeliveriesByProjectId(projectId, { from, to })
 
-  const { data, error, count } = await supabase
-    .from('deliveries')
-    .select(
-      `
-        *,
-        supporter:supporters(*)
-      `,
-      { count: 'exact' },
-    )
-    .eq('project_id', projectId)
-    .order('created_at', { ascending: true })
-    .range(from, to)
-
-  if (error) {
-    throw createError({ statusCode: 500, statusMessage: error.message })
-  }
-
-  return {
-    deliveries: (data ?? []) as Delivery[],
-    totalDeliveries: count ?? 0,
+    return {
+      deliveries,
+      totalDeliveries,
+    }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Failed to fetch deliveries'
+    throw createError({ statusCode: 500, statusMessage: message })
   }
 })

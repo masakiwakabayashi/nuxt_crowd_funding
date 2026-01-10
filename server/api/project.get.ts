@@ -1,6 +1,6 @@
 import { createError, getQuery } from 'h3'
-import { getSupabaseServerClient } from '@/app/plugins/supabase.server'
 import type { Project } from '@/shared/types/Project'
+import { fetchProjectWithRelations } from '@/server/repositories/projectsRepository'
 
 // もう少しわかりやすい感じに修正する
 
@@ -15,26 +15,14 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  const supabase = getSupabaseServerClient()
-
-  const { data, error } = await supabase
-    .from('projects')
-    .select(
-      `
-        *,
-        rewards:rewards(*),
-        deliveries:deliveries(
-          *,
-          supporter:supporters(*)
-        )
-      `,
-    )
-    .eq('id', projectId)
-    .single()
-
-  if (error) {
-    throw createError({ statusCode: 500, statusMessage: error.message })
+  let data
+  try {
+    data = await fetchProjectWithRelations(projectId)
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Failed to fetch project'
+    throw createError({ statusCode: 500, statusMessage: message })
   }
+
   if (!data) {
     throw createError({ statusCode: 404, statusMessage: 'Project not found' })
   }

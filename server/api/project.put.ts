@@ -1,6 +1,6 @@
 import { createError, readBody } from 'h3'
-import { getSupabaseServerClient } from '@/app/plugins/supabase.server'
 import type { Project } from '@/shared/types/Project'
+import { updateProjectWithRelations } from '@/server/repositories/projectsRepository'
 
 interface UpdateProjectBody {
   projectId?: string
@@ -78,26 +78,12 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  const supabase = getSupabaseServerClient()
-
-  const { data, error } = await supabase
-    .from('projects')
-    .update(updates)
-    .eq('id', body.projectId)
-    .select(
-      `
-        *,
-        rewards:rewards(*),
-        deliveries:deliveries(
-          *,
-          supporter:supporters(*)
-        )
-      `,
-    )
-    .single()
-
-  if (error) {
-    throw createError({ statusCode: 500, statusMessage: error.message })
+  let data
+  try {
+    data = await updateProjectWithRelations(body.projectId, updates)
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Failed to update project'
+    throw createError({ statusCode: 500, statusMessage: message })
   }
 
   if (!data) {

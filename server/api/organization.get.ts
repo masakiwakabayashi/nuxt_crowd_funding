@@ -1,6 +1,6 @@
 import { createError, getQuery } from 'h3'
-import { getSupabaseServerClient } from '@/app/plugins/supabase.server'
 import type { Organization } from '@/shared/types/Organization'
+import { fetchOrganizationWithProjects } from '@/server/repositories/organizationsRepository'
 
 export default defineEventHandler(async (event) => {
   const query = getQuery(event)
@@ -13,24 +13,17 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  // この部分はリポジトリに分ける
-  // ---------
-  const supabase = getSupabaseServerClient()
-  const { data, error } = await supabase
-    .from('organizations')
-    .select(`
-      *,
-      projects:projects(*)
-    `)
-    .eq('id', organizationId)
-    .maybeSingle()
-  if (error) {
-    throw createError({ statusCode: 500, statusMessage: error.message })
+  let data
+  try {
+    data = await fetchOrganizationWithProjects(organizationId)
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Failed to fetch organization'
+    throw createError({ statusCode: 500, statusMessage: message })
   }
+
   if (!data) {
     throw createError({ statusCode: 404, statusMessage: 'Organization not found' })
   }
-  // ---------
 
   const response: Organization = {
     id: data.id,
