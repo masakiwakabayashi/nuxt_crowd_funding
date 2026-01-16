@@ -1,19 +1,34 @@
 import { createError, getQuery } from 'h3'
-import type { Project } from '@/shared/types/Project'
+import z from 'zod'
 import { fetchProjectWithRelations } from '@/server/repositories/projectsRepository'
+import { projectWithRelationsSchema } from '@/server/schemas/projects'
 
-// もう少しわかりやすい感じに修正する
+const singleQueryValue = (value: unknown): string | undefined => {
+  if (Array.isArray(value)) {
+    return typeof value[0] === 'string' ? value[0] : undefined
+  }
+
+  return typeof value === 'string' ? value : undefined
+}
+
+const projectQuerySchema = z.object({
+  projectId: z.preprocess(
+    (value) => singleQueryValue(value) ?? '',
+    z.string().min(1, 'projectId is required'),
+  ),
+})
 
 export default defineEventHandler(async (event) => {
-  const query = getQuery(event)
-  const projectId = query.projectId
+  const parsedQuery = projectQuerySchema.safeParse(getQuery(event))
 
-  if (!projectId || typeof projectId !== 'string') {
+  if (!parsedQuery.success) {
     throw createError({
       statusCode: 400,
-      statusMessage: 'projectId is required',
+      statusMessage: parsedQuery.error.issues[0]?.message ?? 'Invalid query parameters',
     })
   }
+
+  const { projectId } = parsedQuery.data
 
   let data
   try {
@@ -27,22 +42,5 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 404, statusMessage: 'Project not found' })
   }
 
-  const parsedGoal = Number(data.goal ?? 0)
-  const goal = Number.isNaN(parsedGoal) ? 0 : parsedGoal
-
-  const project: Project = {
-    id: data.id,
-    organization_id: data.organization_id,
-    title: data.title,
-    description: data.description,
-    start_at: data.start_at,
-    end_at: data.end_at,
-    goal,
-    created_at: data.created_at,
-    updated_at: data.updated_at,
-    rewards: data.rewards,
-    deliveries: data.deliveries,
-  }
-
-  return project
-});
+  return projectWithRelationsSchema.parse(data)
+})

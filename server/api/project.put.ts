@@ -1,74 +1,64 @@
 import { createError, readBody } from 'h3'
-import type { Project } from '@/shared/types/Project'
+import z from 'zod'
 import { updateProjectWithRelations } from '@/server/repositories/projectsRepository'
+import { projectWithRelationsSchema } from '@/server/schemas/projects'
 
-interface UpdateProjectBody {
-  projectId?: string
-  title?: string
-  description?: string | null
-  startAt?: string | null
-  endAt?: string | null
-  goal?: number
-}
-
-const parseGoal = (value: unknown): number | undefined => {
-  if (typeof value === 'number' && !Number.isNaN(value)) {
+const parseGoalValue = (value: unknown): number | undefined => {
+  if (typeof value === 'number' && Number.isFinite(value)) {
     return value
   }
+
   if (typeof value === 'string' && value.trim().length > 0) {
     const parsed = Number(value)
-    return Number.isNaN(parsed) ? undefined : parsed
+    return Number.isFinite(parsed) ? parsed : undefined
   }
+
   return undefined
 }
 
-const mapProject = (data: any): Project => {
-  const parsedGoal = Number(data.goal ?? 0)
-  const goal = Number.isNaN(parsedGoal) ? 0 : parsedGoal
-
-  return {
-    id: data.id,
-    organization_id: data.organization_id,
-    title: data.title,
-    description: data.description,
-    start_at: data.start_at,
-    end_at: data.end_at,
-    goal,
-    created_at: data.created_at,
-    updated_at: data.updated_at,
-    rewards: data.rewards,
-    deliveries: data.deliveries,
-  }
-}
+const updateProjectBodySchema = z.object({
+  projectId: z.string().min(1, 'projectId is required'),
+  title: z.string().optional(),
+  description: z.string().nullable().optional(),
+  startAt: z.string().nullable().optional(),
+  endAt: z.string().nullable().optional(),
+  goal: z.union([z.number(), z.string()]).optional(),
+}).transform((body) => ({
+  ...body,
+  goal: parseGoalValue(body.goal),
+}))
 
 export default defineEventHandler(async (event) => {
-  const body = await readBody<UpdateProjectBody>(event)
+  const parsedBody = updateProjectBodySchema.safeParse(await readBody(event))
 
-  if (!body?.projectId || typeof body.projectId !== 'string') {
-    throw createError({ statusCode: 400, statusMessage: 'projectId is required' })
+  if (!parsedBody.success) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: parsedBody.error.issues[0]?.message ?? 'Invalid request body',
+    })
   }
 
-  const updates: Record<string, any> = {}
+  const body = parsedBody.data
+  const updates: Record<string, unknown> = {}
 
-  if (typeof body.title === 'string') {
+  if (body.title !== undefined) {
     updates.title = body.title
   }
 
-  if (typeof body.description === 'string' || body.description === null) {
+  if (body.description !== undefined) {
     updates.description = body.description
   }
 
-  if (body.startAt === null || typeof body.startAt === 'string') {
+  if (body.startAt !== undefined) {
     updates.start_at = body.startAt
   }
 
-  if (body.endAt === null || typeof body.endAt === 'string') {
+  if (body.endAt !== undefined) {
     updates.end_at = body.endAt
   }
 
-  const goal = parseGoal(body.goal)
-  if (typeof goal === 'number') {
-    updates.goal = goal
+  if (typeof body.goal === 'number') {
+    updates.goal = body.goal
   }
 
   if (Object.keys(updates).length === 0) {
@@ -90,5 +80,5 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 404, statusMessage: 'Project not found' })
   }
 
-  return mapProject(data)
+  return projectWithRelationsSchema.parse(data)
 })

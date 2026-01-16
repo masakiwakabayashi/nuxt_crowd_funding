@@ -1,17 +1,34 @@
 import { createError, getQuery } from 'h3'
-import type { Organization } from '@/shared/types/Organization'
+import z from 'zod'
 import { fetchOrganizationWithProjects } from '@/server/repositories/organizationsRepository'
+import { organizationSchema } from '@/server/schemas/organizations'
+
+const singleQueryValue = (value: unknown): string | undefined => {
+  if (Array.isArray(value)) {
+    return typeof value[0] === 'string' ? value[0] : undefined
+  }
+
+  return typeof value === 'string' ? value : undefined
+}
+
+const organizationQuerySchema = z.object({
+  organizationId: z.preprocess(
+    (value) => singleQueryValue(value) ?? '',
+    z.string().min(1, 'organizationId is required'),
+  ),
+})
 
 export default defineEventHandler(async (event) => {
-  const query = getQuery(event)
-  const organizationId = query.organizationId
+  const parsedQuery = organizationQuerySchema.safeParse(getQuery(event))
 
-  if (!organizationId || typeof organizationId !== 'string') {
+  if (!parsedQuery.success) {
     throw createError({
       statusCode: 400,
-      statusMessage: 'organizationId is required',
+      statusMessage: parsedQuery.error.issues[0]?.message ?? 'Invalid query parameters',
     })
   }
+
+  const { organizationId } = parsedQuery.data
 
   let data
   try {
@@ -25,13 +42,5 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 404, statusMessage: 'Organization not found' })
   }
 
-  const response: Organization = {
-    id: data.id,
-    name: data.name,
-    created_at: data.created_at,
-    updated_at: data.updated_at,
-    projects: data.projects
-  }
-
-  return response
+  return organizationSchema.parse(data)
 })

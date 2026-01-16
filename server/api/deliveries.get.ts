@@ -1,54 +1,67 @@
 import { createError, getQuery } from 'h3'
+import z from 'zod'
 import { fetchDeliveriesByProjectId } from '@/server/repositories/deliveriesRepository'
+import { deliverySchema } from '@/server/schemas/deliveries'
 
-// 全体的にAPIの書き方をなんとかしたい
-// あとリポジトリも使う
-// validatorsにzodのファイルを入れる
-
-interface DeliveryQuery {
-  projectId?: string | string[]
-  page?: string | string[]
-  itemsPerPage?: string | string[]
-}
-
-const toPositiveInteger = (value: string | string[] | undefined, defaultValue: number, maxValue?: number) => {
-  const normalized = Array.isArray(value) ? value[0] : value
-  const parsed = Number.parseInt(normalized ?? '', 10)
-  const fallback = defaultValue
-
-  if (!Number.isFinite(parsed) || parsed <= 0) {
-    return fallback
+const singleQueryValue = (value: unknown): string | undefined => {
+  if (Array.isArray(value)) {
+    return typeof value[0] === 'string' ? value[0] : undefined
   }
 
-  if (typeof maxValue === 'number') {
-    return Math.min(parsed, maxValue)
-  }
-
-  return parsed
+  return typeof value === 'string' ? value : undefined
 }
+
+const positiveIntegerSchema = (defaultValue: number, maxValue?: number) =>
+  z.preprocess((value) => {
+    const normalized = singleQueryValue(value)
+    const parsed = normalized ? Number.parseInt(normalized, 10) : Number.NaN
+
+    if (!Number.isFinite(parsed) || parsed <= 0) {
+      return defaultValue
+    }
+
+    if (typeof maxValue === 'number') {
+      return Math.min(parsed, maxValue)
+    }
+
+    return parsed
+  }, z.number().int().positive())
+
+const deliveriesQuerySchema = z.object({
+  projectId: z.preprocess(
+    (value) => singleQueryValue(value) ?? '',
+    z.string().min(1, 'projectId is required'),
+  ),
+  page: positiveIntegerSchema(1),
+  itemsPerPage: positiveIntegerSchema(20, 100),
+})
+
+const deliveriesResponseSchema = z.object({
+  deliveries: z.array(deliverySchema),
+  totalDeliveries: z.number().int().nonnegative(),
+})
 
 export default defineEventHandler(async (event) => {
-  const query = getQuery(event) as DeliveryQuery
-  const projectId = Array.isArray(query.projectId) ? query.projectId[0] : query.projectId
+  const parsedQuery = deliveriesQuerySchema.safeParse(getQuery(event))
 
-  if (!projectId) {
-    throw createError({ statusCode: 400, statusMessage: 'projectId is required' })
+  if (!parsedQuery.success) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: parsedQuery.error.issues[0]?.message ?? 'Invalid query parameters',
+    })
   }
 
-  const page = toPositiveInteger(query.page, 1)
-  const itemsPerPage = toPositiveInteger(query.itemsPerPage, 20, 100)
+  const { projectId, page, itemsPerPage } = parsedQuery.data
   const from = (page - 1) * itemsPerPage
   const to = from + itemsPerPage - 1
 
+  let data
   try {
-    const { deliveries, totalDeliveries } = await fetchDeliveriesByProjectId(projectId, { from, to })
-
-    return {
-      deliveries,
-      totalDeliveries,
-    }
+    data = await fetchDeliveriesByProjectId(projectId, { from, to })
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Failed to fetch deliveries'
     throw createError({ statusCode: 500, statusMessage: message })
   }
+
+  return deliveriesResponseSchema.parse(data)
 })
