@@ -63,8 +63,8 @@ enabled = true
 sql_paths = [
   "./seeds/000_reset.sql",
   "./seeds/001_users.sql",
-  "./seeds/002_organizations.sql",
-  "./seeds/003_organization_members.sql",
+  "./seeds/002_teams.sql",
+  "./seeds/003_team_members.sql",
   "./seeds/004_projects.sql",
   "./seeds/005_categories.sql",
   "./seeds/006_rewards.sql",

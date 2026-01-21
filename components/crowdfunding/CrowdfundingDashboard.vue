@@ -9,7 +9,7 @@
   import type { Delivery } from '../../shared/types/Delivery'
 
   const props = defineProps<{
-    organizationId: string,
+    teamId: string,
     projectId: string,
   }>()
 
@@ -25,7 +25,7 @@
     pending: isLoading,
     error,
   } = await useAsyncData<Project>(
-    `project-${props.organizationId}`,
+    `project-${props.teamId}`,
     () =>
       // あとでページネーションを考慮した取得の仕方に変える
       $fetch('/api/project', {

@@ -4,41 +4,41 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- organizations
+-- teams
 --------------------------------------------------------------------------------
-alter table organizations enable row level security;
-alter table organizations force row level security;
+alter table teams enable row level security;
+alter table teams force row level security;
 
 -- 組織はメンバーであれば閲覧可能
-create policy "organizations_select_by_members"
-on organizations
+create policy "teams_select_by_members"
+on teams
 for select
 using (
   exists (
     select 1
-    from organization_members om
-    where om.organization_id = organizations.id
+    from team_members om
+    where om.team_id = teams.id
       and om.user_id = auth.uid()
   )
 );
 
 -- 組織の作成は認証済みユーザーであれば可能（初回オーナー登録は別途処理想定）
-create policy "organizations_insert_by_authenticated"
-on organizations
+create policy "teams_insert_by_authenticated"
+on teams
 for insert
 with check (
   auth.role() = 'authenticated'
 );
 
 -- 組織の更新は当該組織の admin のみ
-create policy "organizations_update_by_admin"
-on organizations
+create policy "teams_update_by_admin"
+on teams
 for update
 using (
   exists (
     select 1
-    from organization_members om
-    where om.organization_id = organizations.id
+    from team_members om
+    where om.team_id = teams.id
       and om.user_id = auth.uid()
       and om.role = 'admin'
   )
@@ -46,46 +46,46 @@ using (
 with check (
   exists (
     select 1
-    from organization_members om
-    where om.organization_id = organizations.id
+    from team_members om
+    where om.team_id = teams.id
       and om.user_id = auth.uid()
       and om.role = 'admin'
   )
 );
 
 -- 組織の削除も admin のみ
-create policy "organizations_delete_by_admin"
-on organizations
+create policy "teams_delete_by_admin"
+on teams
 for delete
 using (
   exists (
     select 1
-    from organization_members om
-    where om.organization_id = organizations.id
+    from team_members om
+    where om.team_id = teams.id
       and om.user_id = auth.uid()
       and om.role = 'admin'
   )
 );
 
 --------------------------------------------------------------------------------
--- organization_members
+-- team_members
 --------------------------------------------------------------------------------
-alter table organization_members enable row level security;
-alter table organization_members force row level security;
+alter table team_members enable row level security;
+alter table team_members force row level security;
 
 -- 自分の所属情報、または admin として所属する組織のメンバー一覧は閲覧可
-create policy "organization_members_select_self_or_admin"
-on organization_members
+create policy "team_members_select_self_or_admin"
+on team_members
 for select
 using (
   -- 自分自身の行
-  organization_members.user_id = auth.uid()
+  team_members.user_id = auth.uid()
   or
   -- または当該組織の admin として閲覧
   exists (
     select 1
-    from organization_members om_admin
-    where om_admin.organization_id = organization_members.organization_id
+    from team_members om_admin
+    where om_admin.team_id = team_members.team_id
       and om_admin.user_id = auth.uid()
       and om_admin.role = 'admin'
   )
@@ -93,19 +93,19 @@ using (
 
 -- メンバーの追加/更新/削除はサービスキーやFUNCTION経由を想定し、
 -- 通常のユーザーからは直接操作不可とする（必要に応じて変更）
-create policy "organization_members_no_direct_insert"
-on organization_members
+create policy "team_members_no_direct_insert"
+on team_members
 for insert
 with check (false);
 
-create policy "organization_members_no_direct_update"
-on organization_members
+create policy "team_members_no_direct_update"
+on team_members
 for update
 using (false)
 with check (false);
 
-create policy "organization_members_no_direct_delete"
-on organization_members
+create policy "team_members_no_direct_delete"
+on team_members
 for delete
 using (false);
 
@@ -122,8 +122,8 @@ for select
 using (
   exists (
     select 1
-    from organization_members om
-    where om.organization_id = projects.organization_id
+    from team_members om
+    where om.team_id = projects.team_id
       and om.user_id = auth.uid()
   )
 );
@@ -135,8 +135,8 @@ for insert
 with check (
   exists (
     select 1
-    from organization_members om
-    where om.organization_id = projects.organization_id
+    from team_members om
+    where om.team_id = projects.team_id
       and om.user_id = auth.uid()
       and om.role in ('admin', 'staff')
   )
@@ -148,8 +148,8 @@ for update
 using (
   exists (
     select 1
-    from organization_members om
-    where om.organization_id = projects.organization_id
+    from team_members om
+    where om.team_id = projects.team_id
       and om.user_id = auth.uid()
       and om.role in ('admin', 'staff')
   )
@@ -157,8 +157,8 @@ using (
 with check (
   exists (
     select 1
-    from organization_members om
-    where om.organization_id = projects.organization_id
+    from team_members om
+    where om.team_id = projects.team_id
       and om.user_id = auth.uid()
       and om.role in ('admin', 'staff')
   )
@@ -170,8 +170,8 @@ for delete
 using (
   exists (
     select 1
-    from organization_members om
-    where om.organization_id = projects.organization_id
+    from team_members om
+    where om.team_id = projects.team_id
       and om.user_id = auth.uid()
       and om.role in ('admin', 'staff')
   )
@@ -191,8 +191,8 @@ using (
   exists (
     select 1
     from projects p
-    join organization_members om
-      on om.organization_id = p.organization_id
+    join team_members om
+      on om.team_id = p.team_id
     where p.id = categories.project_id
       and om.user_id = auth.uid()
   )
@@ -206,8 +206,8 @@ with check (
   exists (
     select 1
     from projects p
-    join organization_members om
-      on om.organization_id = p.organization_id
+    join team_members om
+      on om.team_id = p.team_id
     where p.id = categories.project_id
       and om.user_id = auth.uid()
       and om.role in ('admin', 'staff')
@@ -221,8 +221,8 @@ using (
   exists (
     select 1
     from projects p
-    join organization_members om
-      on om.organization_id = p.organization_id
+    join team_members om
+      on om.team_id = p.team_id
     where p.id = categories.project_id
       and om.user_id = auth.uid()
       and om.role in ('admin', 'staff')
@@ -232,8 +232,8 @@ with check (
   exists (
     select 1
     from projects p
-    join organization_members om
-      on om.organization_id = p.organization_id
+    join team_members om
+      on om.team_id = p.team_id
     where p.id = categories.project_id
       and om.user_id = auth.uid()
       and om.role in ('admin', 'staff')
@@ -247,8 +247,8 @@ using (
   exists (
     select 1
     from projects p
-    join organization_members om
-      on om.organization_id = p.organization_id
+    join team_members om
+      on om.team_id = p.team_id
     where p.id = categories.project_id
       and om.user_id = auth.uid()
       and om.role in ('admin', 'staff')
@@ -269,8 +269,8 @@ using (
   exists (
     select 1
     from projects p
-    join organization_members om
-      on om.organization_id = p.organization_id
+    join team_members om
+      on om.team_id = p.team_id
     where p.id = rewards.project_id
       and om.user_id = auth.uid()
   )
@@ -284,8 +284,8 @@ with check (
   exists (
     select 1
     from projects p
-    join organization_members om
-      on om.organization_id = p.organization_id
+    join team_members om
+      on om.team_id = p.team_id
     where p.id = rewards.project_id
       and om.user_id = auth.uid()
       and om.role in ('admin', 'staff')
@@ -299,8 +299,8 @@ using (
   exists (
     select 1
     from projects p
-    join organization_members om
-      on om.organization_id = p.organization_id
+    join team_members om
+      on om.team_id = p.team_id
     where p.id = rewards.project_id
       and om.user_id = auth.uid()
       and om.role in ('admin', 'staff')
@@ -310,8 +310,8 @@ with check (
   exists (
     select 1
     from projects p
-    join organization_members om
-      on om.organization_id = p.organization_id
+    join team_members om
+      on om.team_id = p.team_id
     where p.id = rewards.project_id
       and om.user_id = auth.uid()
       and om.role in ('admin', 'staff')
@@ -325,8 +325,8 @@ using (
   exists (
     select 1
     from projects p
-    join organization_members om
-      on om.organization_id = p.organization_id
+    join team_members om
+      on om.team_id = p.team_id
     where p.id = rewards.project_id
       and om.user_id = auth.uid()
       and om.role in ('admin', 'staff')
@@ -347,8 +347,8 @@ using (
   exists (
     select 1
     from projects p
-    join organization_members om
-      on om.organization_id = p.organization_id
+    join team_members om
+      on om.team_id = p.team_id
     where p.id = supporters.project_id
       and om.user_id = auth.uid()
   )
@@ -362,8 +362,8 @@ with check (
   exists (
     select 1
     from projects p
-    join organization_members om
-      on om.organization_id = p.organization_id
+    join team_members om
+      on om.team_id = p.team_id
     where p.id = supporters.project_id
       and om.user_id = auth.uid()
       and om.role in ('admin', 'staff')
@@ -377,8 +377,8 @@ using (
   exists (
     select 1
     from projects p
-    join organization_members om
-      on om.organization_id = p.organization_id
+    join team_members om
+      on om.team_id = p.team_id
     where p.id = supporters.project_id
       and om.user_id = auth.uid()
       and om.role in ('admin', 'staff')
@@ -388,8 +388,8 @@ with check (
   exists (
     select 1
     from projects p
-    join organization_members om
-      on om.organization_id = p.organization_id
+    join team_members om
+      on om.team_id = p.team_id
     where p.id = supporters.project_id
       and om.user_id = auth.uid()
       and om.role in ('admin', 'staff')
@@ -403,8 +403,8 @@ using (
   exists (
     select 1
     from projects p
-    join organization_members om
-      on om.organization_id = p.organization_id
+    join team_members om
+      on om.team_id = p.team_id
     where p.id = supporters.project_id
       and om.user_id = auth.uid()
       and om.role in ('admin', 'staff')
@@ -425,8 +425,8 @@ using (
   exists (
     select 1
     from projects p
-    join organization_members om
-      on om.organization_id = p.organization_id
+    join team_members om
+      on om.team_id = p.team_id
     where p.id = deliveries.project_id
       and om.user_id = auth.uid()
   )
@@ -440,8 +440,8 @@ with check (
   exists (
     select 1
     from projects p
-    join organization_members om
-      on om.organization_id = p.organization_id
+    join team_members om
+      on om.team_id = p.team_id
     where p.id = deliveries.project_id
       and om.user_id = auth.uid()
       and om.role in ('admin', 'staff')
@@ -455,8 +455,8 @@ using (
   exists (
     select 1
     from projects p
-    join organization_members om
-      on om.organization_id = p.organization_id
+    join team_members om
+      on om.team_id = p.team_id
     where p.id = deliveries.project_id
       and om.user_id = auth.uid()
       and om.role in ('admin', 'staff')
@@ -466,8 +466,8 @@ with check (
   exists (
     select 1
     from projects p
-    join organization_members om
-      on om.organization_id = p.organization_id
+    join team_members om
+      on om.team_id = p.team_id
     where p.id = deliveries.project_id
       and om.user_id = auth.uid()
       and om.role in ('admin', 'staff')
@@ -481,8 +481,8 @@ using (
   exists (
     select 1
     from projects p
-    join organization_members om
-      on om.organization_id = p.organization_id
+    join team_members om
+      on om.team_id = p.team_id
     where p.id = deliveries.project_id
       and om.user_id = auth.uid()
       and om.role in ('admin', 'staff')

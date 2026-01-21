@@ -8,7 +8,7 @@
   import type { Project } from '../../../shared/types/Project'
 
   const props = defineProps<{
-    organizationId: string
+    teamId: string
     projectStats: ProjectStatsType
     project: Project
   }>()

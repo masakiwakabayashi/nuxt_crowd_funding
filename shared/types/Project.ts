@@ -3,7 +3,7 @@ import type { Delivery } from "#imports";
 
 export interface Project {
   id: string;
-  organization_id: string;
+  team_id: string;
   title: string;
   description: string | null;
   start_at: string;

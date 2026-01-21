@@ -1,5 +1,5 @@
--- 組織
-create table organizations (
+-- チーム
+create table teams (
   id uuid primary key default gen_random_uuid(),
   name text not null,
   created_at timestamp with time zone default now() not null,
@@ -7,11 +7,11 @@ create table organizations (
 );
 
 -------------------------------------------------------------------------------
--- 組織メンバー（Supabaseユーザーと組織を紐づけ、ロールを持たせる）
+-- チームメンバー（Supabaseユーザーとチームを紐づけ、ロールを持たせる）
 -------------------------------------------------------------------------------
-create table organization_members (
+create table team_members (
   id uuid primary key default gen_random_uuid(),
-  organization_id uuid not null references organizations(id) on delete cascade,
+  team_id uuid not null references teams(id) on delete cascade,
   user_id uuid not null references auth.users(id) on delete cascade,
 
   -- admin / staff / viewer の3区分
@@ -20,18 +20,18 @@ create table organization_members (
   created_at timestamp with time zone default now() not null,
   updated_at timestamp with time zone default now() not null,
 
-  unique (organization_id, user_id)
+  unique (team_id, user_id)
 );
 
-create index idx_organization_members_org_id on organization_members(organization_id);
-create index idx_organization_members_user_id on organization_members(user_id);
+create index idx_team_members_team_id on team_members(team_id);
+create index idx_team_members_user_id on team_members(user_id);
 
 -------------------------------------------------------------------------------
 -- プロジェクト（クラウドファンディング）
 -------------------------------------------------------------------------------
 create table projects (
   id uuid primary key default gen_random_uuid(),
-  organization_id uuid not null references organizations(id) on delete cascade,
+  team_id uuid not null references teams(id) on delete cascade,
   title text not null,
   description text,
   start_at timestamp with time zone not null,
@@ -44,7 +44,7 @@ create table projects (
   updated_at timestamp with time zone default now() not null
 );
 
-create index idx_projects_organization_id on projects(organization_id);
+create index idx_projects_team_id on projects(team_id);
 
 -------------------------------------------------------------------------------
 -- カテゴリー

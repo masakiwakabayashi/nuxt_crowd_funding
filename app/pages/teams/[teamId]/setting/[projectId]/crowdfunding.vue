@@ -12,9 +12,7 @@
   const selectedProjectId = ref(
     typeof route.params.projectId === 'string' ? route.params.projectId : '',
   )
-  const organizationId = ref(
-    typeof route.params.organizationId === 'string' ? route.params.organizationId : '',
-  )
+  const teamId = ref(typeof route.params.teamId === 'string' ? route.params.teamId : '')
 
   watch(
     () => route.params.projectId,
@@ -25,10 +23,10 @@
     },
   )
   watch(
-    () => route.params.organizationId,
+    () => route.params.teamId,
     (id) => {
-      if (typeof id === 'string' && id !== organizationId.value) {
-        organizationId.value = id
+      if (typeof id === 'string' && id !== teamId.value) {
+        teamId.value = id
       }
     },
   )
@@ -42,7 +40,7 @@
         query: { projectId: selectedProjectId.value },
       })
     },
-    { watch: [selectedProjectId, organizationId] },
+    { watch: [selectedProjectId, teamId] },
   )
 
   const projectStats = ref<ProjectStats>({ totalSupporters: 0, totalSales: 0 })
@@ -60,7 +58,7 @@
   <main class="flex flex-1 flex-col gap-8 pb-16">
     <ProjectSetting
       v-if="project"
-      :organization-id="organizationId"
+      :team-id="teamId"
       :project-stats="projectStats"
       :project="project"
       @update:selected-project-id="handleProjectSelection"
@@ -68,7 +66,7 @@
 
     <ReturnSetting
       v-if="project?.rewards"
-      :organization-id="organizationId"
+      :team-id="teamId"
       :selected-project-id="selectedProjectId"
       :rewards="project.rewards"
       @update:stats="handleStatsUpdate"

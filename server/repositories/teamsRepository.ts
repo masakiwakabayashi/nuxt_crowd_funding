@@ -1,14 +1,14 @@
 import { getSupabaseServerClient } from '@/app/plugins/supabase.server'
 
-export const fetchOrganizationWithProjects = async (organizationId: string) => {
+export const fetchTeamWithProjects = async (teamId: string) => {
   const supabase = getSupabaseServerClient()
   const { data, error } = await supabase
-    .from('organizations')
+    .from('teams')
     .select(`
       *,
       projects:projects(*)
     `)
-    .eq('id', organizationId)
+    .eq('id', teamId)
     .maybeSingle()
 
   if (error) {

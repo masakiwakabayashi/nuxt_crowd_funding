@@ -1,6 +1,6 @@
 import type { Project } from "./Project";
 
-export interface Organization {
+export interface Team {
   id: string;
   name: string;
   created_at: string;

@@ -2,7 +2,7 @@ import z from 'zod'
 import { relationArray } from './utils'
 import { baseProjectSchema } from './projects'
 
-export const organizationSchema = z.object({
+export const teamSchema = z.object({
   id: z.string(),
   name: z.string(),
   created_at: z.string(),

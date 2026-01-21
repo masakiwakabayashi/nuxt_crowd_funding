@@ -2,34 +2,34 @@
   import { computed, ref, watchEffect } from 'vue'
   import { useAsyncData } from 'nuxt/app'
   import { formatDateTime, formatDisplayDate } from '../../../shared/utils/date'
-  import type { Organization } from "../../../shared/types/Organization"
+  import type { Team } from '../../../shared/types/Team'
   import type { Project } from '../../../shared/types/Project'
 
   const props = defineProps<{
-    organizationId: string
+    teamId: string
   }>()
 
-  const organization = ref<Organization>()
+  const team = ref<Team>()
   const projects = ref<Project[]>([])
 
   const {
     data,
     pending: isLoading,
     error,
-  } = await useAsyncData<Organization>(
-    `organization-${props.organizationId}`,
+  } = await useAsyncData<Team>(
+    `team-${props.teamId}`,
     () =>
-      $fetch('/api/organization', {
-        query: { organizationId: props.organizationId },
+      $fetch('/api/team', {
+        query: { teamId: props.teamId },
       }),
   )
 
   watchEffect(() => {
-    const fetchedOrganization = data.value
-    if (!fetchedOrganization) return
+    const fetchedTeam = data.value
+    if (!fetchedTeam) return
 
-    organization.value = fetchedOrganization
-    projects.value = fetchedOrganization.projects ?? []
+    team.value = fetchedTeam
+    projects.value = fetchedTeam.projects ?? []
   })
 
   const formatCurrency = (value: number): string =>
@@ -40,12 +40,12 @@
     }).format(value)
 
   const projectSettingsLink = (projectId: string): string =>
-    `/organizations/${props.organizationId}/setting/${encodeURIComponent(projectId)}/crowdfunding`
+    `/teams/${props.teamId}/setting/${encodeURIComponent(projectId)}/crowdfunding`
 </script>
 
 <template>
   <main class="flex flex-1 flex-col gap-8 pb-12">
-    <template v-if="organization">
+    <template v-if="team">
       <section class="grid gap-6">
         <article
           class="rounded-3xl border border-white/80 bg-white/95 p-6 shadow-xl shadow-emerald-100/70"
@@ -53,15 +53,15 @@
           <h2 class="text-base font-semibold text-slate-900">基本情報</h2>
           <div class="mt-4 space-y-4 text-sm text-slate-600">
             <dl>
-              <dt class="text-xs uppercase tracking-wide text-slate-400">組織名</dt>
+              <dt class="text-xs uppercase tracking-wide text-slate-400">チーム名</dt>
               <dd class="mt-1 text-xl font-semibold text-slate-900">
-                {{ organization.name }}
+                {{ team.name }}
               </dd>
             </dl>
             <dl>
-              <dt class="text-xs uppercase tracking-wide text-slate-400">組織 ID</dt>
+              <dt class="text-xs uppercase tracking-wide text-slate-400">チーム ID</dt>
               <dd class="mt-1 font-mono text-sm text-slate-600">
-                {{ organization.id }}
+                {{ team.id }}
               </dd>
             </dl>
           </div>
@@ -75,13 +75,13 @@
             <dl>
               <dt class="text-xs uppercase tracking-wide text-slate-400">作成日時</dt>
               <dd class="mt-1 text-base font-semibold text-slate-900">
-                {{ formatDateTime(organization.created_at) }}
+                {{ formatDateTime(team.created_at) }}
               </dd>
             </dl>
             <dl>
               <dt class="text-xs uppercase tracking-wide text-slate-400">最終更新</dt>
               <dd class="mt-1 text-base font-semibold text-slate-900">
-                {{ formatDateTime(organization.updated_at) }}
+                {{ formatDateTime(team.updated_at) }}
               </dd>
             </dl>
           </div>
@@ -95,7 +95,7 @@
           <div>
             <h2 class="text-base font-semibold text-slate-900">クラウドファンディング</h2>
             <p class="mt-1 text-sm text-slate-500">
-              この組織に紐づいているプロジェクトの一覧です。
+              このチームに紐づいているプロジェクトの一覧です。
             </p>
           </div>
         </div>

@@ -8,7 +8,7 @@
   import type { Reward } from '../../../shared/types/Rewards'
 
   const props = defineProps<{
-    organizationId: string
+    teamId: string
     selectedProjectId: string
     rewards: Reward[]
   }>()

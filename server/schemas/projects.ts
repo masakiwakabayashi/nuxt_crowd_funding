@@ -5,7 +5,7 @@ import { deliverySchema } from './deliveries'
 
 export const baseProjectSchema = z.object({
   id: z.string(),
-  organization_id: z.string(),
+  team_id: z.string(),
   title: z.string(),
   description: z.string().nullable(),
   start_at: z.string(),

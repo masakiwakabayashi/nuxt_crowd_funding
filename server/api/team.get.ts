@@ -1,7 +1,7 @@
 import { createError, getQuery } from 'h3'
 import z from 'zod'
-import { fetchOrganizationWithProjects } from '@/server/repositories/organizationsRepository'
-import { organizationSchema } from '@/server/schemas/organizations'
+import { fetchTeamWithProjects } from '@/server/repositories/teamsRepository'
+import { teamSchema } from '@/server/schemas/teams'
 
 const singleQueryValue = (value: unknown): string | undefined => {
   if (Array.isArray(value)) {
@@ -11,15 +11,15 @@ const singleQueryValue = (value: unknown): string | undefined => {
   return typeof value === 'string' ? value : undefined
 }
 
-const organizationQuerySchema = z.object({
-  organizationId: z.preprocess(
+const teamQuerySchema = z.object({
+  teamId: z.preprocess(
     (value) => singleQueryValue(value) ?? '',
-    z.string().min(1, 'organizationId is required'),
+    z.string().min(1, 'teamId is required'),
   ),
 })
 
 export default defineEventHandler(async (event) => {
-  const parsedQuery = organizationQuerySchema.safeParse(getQuery(event))
+  const parsedQuery = teamQuerySchema.safeParse(getQuery(event))
 
   if (!parsedQuery.success) {
     throw createError({
@@ -28,19 +28,19 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  const { organizationId } = parsedQuery.data
+  const { teamId } = parsedQuery.data
 
   let data
   try {
-    data = await fetchOrganizationWithProjects(organizationId)
+    data = await fetchTeamWithProjects(teamId)
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Failed to fetch organization'
+    const message = error instanceof Error ? error.message : 'Failed to fetch team'
     throw createError({ statusCode: 500, statusMessage: message })
   }
 
   if (!data) {
-    throw createError({ statusCode: 404, statusMessage: 'Organization not found' })
+    throw createError({ statusCode: 404, statusMessage: 'Team not found' })
   }
 
-  return organizationSchema.parse(data)
+  return teamSchema.parse(data)
 })

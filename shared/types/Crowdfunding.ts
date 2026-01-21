@@ -1,4 +1,4 @@
-export type OrganizationProject = {
+export type TeamProject = {
   id: string
   title: string
   description: string | null

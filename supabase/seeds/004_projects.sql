@@ -2,7 +2,7 @@ begin;
 
 with project_seed(
   id,
-  organization_id,
+  team_id,
   title,
   description,
   start_at,
@@ -20,8 +20,8 @@ with project_seed(
       2500000::numeric
     )
 )
-insert into projects (id, organization_id, title, description, start_at, end_at, goal, created_at, updated_at)
-select id, organization_id, title, description, start_at, end_at, goal, now(), now()
+insert into projects (id, team_id, title, description, start_at, end_at, goal, created_at, updated_at)
+select id, team_id, title, description, start_at, end_at, goal, now(), now()
 from project_seed;
 
 commit;

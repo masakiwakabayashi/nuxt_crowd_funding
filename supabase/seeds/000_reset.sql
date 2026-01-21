@@ -6,8 +6,8 @@ truncate table
   rewards,
   categories,
   projects,
-  organization_members,
-  organizations
+  team_members,
+  teams
 restart identity cascade;
 
 -- remove seeded auth users to keep re-runs idempotent
