@@ -131,6 +131,12 @@ file_size_limit = "50MiB"
 public = false
 objects_path = "./documents"
 
+[storage.buckets.pdfs]
+public = false
+allowed_mime_types = [
+  "application/pdf"
+]
+objects_path = "./documents"
 
 [auth]
 enabled = true
