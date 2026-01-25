@@ -126,6 +126,12 @@ file_size_limit = "50MiB"
 # allowed_mime_types = ["image/png", "image/jpeg"]
 # objects_path = "./images"
 
+# ストレージの検証
+[storage.buckets.documents]
+public = false
+objects_path = "./documents"
+
+
 [auth]
 enabled = true
 # The base URL of your website. Used as an allow-list for redirects and for constructing URLs used

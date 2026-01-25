@@ -3,8 +3,6 @@ import z from 'zod'
 import { fetchDeliveriesByProjectId } from '@/server/repositories/deliveriesRepository'
 import { deliverySchema } from '@/server/schemas/deliveries'
 
-// もう少しAPIを全体的にすっきりさせたい
-
 const singleQueryValue = (value: unknown): string | undefined => {
   if (Array.isArray(value)) {
     return typeof value[0] === 'string' ? value[0] : undefined
