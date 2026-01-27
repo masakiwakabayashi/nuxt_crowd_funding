@@ -3,6 +3,10 @@ import z from 'zod'
 import { fetchDeliveriesByProjectId } from '@/server/repositories/deliveriesRepository'
 import { deliverySchema } from '@/server/schemas/deliveries'
 
+// テーブルを見直す
+// https://docs.google.com/spreadsheets/d/1dKkgna5v09tAtruAuIljwdfYwENku_CQH5VLWuAE3WA/edit?gid=2044384052#gid=2044384052
+
+
 const singleQueryValue = (value: unknown): string | undefined => {
   if (Array.isArray(value)) {
     return typeof value[0] === 'string' ? value[0] : undefined
