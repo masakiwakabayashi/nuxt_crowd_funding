@@ -13,6 +13,7 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 const projectRoot = path.resolve(__dirname, '..')
 
+// 既存の環境変数を上書きせずに.envのキーと値を読み込む
 async function loadEnvFile(envPath) {
   try {
     const raw = await fs.readFile(envPath, 'utf8')
@@ -35,6 +36,7 @@ async function loadEnvFile(envPath) {
   }
 }
 
+// アップロード対象となるベースディレクトリが存在するか検証する
 async function ensureDirectoryExists(dir) {
   try {
     const stats = await fs.stat(dir)
@@ -49,6 +51,7 @@ async function ensureDirectoryExists(dir) {
   }
 }
 
+// 指定ディレクトリ以下のファイルを再帰的に列挙する
 async function walkFiles(dir) {
   const entries = await fs.readdir(dir, { withFileTypes: true })
   const files = []
@@ -64,17 +67,20 @@ async function walkFiles(dir) {
   return files
 }
 
+// ファイル拡張子からSupabaseに渡すMIMEタイプを決める
 function guessContentType(filePath) {
   const ext = path.extname(filePath).toLowerCase()
   return MIME_TYPES[ext] || 'application/octet-stream'
 }
 
+// PDFのみを扱うためのガードロジック
 function ensurePdf(filePath) {
   if (path.extname(filePath).toLowerCase() !== '.pdf') {
     throw new Error(`Only PDF files are supported. Invalid file: ${filePath}`)
   }
 }
 
+// アップロード先バケットの存在を確認し無ければ作成する
 async function ensureBucketExists(supabase, bucket) {
   const { data: buckets, error } = await supabase.storage.listBuckets()
   if (error) {
@@ -89,6 +95,7 @@ async function ensureBucketExists(supabase, bucket) {
   }
 }
 
+// ローカルパスを(必要に応じてprefixを付けて)ストレージ上のパスに変換する
 function buildStoragePath(baseDir, filePath, prefix = '') {
   const relativePath = path.relative(baseDir, filePath)
   const normalized = relativePath.split(path.sep).join('/')
@@ -96,6 +103,7 @@ function buildStoragePath(baseDir, filePath, prefix = '') {
   return `${prefix.replace(/\/+$/u, '')}/${normalized}`
 }
 
+// 発見したすべてのファイルを並列数の上限を守りつつアップロードする
 async function uploadAllFiles({ supabase, bucket, baseDir, files, prefix, concurrency }) {
   let index = 0
   let uploaded = 0
@@ -125,10 +133,11 @@ async function uploadAllFiles({ supabase, bucket, baseDir, files, prefix, concur
   await Promise.all(workers)
 }
 
+// 環境変数読み込みからSupabase初期化、アップロードまでを統括するエントリーポイント
 async function main() {
   await loadEnvFile(path.join(projectRoot, '.env'))
 
-  const bucketSetting = process.env.DOCUMENTS_BUCKETS || process.env.DOCUMENTS_BUCKET || 'documents,pdfs'
+  const bucketSetting = 'documents,pdfs'
   const buckets = bucketSetting
     .split(',')
     .map((name) => name.trim())
@@ -143,8 +152,8 @@ async function main() {
 
   await ensureDirectoryExists(baseDir)
 
-  const supabaseUrl = process.env.NUXT_SUPABASE_URL || process.env.SUPABASE_URL
-  const supabaseKey = process.env.NUXT_SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_KEY
+  const supabaseUrl = process.env.NUXT_SUPABASE_URL
+  const supabaseKey = process.env.NUXT_SUPABASE_SECRET_KEY
 
   if (!supabaseUrl || !supabaseKey) {
     throw new Error('Missing Supabase credentials. Set NUXT_SUPABASE_URL and NUXT_SUPABASE_SECRET_KEY in your environment or .env file.')
