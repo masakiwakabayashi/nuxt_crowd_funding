@@ -6,11 +6,7 @@ import { fileURLToPath } from 'node:url'
 import { createClient } from '@supabase/supabase-js'
 
 const MIME_TYPES = {
-  '.pdf': 'application/pdf',
-  '.png': 'image/png',
-  '.jpg': 'image/jpeg',
-  '.jpeg': 'image/jpeg',
-  '.gif': 'image/gif'
+  '.pdf': 'application/pdf'
 }
 
 const __filename = fileURLToPath(import.meta.url)
@@ -57,6 +53,7 @@ async function walkFiles(dir) {
   const entries = await fs.readdir(dir, { withFileTypes: true })
   const files = []
   for (const entry of entries) {
+    if (entry.name === '.DS_Store') continue
     const fullPath = path.join(dir, entry.name)
     if (entry.isDirectory()) {
       files.push(...(await walkFiles(fullPath)))
@@ -70,6 +67,12 @@ async function walkFiles(dir) {
 function guessContentType(filePath) {
   const ext = path.extname(filePath).toLowerCase()
   return MIME_TYPES[ext] || 'application/octet-stream'
+}
+
+function ensurePdf(filePath) {
+  if (path.extname(filePath).toLowerCase() !== '.pdf') {
+    throw new Error(`Only PDF files are supported. Invalid file: ${filePath}`)
+  }
 }
 
 async function ensureBucketExists(supabase, bucket) {
@@ -103,6 +106,7 @@ async function uploadAllFiles({ supabase, bucket, baseDir, files, prefix, concur
       const currentIndex = index++
       if (currentIndex >= total) break
       const filePath = files[currentIndex]
+      ensurePdf(filePath)
       const storagePath = buildStoragePath(baseDir, filePath, prefix)
       const buffer = await fs.readFile(filePath)
       const { error } = await supabase.storage.from(bucket).upload(storagePath, buffer, {
@@ -124,7 +128,15 @@ async function uploadAllFiles({ supabase, bucket, baseDir, files, prefix, concur
 async function main() {
   await loadEnvFile(path.join(projectRoot, '.env'))
 
-  const bucket = process.env.DOCUMENTS_BUCKET || 'documents'
+  const bucketSetting = process.env.DOCUMENTS_BUCKETS || process.env.DOCUMENTS_BUCKET || 'documents,pdfs'
+  const buckets = bucketSetting
+    .split(',')
+    .map((name) => name.trim())
+    .filter(Boolean)
+  if (buckets.length === 0) {
+    throw new Error('No bucket names specified. Provide DOCUMENTS_BUCKETS or DOCUMENTS_BUCKET env variable.')
+  }
+
   const baseDir = path.resolve(projectRoot, process.env.DOCUMENTS_BASE_DIR || 'supabase/documents')
   const prefix = process.env.DOCUMENTS_PREFIX || ''
   const concurrency = Number(process.env.UPLOAD_CONCURRENCY || '5')
@@ -142,16 +154,17 @@ async function main() {
     auth: { persistSession: false }
   })
 
-  await ensureBucketExists(supabase, bucket)
-
   const files = await walkFiles(baseDir)
   if (files.length === 0) {
     console.log(`No files found under ${baseDir}`)
     return
   }
 
-  await uploadAllFiles({ supabase, bucket, baseDir, files, prefix, concurrency })
-  console.log(`Uploaded ${files.length} files to bucket ${bucket}`)
+  for (const bucket of buckets) {
+    await ensureBucketExists(supabase, bucket)
+    await uploadAllFiles({ supabase, bucket, baseDir, files, prefix, concurrency })
+    console.log(`Uploaded ${files.length} files to bucket ${bucket}`)
+  }
 }
 
 main().catch((error) => {
