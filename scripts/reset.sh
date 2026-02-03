@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# 実行：npm run db:reset
 set -euo pipefail
 
 # Determine the repository root relative to this script
@@ -23,6 +24,7 @@ run_upload() {
 }
 
 echo "[reset] Uploading documents to Supabase storage..."
+sleep 3
 run_upload
 
 echo "[reset] Done."
