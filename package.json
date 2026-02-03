@@ -8,7 +8,7 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "upload:documents": "node scripts/upload-documents.mjs"
+    "upload:documents": "npx tsx scripts/upload-documents.ts"
   },
   "dependencies": {
     "@pinia/nuxt": "^0.9.7",

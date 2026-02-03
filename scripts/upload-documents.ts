@@ -3,9 +3,9 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 import process from 'node:process'
 import { fileURLToPath } from 'node:url'
-import { createClient } from '@supabase/supabase-js'
+import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 
-const MIME_TYPES = {
+const MIME_TYPES: Record<string, string> = {
   '.pdf': 'application/pdf'
 }
 
@@ -13,8 +13,17 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 const projectRoot = path.resolve(__dirname, '..')
 
+function isNodeErrno(error: unknown): error is NodeJS.ErrnoException {
+  return Boolean(
+    error &&
+      typeof error === 'object' &&
+      'code' in error &&
+      typeof (error as NodeJS.ErrnoException).code === 'string'
+  )
+}
+
 // 既存の環境変数を上書きせずに.envのキーと値を読み込む
-async function loadEnvFile(envPath) {
+async function loadEnvFile(envPath: string): Promise<void> {
   try {
     const raw = await fs.readFile(envPath, 'utf8')
     for (const line of raw.split(/\r?\n/)) {
@@ -31,20 +40,20 @@ async function loadEnvFile(envPath) {
       process.env[key] = value
     }
   } catch (error) {
-    if (error && error.code === 'ENOENT') return
+    if (isNodeErrno(error) && error.code === 'ENOENT') return
     throw error
   }
 }
 
 // アップロード対象となるベースディレクトリが存在するか検証する
-async function ensureDirectoryExists(dir) {
+async function ensureDirectoryExists(dir: string): Promise<void> {
   try {
     const stats = await fs.stat(dir)
     if (!stats.isDirectory()) {
       throw new Error(`${dir} exists but is not a directory`)
     }
   } catch (error) {
-    if (error && error.code === 'ENOENT') {
+    if (isNodeErrno(error) && error.code === 'ENOENT') {
       throw new Error(`Directory not found: ${dir}`)
     }
     throw error
@@ -52,9 +61,9 @@ async function ensureDirectoryExists(dir) {
 }
 
 // 指定ディレクトリ以下のファイルを再帰的に列挙する
-async function walkFiles(dir) {
+async function walkFiles(dir: string): Promise<string[]> {
   const entries = await fs.readdir(dir, { withFileTypes: true })
-  const files = []
+  const files: string[] = []
   for (const entry of entries) {
     if (entry.name === '.DS_Store') continue
     const fullPath = path.join(dir, entry.name)
@@ -68,25 +77,25 @@ async function walkFiles(dir) {
 }
 
 // ファイル拡張子からSupabaseに渡すMIMEタイプを決める
-function guessContentType(filePath) {
+function guessContentType(filePath: string): string {
   const ext = path.extname(filePath).toLowerCase()
   return MIME_TYPES[ext] || 'application/octet-stream'
 }
 
 // PDFのみを扱うためのガードロジック
-function ensurePdf(filePath) {
+function ensurePdf(filePath: string): void {
   if (path.extname(filePath).toLowerCase() !== '.pdf') {
     throw new Error(`Only PDF files are supported. Invalid file: ${filePath}`)
   }
 }
 
 // アップロード先バケットの存在を確認し無ければ作成する
-async function ensureBucketExists(supabase, bucket) {
+async function ensureBucketExists(supabase: SupabaseClient, bucket: string): Promise<void> {
   const { data: buckets, error } = await supabase.storage.listBuckets()
   if (error) {
     throw new Error(`Failed to list buckets: ${error.message}`)
   }
-  if (buckets.some(({ name }) => name === bucket)) {
+  if (buckets?.some(({ name }) => name === bucket)) {
     return
   }
   const { error: createError } = await supabase.storage.createBucket(bucket, { public: false })
@@ -96,20 +105,30 @@ async function ensureBucketExists(supabase, bucket) {
 }
 
 // ローカルパスを(必要に応じてprefixを付けて)ストレージ上のパスに変換する
-function buildStoragePath(baseDir, filePath, prefix = '') {
+function buildStoragePath(baseDir: string, filePath: string, prefix = ''): string {
   const relativePath = path.relative(baseDir, filePath)
   const normalized = relativePath.split(path.sep).join('/')
   if (!prefix) return normalized
   return `${prefix.replace(/\/+$/u, '')}/${normalized}`
 }
 
+type UploadOptions = {
+  supabase: SupabaseClient
+  bucket: string
+  baseDir: string
+  files: string[]
+  prefix: string
+  concurrency: number
+}
+
 // 発見したすべてのファイルを並列数の上限を守りつつアップロードする
-async function uploadAllFiles({ supabase, bucket, baseDir, files, prefix, concurrency }) {
+async function uploadAllFiles({ supabase, bucket, baseDir, files, prefix, concurrency }: UploadOptions): Promise<void> {
   let index = 0
   let uploaded = 0
   const total = files.length
+  const workerCount = Math.max(1, Math.min(concurrency, total))
 
-  const worker = async () => {
+  const worker = async (): Promise<void> => {
     while (true) {
       const currentIndex = index++
       if (currentIndex >= total) break
@@ -129,12 +148,12 @@ async function uploadAllFiles({ supabase, bucket, baseDir, files, prefix, concur
     }
   }
 
-  const workers = Array.from({ length: Math.min(concurrency, total) }, () => worker())
+  const workers = Array.from({ length: workerCount }, () => worker())
   await Promise.all(workers)
 }
 
 // 環境変数読み込みからSupabase初期化、アップロードまでを統括するエントリーポイント
-async function main() {
+async function main(): Promise<void> {
   await loadEnvFile(path.join(projectRoot, '.env'))
 
   const bucketSetting = 'documents,pdfs'
