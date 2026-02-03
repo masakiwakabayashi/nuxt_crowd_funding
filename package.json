@@ -8,7 +8,8 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "upload:documents": "npx tsx scripts/upload-documents.ts"
+    "upload:documents": "npx tsx scripts/upload-documents.ts",
+    "db:reset": "bash scripts/reset.sh"
   },
   "dependencies": {
     "@pinia/nuxt": "^0.9.7",
