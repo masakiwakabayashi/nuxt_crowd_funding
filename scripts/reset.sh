@@ -2,5 +2,5 @@
 set -euo pipefail
 
 supabase db reset
-sleep 30
-npx tsx scripts/upload-documents.ts
+# sleep 120
+# npx tsx scripts/upload-documents.ts

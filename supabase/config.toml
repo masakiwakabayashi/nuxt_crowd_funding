@@ -127,16 +127,7 @@ file_size_limit = "50MiB"
 # objects_path = "./images"
 
 # ストレージの検証
-[storage.buckets.documents]
-public = false
-objects_path = "./documents"
 
-[storage.buckets.pdfs]
-public = false
-allowed_mime_types = [
-  "application/pdf"
-]
-objects_path = "./documents"
 
 [auth]
 enabled = true
