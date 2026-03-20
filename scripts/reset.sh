@@ -60,7 +60,7 @@ fi
 echo "[ok] REST is ready."
 
 # ===========================
-# 修正版（治し方1）：Storage は「HTTP応答が返ればOK」
+# 修正版（直し方1）：Storage は「HTTP応答が返ればOK」
 # ===========================
 echo "[wait] Waiting for Storage..."
 deadline=$((SECONDS + 360))
